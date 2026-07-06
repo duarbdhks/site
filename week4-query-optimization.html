@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>쿼리 최적화와 위험 패턴</title>
+  <style>
+:root {
+  --bg: #f6f7fb;
+  --paper: #ffffff;
+  --ink: #172033;
+  --muted: #607086;
+  --line: #dce3ee;
+  --soft: #eef3ff;
+  --soft2: #fff8e6;
+  --accent: #325dff;
+  --accent2: #111827;
+  --good: #0f766e;
+  --warn: #b45309;
+  --bad: #b91c1c;
+  --code: #111827;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.82;
+  word-break: keep-all;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { max-width: 1120px; margin: 0 auto; padding: 28px 20px 80px; }
+.hero {
+  background: linear-gradient(135deg, #111827 0%, #26375f 60%, #325dff 100%);
+  color: white;
+  border-radius: 28px;
+  padding: 44px 38px;
+  margin-bottom: 24px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, .18);
+}
+.hero .eyebrow { opacity: .78; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.hero h1 { margin: 0 0 16px; font-size: 38px; line-height: 1.25; letter-spacing: -0.03em; }
+.hero p { max-width: 820px; margin: 0; color: rgba(255,255,255,.88); font-size: 17px; }
+.navbar {
+  background: rgba(255,255,255,.82);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+  padding: 12px;
+  border-radius: 18px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.navbar a { padding: 8px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; color: var(--accent2); font-size: 14px; }
+.navbar a.active { background: #111827; color: white; border-color: #111827; }
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 28px;
+  margin: 18px 0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .05);
+}
+.card.compact { padding: 22px; }
+h2 { margin: 0 0 18px; font-size: 27px; letter-spacing: -0.02em; line-height: 1.35; }
+h3 { margin: 28px 0 10px; font-size: 21px; line-height: 1.45; letter-spacing: -0.01em; }
+h4 { margin: 20px 0 8px; font-size: 17px; color: var(--accent2); }
+p { margin: 12px 0; }
+ul, ol { padding-left: 1.35rem; }
+li { margin: 8px 0; }
+.kicker { color: var(--muted); font-weight: 700; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+.badge { display:inline-flex; align-items:center; gap:6px; font-size:13px; padding:4px 10px; border-radius:999px; background:var(--soft); border:1px solid #cfdaff; color:#1e3a8a; margin-right:6px; }
+.callout { border-left: 5px solid var(--accent); background: var(--soft); padding: 16px 18px; border-radius: 14px; margin: 18px 0; }
+.callout.warn { border-left-color: var(--warn); background: var(--soft2); }
+.callout.bad { border-left-color: var(--bad); background: #fff1f2; }
+.callout.good { border-left-color: var(--good); background: #ecfdf5; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tile { background: #fbfdff; border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+.tile h3, .tile h4 { margin-top: 0; }
+.table-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--line); border-radius: 16px; }
+table { width: 100%; border-collapse: collapse; background: white; min-width: 760px; }
+th, td { text-align: left; padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: #f1f5f9; color: #243247; }
+tr:last-child td { border-bottom: 0; }
+code { background: #eef2f7; padding: 2px 6px; border-radius: 6px; color: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+pre { background: var(--code); color: #f8fafc; padding: 18px; border-radius: 18px; overflow-x: auto; line-height: 1.6; }
+pre code { background: transparent; color: inherit; padding: 0; }
+.diagram { border: 1px dashed #b7c4d8; background: #fbfdff; border-radius: 18px; padding: 18px; margin: 16px 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; line-height: 1.6; color: #233047; }
+.footer-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.footer-nav a { flex: 1; text-align: center; padding: 14px 16px; background: #111827; color: white; border-radius: 16px; }
+.sources li { margin: 6px 0; }
+.small { color: var(--muted); font-size: 14px; }
+.quote { border-left: 4px solid #94a3b8; padding: 10px 16px; color: #334155; background: #f8fafc; border-radius: 10px; }
+@media (max-width: 820px) {
+  .hero { padding: 34px 24px; border-radius: 22px; }
+  .hero h1 { font-size: 30px; }
+  .grid, .grid3 { grid-template-columns: 1fr; }
+  .card { padding: 22px; }
+  body { line-height: 1.76; }
+}
+</style>
+</head>
+<body>
+  <main class="layout">
+    <section class="hero">
+      <div class="eyebrow">ClickHouse 학습 로드맵 V2 · Week 4</div>
+      <h1>🔍 쿼리 최적화와 위험 패턴</h1>
+      <p>느린 쿼리를 설명하고 피하는 기준을 만듭니다.</p>
+    </section>
+    <nav class="navbar"><a href="index.html">🏠 전체</a><a href="week1-mergetree.html">🧱 1주차</a><a href="week2-cdc-consistency.html">🔁 2주차</a><a href="week3-materialized-view-aggregation.html">🧮 3주차</a><a href="week4-query-optimization.html" class="active">🔍 4주차</a><a href="week5-observability-runbook.html">🚨 5주차</a><a href="week6-ingestion-cost-retention.html">📥 6주차</a></nav>
+    
+<section class="card">
+  <div class="kicker">이번 주의 관점</div>
+  <h2>🔍 ClickHouse 튜닝은 “더 빠른 SQL”보다 “덜 읽는 SQL”에서 시작합니다</h2>
+  <p>4주차에서는 쿼리 최적화를 다룹니다. ClickHouse를 빠르게 쓰는 첫 번째 원칙은 CPU를 더 세게 쓰는 것이 아니라 읽을 데이터를 줄이는 것입니다. 컬럼 지향 DB에서는 필요한 컬럼만 읽고, 필요한 part와 granule만 읽고, 불필요한 join과 `FINAL`을 피하는 것이 성능의 중심입니다.</p>
+  <p>규완님이 운영에서 마주칠 느린 쿼리는 대개 SQL 문법이 어려워서 느린 것이 아닙니다. 테이블의 정렬 키를 못 타거나, 넓은 날짜 범위를 읽거나, `FINAL`과 `JOIN`이 결합되거나, 배열이 폭발하거나, API가 반복적으로 같은 대량 집계를 수행하기 때문에 느립니다. 이 주차의 목표는 이런 패턴을 보자마자 위험도를 판단하는 것입니다.</p>
+  <div class="callout good">
+    <strong>핵심 문장</strong><br />ClickHouse 최적화의 질문은 “이 쿼리를 어떻게 더 똑똑하게 계산할까?”가 아니라 “이 쿼리가 애초에 읽지 않아도 되는 데이터를 읽고 있지 않은가?”입니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>📏 1강. 느린 쿼리를 보는 첫 질문은 “얼마나 읽었나”입니다</h2>
+  <p>ClickHouse에서 쿼리 성능을 볼 때 먼저 봐야 할 것은 읽은 rows, bytes, columns입니다. 같은 결과 100행을 반환하더라도 내부에서 10만 행을 읽었는지, 10억 행을 읽었는지는 완전히 다릅니다. 반환 결과 크기가 작다고 쿼리가 가벼운 것은 아닙니다.</p>
+  <p>예를 들어 “최근 30일 캠페인별 클릭 수 상위 10개”라는 API는 결과가 10행뿐입니다. 하지만 내부에서 전체 테넌트의 1년치 이벤트를 읽고 마지막에 정렬해서 10개만 보여준다면 비용이 큽니다. 좋은 쿼리는 early filtering(초기 필터링)으로 읽을 범위를 빠르게 줄입니다.</p>
+  <p>따라서 쿼리 리뷰에서는 `WHERE` 조건이 정렬 키 앞쪽 컬럼과 맞는지, 날짜 범위가 제한되어 있는지, 필요한 컬럼만 읽는지, 집계 전에 데이터가 충분히 줄어드는지 확인해야 합니다. ClickHouse는 대량 스캔에 강하지만, 불필요한 대량 스캔을 무제한 허용해도 되는 DB는 아닙니다.</p>
+</section>
+
+<section class="card">
+  <h2>🧭 2강. 정렬 키를 타는 쿼리와 못 타는 쿼리</h2>
+  <p>1주차에서 `ORDER BY`를 저장 순서라고 설명했습니다. 쿼리 최적화에서는 이 저장 순서를 실제로 활용하는지가 중요합니다. 테이블이 `(tenant_id, event_date, campaign_id)` 순서로 정렬되어 있는데 쿼리가 `tenant_id`와 `event_date` 조건을 주면 ClickHouse는 읽을 구간을 크게 줄일 수 있습니다.</p>
+  <p>반대로 같은 테이블에서 `user_agent LIKE '%Chrome%'` 또는 `campaign_name LIKE '%summer%'`처럼 정렬 키와 무관한 조건만 주면 넓은 범위를 읽어야 합니다. 이런 조건이 꼭 필요하다면 별도 serving 테이블, data skipping index(데이터 스킵 인덱스), projection, dictionary, 검색 시스템 연동 같은 대안을 고려해야 합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>테이블 정렬 키</th><th>쿼리 조건</th><th>판단</th><th>이유</th></tr></thead>
+      <tbody>
+        <tr><td>`(tenant_id, event_date, campaign_id)`</td><td>`tenant_id = ? AND event_date BETWEEN ? AND ?`</td><td>좋음</td><td>앞쪽 정렬 키와 날짜 범위를 활용합니다.</td></tr>
+        <tr><td>`(tenant_id, event_date, campaign_id)`</td><td>`campaign_id = ?`</td><td>주의</td><td>앞쪽 키인 tenant/date가 없으면 넓게 읽을 수 있습니다.</td></tr>
+        <tr><td>`(event_date, tenant_id)`</td><td>`event_date = today()`</td><td>좋음</td><td>날짜 중심 대시보드에 적합합니다.</td></tr>
+        <tr><td>`(event_id)`</td><td>`event_date BETWEEN ? AND ?`</td><td>나쁨</td><td>조회 조건과 저장 순서가 맞지 않습니다.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🚪 3강. `PREWHERE`는 필요 없는 컬럼 읽기를 뒤로 미룹니다</h2>
+  <p>`PREWHERE`는 ClickHouse가 필터 조건을 더 효율적으로 적용하기 위한 최적화입니다. 일반적인 `WHERE`가 모든 필요한 컬럼을 읽은 뒤 필터링한다고 단순화해 보면, `PREWHERE`는 먼저 필터에 필요한 컬럼 일부만 읽고, 살아남은 행에 대해서만 나머지 컬럼을 읽는 방식으로 이해할 수 있습니다.</p>
+  <p>예를 들어 테이블에 컬럼이 80개 있고, 쿼리는 `tenant_id`, `event_date` 조건으로 필터링한 뒤 `revenue`, `campaign_id`, `country`만 집계한다고 합시다. `PREWHERE`가 잘 작동하면 처음부터 모든 컬럼을 읽지 않고, 필터링에 필요한 작은 컬럼을 먼저 읽어 데이터 범위를 줄입니다. 그 다음 남은 행에 대해서만 다른 컬럼을 읽습니다.</p>
+  <p>ClickHouse는 많은 경우 `PREWHERE`를 자동으로 적용합니다. 사용자가 항상 명시적으로 써야 하는 기능은 아닙니다. 다만 넓은 테이블에서 필터 컬럼이 작고 선택도가 높다면 `PREWHERE`가 왜 도움이 되는지 이해해야 합니다. 특히 “필요한 컬럼만 select하라”는 원칙과 연결됩니다.</p>
+  <div class="diagram">나쁜 흐름의 이미지
+많은 컬럼 읽기 → 필터링 → 집계
+
+좋은 흐름의 이미지
+필터 컬럼 먼저 읽기 → 관련 없는 행 제거 → 필요한 컬럼만 추가 읽기 → 집계</div>
+</section>
+
+<section class="card">
+  <h2>🧨 4강. `FINAL`은 느린 쿼리의 증폭기가 될 수 있습니다</h2>
+  <p>2주차에서 `FINAL`은 정확성을 사는 비용이라고 설명했습니다. 4주차에서는 성능 관점에서 다시 봅니다. `FINAL`은 같은 키의 여러 버전을 쿼리 시점에 정리해야 하므로, 읽는 범위가 넓을수록 비용이 커집니다. 작은 상세 조회에서는 괜찮아도, 대시보드 전체 집계에서는 위험합니다.</p>
+  <p>`FINAL`이 특히 위험해지는 조합이 있습니다. 첫째, 날짜 범위가 넓습니다. 둘째, 정렬 키 조건이 약합니다. 셋째, `JOIN`과 함께 사용됩니다. 넷째, API 트래픽이 높습니다. 다섯째, 같은 쿼리를 여러 위젯이 동시에 실행합니다. 이런 조합은 장애로 이어질 수 있습니다.</p>
+  <p>대안은 여러 가지입니다. 최신 상태가 필요한 데이터는 Flink나 배치에서 미리 정리한 serving 테이블로 만들 수 있습니다. 특정 기간만 정확하면 된다면 최근 기간만 `FINAL`을 허용하고 과거는 집계 테이블을 사용할 수 있습니다. 또는 API에서 정확도 요구가 낮은 지표와 높은 지표를 분리할 수 있습니다.</p>
+  <div class="callout warn">
+    <strong>실무 규칙</strong><br />`FINAL`은 쿼리 리뷰에서 반드시 표시해야 하는 위험 키워드입니다. 특히 `FINAL`, `JOIN`, 넓은 날짜 범위가 한 쿼리에 같이 있으면 별도 검토가 필요합니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>🔗 5강. ClickHouse에서 JOIN은 가능하지만 설계로 줄이는 것이 우선입니다</h2>
+  <p>ClickHouse는 JOIN을 지원합니다. 하지만 OLAP 시스템에서 JOIN은 여전히 비용이 큰 연산입니다. 특히 큰 fact 테이블끼리 JOIN하거나, 조인 키의 cardinality(고유값 수)가 크거나, 조인 전 필터링이 약하면 메모리 사용량이 급격히 증가할 수 있습니다.</p>
+  <p>실무 통계 시스템에서는 JOIN을 없애기 위해 denormalization(반정규화)을 자주 사용합니다. 예를 들어 이벤트 테이블에 캠페인 이름, 광고주 ID, 상품 카테고리 같은 조회에 필요한 차원을 일부 복사해 넣습니다. MySQL 정규화 관점에서는 중복 저장처럼 보이지만, ClickHouse 분석 조회에서는 읽기 성능과 단순성을 얻는 선택입니다.</p>
+  <p>다만 모든 차원을 이벤트에 복사하면 컬럼이 과도하게 늘고, 차원 값 변경 시 과거 데이터 의미가 애매해질 수 있습니다. 캠페인 이름 변경이 과거 리포트에도 반영되어야 하는지, 당시 이름을 보존해야 하는지 정해야 합니다. 작은 차원 테이블은 dictionary(딕셔너리, key-value 형태의 빠른 참조 구조)로 해결하는 선택지도 있습니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>상황</th><th>추천 접근</th><th>이유</th></tr></thead>
+      <tbody>
+        <tr><td>대시보드에서 항상 필요한 차원</td><td>이벤트 또는 집계 테이블에 반정규화</td><td>반복 JOIN을 줄입니다.</td></tr>
+        <tr><td>작고 자주 참조되는 매핑</td><td>Dictionary 검토</td><td>큰 fact JOIN보다 가볍게 참조할 수 있습니다.</td></tr>
+        <tr><td>탐색성 임시 분석</td><td>JOIN 허용</td><td>일회성 분석은 유연성이 더 중요할 수 있습니다.</td></tr>
+        <tr><td>큰 fact 테이블끼리 JOIN</td><td>사전 집계 또는 데이터 모델 재검토</td><td>메모리와 시간 비용이 커질 가능성이 높습니다.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧬 6강. Data skipping index는 보조 수단입니다</h2>
+  <p>Data skipping index는 정렬 키만으로는 충분히 줄이기 어려운 조건에서 일부 데이터 블록을 건너뛰도록 돕는 보조 인덱스입니다. 예를 들어 `country`, `status`, `event_type`처럼 특정 조건으로 자주 필터링하지만 정렬 키 앞쪽에 둘 수 없는 컬럼이 후보가 될 수 있습니다.</p>
+  <p>하지만 data skipping index는 MySQL의 일반 보조 인덱스처럼 생각하면 안 됩니다. 모든 조건을 빠르게 만들어주는 만능 장치가 아닙니다. 컬럼 값의 분포, 블록 안 값의 뭉침 정도, 쿼리 조건의 선택도에 따라 효과가 크게 달라집니다. 값이 거의 무작위로 섞여 있으면 건너뛸 수 있는 블록이 줄어듭니다.</p>
+  <p>따라서 우선순위는 항상 정렬 키와 파티션 설계입니다. 그 다음 자주 쓰는 필터 중 정렬 키에 넣기 어려운 조건을 관찰하고, 실제 쿼리 로그와 `EXPLAIN`으로 효과를 확인하면서 data skipping index를 검토하는 순서가 안전합니다.</p>
+</section>
+
+<section class="card">
+  <h2>🧯 7강. `ARRAY JOIN`과 고카디널리티 컬럼의 폭발</h2>
+  <p>`ARRAY JOIN`은 배열 컬럼을 펼쳐 여러 행으로 만드는 기능입니다. 예를 들어 한 이벤트에 태그가 5개 있으면, `ARRAY JOIN tags` 후에는 이벤트 한 건이 5행처럼 보입니다. 분석에는 유용하지만 데이터량이 순식간에 늘어날 수 있습니다.</p>
+  <p>문제는 배열 길이가 일정하지 않다는 점입니다. 대부분 이벤트는 태그가 3개지만 일부 이벤트는 태그가 200개일 수 있습니다. API가 넓은 기간에서 `ARRAY JOIN`을 수행하면 원본 행 수보다 몇 배 또는 몇십 배 많은 중간 결과가 생깁니다. 이후 GROUP BY나 JOIN이 붙으면 비용은 더 커집니다.</p>
+  <p>고카디널리티(high cardinality, 고유값 수가 큰) 컬럼도 주의해야 합니다. `user_id`, `session_id`, `request_id`처럼 값 종류가 매우 많은 컬럼으로 무거운 group by를 수행하면 메모리 사용량이 커집니다. 이런 분석은 사전 집계, 샘플링, 기간 제한, 별도 테이블 구조가 필요할 수 있습니다.</p>
+</section>
+
+<section class="card">
+  <h2>🧠 8강. `EXPLAIN`은 실행 계획을 보는 현미경입니다</h2>
+  <p>`EXPLAIN`은 쿼리가 어떻게 실행될지 이해하기 위한 도구입니다. ClickHouse에서는 쿼리가 어떤 단계를 거치는지, 필터가 어떻게 적용되는지, 읽기 범위가 어떻게 줄어드는지 확인하는 데 사용합니다. 운영자가 느린 쿼리를 고칠 때 감으로만 판단하지 않게 해줍니다.</p>
+  <p>처음에는 `EXPLAIN` 출력이 낯설 수 있습니다. 모든 줄을 완벽히 이해하려고 하기보다, 필터가 빨리 적용되는지, 읽는 컬럼이 과도하지 않은지, JOIN이나 aggregation 단계가 어디서 커지는지 보는 식으로 접근하면 됩니다. 특히 쿼리 변경 전후에 읽은 rows/bytes가 줄었는지를 비교하는 것이 중요합니다.</p>
+  <p>쿼리 최적화는 “한 번에 천재적인 SQL을 쓰는 작업”이 아닙니다. 원래 쿼리의 읽기 범위를 확인하고, 정렬 키와 조건을 맞추고, 불필요한 컬럼을 제거하고, JOIN을 줄이고, 필요하면 집계 테이블로 옮기는 반복 작업입니다.</p>
+</section>
+
+<section class="card">
+  <h2>🚦 9강. API 쿼리 리뷰 체크리스트</h2>
+  <p>규완님이 팀에서 ClickHouse API 쿼리를 리뷰한다면, 복잡한 내부 구현보다 몇 가지 질문이 더 효과적입니다. 첫째, 이 쿼리는 어떤 화면에서 얼마나 자주 호출되는가? 둘째, 날짜 범위는 제한되는가? 셋째, 정렬 키 앞쪽 조건을 사용하는가? 넷째, `FINAL`이나 큰 `JOIN`이 있는가? 다섯째, 같은 결과를 집계 테이블로 미리 만들 수 있는가?</p>
+  <p>API 쿼리는 사용자 트래픽에 의해 반복 실행됩니다. 개발자가 콘솔에서 한 번 실행했을 때 2초인 쿼리도, 동시에 100명이 대시보드를 열면 문제가 됩니다. 특히 대시보드 한 화면이 위젯 12개를 각각 쿼리하면 실제 호출 수는 화면 수보다 훨씬 많습니다. 그래서 API 쿼리는 단건 성능뿐 아니라 동시성과 호출 빈도를 함께 봐야 합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>리뷰 질문</th><th>위험 신호</th><th>대응 방향</th></tr></thead>
+      <tbody>
+        <tr><td>날짜 범위가 제한되는가?</td><td>기본값이 전체 기간</td><td>기본 기간 제한, pagination, 집계 테이블</td></tr>
+        <tr><td>정렬 키 조건을 쓰는가?</td><td>앞쪽 키 없이 뒤쪽 키만 필터</td><td>쿼리 조건 변경 또는 테이블 재설계</td></tr>
+        <tr><td>`FINAL`이 있는가?</td><td>대시보드 메인 API에서 사용</td><td>serving 테이블 또는 범위 제한</td></tr>
+        <tr><td>JOIN 대상이 큰가?</td><td>fact table끼리 JOIN</td><td>반정규화, dictionary, 사전 집계</td></tr>
+        <tr><td>GROUP BY 키가 큰가?</td><td>user_id/session_id 대량 그룹핑</td><td>사전 집계, 기간 제한, 샘플링</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<section class="card">
+  <h2>🧱 10강. Top-N 쿼리는 결과보다 중간 정렬 비용을 봐야 합니다</h2>
+  <p>대시보드에서 “상위 10개 캠페인”, “상위 20개 상품” 같은 Top-N 쿼리는 흔합니다. 결과는 작지만 내부 비용은 작지 않을 수 있습니다. 상위 10개를 찾으려면 후보 전체를 읽고, 그룹핑하고, 정렬해야 할 수 있기 때문입니다. 결과 행이 10개라는 사실만 보고 가벼운 쿼리라고 판단하면 안 됩니다.</p>
+  <p>Top-N 쿼리를 안전하게 만들려면 먼저 후보 범위를 줄여야 합니다. 테넌트, 날짜, 상태, 지표 종류 같은 조건으로 읽을 범위를 줄인 뒤 정렬해야 합니다. 또한 매번 raw에서 Top-N을 계산하는 대신 일자별 또는 시간대별 집계 테이블에서 Top-N을 구하는 방식이 안정적입니다.</p>
+  <p>Top-N의 의미도 명확히 해야 합니다. “최근 7일 매출 상위 10개”인지, “오늘 현재까지 클릭 상위 10개”인지, “마감된 어제 기준 상위 10개”인지에 따라 필요한 데이터와 정합성 수준이 달라집니다. API가 실시간성을 요구할수록 중복, 늦은 이벤트, 재처리 영향을 받을 수 있습니다.</p>
+</section>
+
+<section class="card">
+  <h2>📄 11강. Pagination은 OLTP 방식 그대로 가져오면 위험합니다</h2>
+  <p>MySQL에서는 `LIMIT 20 OFFSET 10000` 같은 pagination(페이지 나누기)을 흔히 사용합니다. 하지만 ClickHouse에서 넓은 결과를 정렬한 뒤 큰 offset을 건너뛰는 방식은 비용이 클 수 있습니다. 특히 정렬 기준이 테이블 정렬 키와 다르고, 결과 후보가 수천만 행이면 페이지 하나를 보여주기 위해 거대한 중간 결과를 만들어야 합니다.</p>
+  <p>분석 API에서는 무한 페이지보다 필터와 집계 단위를 명확히 제한하는 것이 더 중요합니다. 사용자가 “전체 이벤트 로그”를 끝없이 넘겨보는 기능이 필요하다면 ClickHouse raw 테이블을 직접 훑는 대신, 시간 범위 제한, 키셋 pagination(keyset pagination, 마지막으로 본 키 이후를 가져오는 방식), 별도 검색 인덱스, 비동기 export를 검토해야 합니다.</p>
+  <p>대시보드와 운영 콘솔은 요구가 다릅니다. 대시보드는 집계된 작은 결과를 빠르게 보여줘야 하고, 운영 콘솔은 원본 이벤트를 추적해야 할 수 있습니다. 두 요구를 같은 API와 같은 테이블로 해결하려 하면 성능과 UX가 모두 흔들릴 수 있습니다.</p>
+</section>
+
+<section class="card">
+  <h2>🧮 12강. 정확한 집계와 근사 집계의 선택</h2>
+  <p>ClickHouse는 대량 데이터에서 다양한 집계 함수를 제공합니다. 그중 일부는 정확한 값을 계산하고, 일부는 근사값을 빠르게 계산합니다. 예를 들어 순사용자 수, 분위수, cardinality 추정 같은 지표는 정확 계산이 비싸질 수 있습니다. 이때 근사 집계는 비용을 줄이는 선택지가 됩니다.</p>
+  <p>하지만 근사 집계를 쓰려면 사용자와 비즈니스가 허용하는 오차 범위를 알아야 합니다. 모니터링 대시보드의 추세에는 작은 오차가 허용될 수 있습니다. 반면 과금, 정산, 계약 리포트에는 근사값이 부적절합니다. 기술적으로 빠르다는 이유만으로 근사 집계를 쓰면 신뢰 문제가 생깁니다.</p>
+  <p>따라서 쿼리 최적화에는 “정확해야 하는가”라는 질문이 포함됩니다. 정확해야 하면 사전 집계, 배치 계산, 리소스 분리로 비용을 감당해야 합니다. 근사도 괜찮다면 지표명과 문서에서 그것이 추정값임을 명확히 해야 합니다. API 응답 필드 이름도 `estimated_unique_users`처럼 의미를 드러내는 편이 안전합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>지표</th><th>정확성 요구</th><th>최적화 방향</th></tr></thead>
+      <tbody>
+        <tr><td>과금 매출</td><td>정확</td><td>검증된 배치/정산 테이블</td></tr>
+        <tr><td>실시간 접속자 추세</td><td>근사 허용 가능</td><td>근사 집계 또는 샘플링 검토</td></tr>
+        <tr><td>고객 리포트 다운로드</td><td>정확</td><td>비동기 생성, 재현 가능한 입력</td></tr>
+        <tr><td>운영 모니터링</td><td>지연·근사 허용 가능</td><td>낮은 비용의 집계 테이블</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🛡️ 13강. 쿼리 제한은 개발자를 막는 장치가 아니라 시스템을 지키는 안전벨트입니다</h2>
+  <p>ClickHouse 운영에서는 max memory, max execution time, read rows 제한, 사용자별 권한 같은 guardrail(안전장치)을 고려해야 합니다. 잘못된 쿼리 하나가 전체 클러스터 리소스를 잡아먹으면 다른 정상 API도 영향을 받습니다. 특히 사내 분석 콘솔과 사용자-facing API가 같은 리소스를 공유한다면 제한이 필요합니다.</p>
+  <p>쿼리 제한은 팀 생산성을 낮추기 위한 장치가 아닙니다. 오히려 실수의 blast radius(영향 범위)를 줄입니다. 분석가는 넓은 쿼리를 실행할 수 있지만 비동기 리포트나 전용 워크로드에서 실행하게 하고, 사용자 API는 엄격한 시간·메모리 제한 안에서 동작하게 나눌 수 있습니다.</p>
+  <p>리더 관점에서는 리소스 정책이 중요합니다. 운영 API, 내부 어드민, 데이터 분석, 백필 작업은 우선순위가 다릅니다. 같은 ClickHouse를 쓰더라도 워크로드별 계정, 제한, 스케줄을 분리하면 장애 가능성을 줄일 수 있습니다.</p>
+</section>
+
+
+<section class="card">
+  <h2>🧰 14강. 캐시는 해결책이 아니라 증상 완화일 수 있습니다</h2>
+  <p>느린 대시보드를 보면 캐시부터 떠올리기 쉽습니다. 캐시는 반복 조회를 줄이는 데 효과가 있지만, 근본 쿼리가 지나치게 무겁다면 문제를 숨길 뿐입니다. 캐시가 만료되거나 동시에 여러 요청이 캐시 미스를 만들면 원래의 무거운 쿼리가 한꺼번에 ClickHouse로 들어갑니다. 이를 cache stampede(캐시 쇄도)라고 부릅니다.</p>
+  <p>캐시를 쓰더라도 먼저 쿼리가 합리적인 범위를 읽는지 확인해야 합니다. 정렬 키를 타지 못하는 전체 스캔, 넓은 범위의 `FINAL`, 큰 JOIN이 붙은 쿼리를 캐시로만 덮으면 장애가 지연될 뿐입니다. API 캐시는 집계 테이블, 날짜 제한, 권한별 쿼리 제한과 함께 사용해야 안전합니다.</p>
+  <p>캐시가 적합한 경우도 명확합니다. 여러 사용자가 같은 대시보드 기본 화면을 반복 조회하고, freshness 요구가 1~5분 정도라면 캐시가 비용 대비 효과적입니다. 반대로 사용자마다 필터 조합이 너무 다양하거나, 정산처럼 항상 최신·정확해야 하는 값은 캐시 정책을 신중하게 잡아야 합니다.</p>
+</section>
+
+
+<section class="card">
+  <h2>🧪 15강. 느린 쿼리는 한 번에 고치지 말고 읽기 범위를 단계별로 줄입니다</h2>
+  <p>실무에서 느린 ClickHouse 쿼리를 받으면 처음부터 완전히 새로 쓰려 하기보다, 읽기 범위를 줄이는 실험을 단계별로 진행하는 편이 좋습니다. 먼저 날짜 범위를 줄이고, 그다음 테넌트나 주요 차원 조건을 추가하고, 필요 없는 컬럼을 제거하고, JOIN 전후의 행 수를 비교합니다. 이렇게 하면 어떤 조건이 실제로 비용을 줄이는지 보입니다.</p>
+  <p>이 접근은 커뮤니케이션에도 유리합니다. “쿼리를 최적화했습니다”보다 “날짜 기본 범위를 90일에서 14일로 줄이니 read_bytes가 줄었고, 집계 테이블을 보게 바꾸니 raw scan이 사라졌습니다”라고 설명할 수 있습니다. 성능 개선은 추상적인 감이 아니라 읽은 데이터량 감소로 증명하는 편이 좋습니다.</p>
+  <p>또한 최적화 전후에는 사용자에게 보이는 숫자가 같은지 확인해야 합니다. 빠르지만 다른 숫자를 내는 쿼리는 개선이 아닙니다. 특히 `FINAL` 제거, JOIN 제거, 근사 집계 전환, 집계 테이블 사용은 결과 의미가 달라질 수 있습니다. 성능과 정합성을 함께 검증하는 습관이 필요합니다.</p>
+</section>
+
+<section class="card">
+  <h2>✅ 4주차 정리</h2>
+  <p>이번 주의 핵심은 ClickHouse 쿼리 최적화를 “적게 읽기” 관점에서 보는 것입니다. 정렬 키와 맞는 조건을 사용하고, 날짜 범위를 제한하고, 필요한 컬럼만 읽고, `FINAL`과 JOIN을 신중히 다루는 것이 기본입니다. 느린 쿼리의 상당수는 고급 튜닝보다 데이터 모델과 조회 패턴 불일치에서 시작됩니다.</p>
+  <p>`PREWHERE`는 불필요한 컬럼 읽기를 줄이는 최적화이고, data skipping index는 정렬 키를 보완하는 보조 수단입니다. `ARRAY JOIN`, 고카디널리티 group by, 넓은 범위의 `FINAL + JOIN`은 API에서 특히 주의해야 합니다. 운영에서는 쿼리 로그와 `EXPLAIN`을 함께 보며 변경 전후의 rows/bytes 감소를 확인하는 습관이 필요합니다.</p>
+  <div class="tile"><h3>핵심 용어</h3><p>`PREWHERE`는 필터링에 필요한 컬럼을 먼저 읽어 불필요한 I/O를 줄이는 최적화입니다. `cardinality`는 컬럼의 고유값 수입니다. `denormalization`은 조회 성능을 위해 일부 차원 값을 중복 저장하는 반정규화입니다. `EXPLAIN`은 쿼리 실행 계획을 확인하는 도구입니다.</p></div>
+</section>
+
+    <section class="card compact"><h2>📚 참고한 공식 문서</h2><ul class="sources"><li><a href="https://clickhouse.com/docs/optimize/prewhere" target="_blank" rel="noopener">ClickHouse Docs · PREWHERE optimization</a></li><li><a href="https://clickhouse.com/docs/sql-reference/statements/select/prewhere" target="_blank" rel="noopener">ClickHouse Docs · PREWHERE Clause</a></li><li><a href="https://clickhouse.com/docs/guides/joining-tables" target="_blank" rel="noopener">ClickHouse Docs · Using JOINs in ClickHouse</a></li><li><a href="https://clickhouse.com/docs/guides/replacing-merge-tree" target="_blank" rel="noopener">ClickHouse Docs · Working with ReplacingMergeTree</a></li></ul><p class="small">문서는 2026년 7월 기준으로 다시 확인한 ClickHouse 공식 문서 중심입니다. 운영 버전과 Cloud/OSS 차이는 실제 환경에서 별도 확인하세요.</p></section>
+    <div class="footer-nav"><a href="week3-materialized-view-aggregation.html">← 이전 주차</a><a href="week5-observability-runbook.html">다음 주차 →</a></div>
+  </main>
+</body>
+</html>

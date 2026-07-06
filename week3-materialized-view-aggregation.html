@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Materialized View와 집계 전략</title>
+  <style>
+:root {
+  --bg: #f6f7fb;
+  --paper: #ffffff;
+  --ink: #172033;
+  --muted: #607086;
+  --line: #dce3ee;
+  --soft: #eef3ff;
+  --soft2: #fff8e6;
+  --accent: #325dff;
+  --accent2: #111827;
+  --good: #0f766e;
+  --warn: #b45309;
+  --bad: #b91c1c;
+  --code: #111827;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.82;
+  word-break: keep-all;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { max-width: 1120px; margin: 0 auto; padding: 28px 20px 80px; }
+.hero {
+  background: linear-gradient(135deg, #111827 0%, #26375f 60%, #325dff 100%);
+  color: white;
+  border-radius: 28px;
+  padding: 44px 38px;
+  margin-bottom: 24px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, .18);
+}
+.hero .eyebrow { opacity: .78; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.hero h1 { margin: 0 0 16px; font-size: 38px; line-height: 1.25; letter-spacing: -0.03em; }
+.hero p { max-width: 820px; margin: 0; color: rgba(255,255,255,.88); font-size: 17px; }
+.navbar {
+  background: rgba(255,255,255,.82);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+  padding: 12px;
+  border-radius: 18px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.navbar a { padding: 8px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; color: var(--accent2); font-size: 14px; }
+.navbar a.active { background: #111827; color: white; border-color: #111827; }
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 28px;
+  margin: 18px 0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .05);
+}
+.card.compact { padding: 22px; }
+h2 { margin: 0 0 18px; font-size: 27px; letter-spacing: -0.02em; line-height: 1.35; }
+h3 { margin: 28px 0 10px; font-size: 21px; line-height: 1.45; letter-spacing: -0.01em; }
+h4 { margin: 20px 0 8px; font-size: 17px; color: var(--accent2); }
+p { margin: 12px 0; }
+ul, ol { padding-left: 1.35rem; }
+li { margin: 8px 0; }
+.kicker { color: var(--muted); font-weight: 700; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+.badge { display:inline-flex; align-items:center; gap:6px; font-size:13px; padding:4px 10px; border-radius:999px; background:var(--soft); border:1px solid #cfdaff; color:#1e3a8a; margin-right:6px; }
+.callout { border-left: 5px solid var(--accent); background: var(--soft); padding: 16px 18px; border-radius: 14px; margin: 18px 0; }
+.callout.warn { border-left-color: var(--warn); background: var(--soft2); }
+.callout.bad { border-left-color: var(--bad); background: #fff1f2; }
+.callout.good { border-left-color: var(--good); background: #ecfdf5; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tile { background: #fbfdff; border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+.tile h3, .tile h4 { margin-top: 0; }
+.table-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--line); border-radius: 16px; }
+table { width: 100%; border-collapse: collapse; background: white; min-width: 760px; }
+th, td { text-align: left; padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: #f1f5f9; color: #243247; }
+tr:last-child td { border-bottom: 0; }
+code { background: #eef2f7; padding: 2px 6px; border-radius: 6px; color: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+pre { background: var(--code); color: #f8fafc; padding: 18px; border-radius: 18px; overflow-x: auto; line-height: 1.6; }
+pre code { background: transparent; color: inherit; padding: 0; }
+.diagram { border: 1px dashed #b7c4d8; background: #fbfdff; border-radius: 18px; padding: 18px; margin: 16px 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; line-height: 1.6; color: #233047; }
+.footer-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.footer-nav a { flex: 1; text-align: center; padding: 14px 16px; background: #111827; color: white; border-radius: 16px; }
+.sources li { margin: 6px 0; }
+.small { color: var(--muted); font-size: 14px; }
+.quote { border-left: 4px solid #94a3b8; padding: 10px 16px; color: #334155; background: #f8fafc; border-radius: 10px; }
+@media (max-width: 820px) {
+  .hero { padding: 34px 24px; border-radius: 22px; }
+  .hero h1 { font-size: 30px; }
+  .grid, .grid3 { grid-template-columns: 1fr; }
+  .card { padding: 22px; }
+  body { line-height: 1.76; }
+}
+</style>
+</head>
+<body>
+  <main class="layout">
+    <section class="hero">
+      <div class="eyebrow">ClickHouse 학습 로드맵 V2 · Week 3</div>
+      <h1>🧮 Materialized View와 집계 전략</h1>
+      <p>조회 시점 계산과 적재 시점 계산을 어떻게 나눌지 배웁니다.</p>
+    </section>
+    <nav class="navbar"><a href="index.html">🏠 전체</a><a href="week1-mergetree.html">🧱 1주차</a><a href="week2-cdc-consistency.html">🔁 2주차</a><a href="week3-materialized-view-aggregation.html" class="active">🧮 3주차</a><a href="week4-query-optimization.html">🔍 4주차</a><a href="week5-observability-runbook.html">🚨 5주차</a><a href="week6-ingestion-cost-retention.html">📥 6주차</a></nav>
+    
+<section class="card">
+  <div class="kicker">이번 주의 관점</div>
+  <h2>🧮 Materialized View는 “빠른 조회”를 위해 계산 비용을 미리 지불하는 장치입니다</h2>
+  <p>3주차에서는 Materialized View, 줄여서 MV를 다룹니다. MV는 조회할 때마다 무거운 집계를 반복하지 않기 위해, 데이터가 들어오는 시점에 미리 계산해 target table(대상 테이블)에 저장하는 방식입니다. 쉽게 말해 “읽을 때 계산할래, 넣을 때 계산할래?”라는 질문에서 후자를 선택하는 도구입니다.</p>
+  <p>규완님이 다루는 통계 시스템에서는 MV가 매우 매력적입니다. API가 “오늘 캠페인별 클릭 수”를 자주 묻는다면, raw 이벤트 수천만 건을 매번 읽기보다 일자·캠페인별 집계 테이블을 미리 만들어 두는 편이 빠릅니다. 하지만 MV는 마법이 아닙니다. 특히 CDC update/delete가 섞이면 “이미 집계된 값을 어떻게 되돌릴 것인가”라는 문제가 생깁니다.</p>
+  <div class="callout good">
+    <strong>핵심 문장</strong><br />MV는 성능 최적화 도구이면서 데이터 의미를 고정하는 장치입니다. 어떤 데이터를 어떤 시점에 어떤 단위로 굳힐지 결정하지 않으면 MV가 오히려 정합성 리스크가 됩니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>📥 1강. MV는 source table의 insert 흐름에 반응합니다</h2>
+  <p>ClickHouse의 incremental materialized view는 source table에 데이터가 insert될 때 동작합니다. source에 들어온 새 블록을 읽고, 정의된 SELECT 결과를 target table에 insert합니다. 이 점 때문에 MV는 실시간 ETL(Extract, Transform, Load, 추출·변환·적재)처럼 사용할 수 있습니다. 원본 이벤트가 들어오자마자 집계 테이블이 함께 채워지는 구조입니다.</p>
+  <p>중요한 표현은 “insert될 때”입니다. 원본 테이블의 과거 데이터가 나중에 수정되거나 삭제된다고 해서 MV target이 자동으로 완벽히 되돌아간다고 생각하면 안 됩니다. source의 update/delete를 어떤 형태로 처리하느냐, MV가 delta를 받는지 snapshot을 받는지, target 엔진이 어떤 의미로 merge하는지에 따라 결과가 달라집니다.</p>
+  <div class="diagram">raw_events INSERT
+        ↓
+Materialized View SELECT
+        ↓
+agg_daily_campaign INSERT
+
+조회 API
+        ↓
+agg_daily_campaign SELECT</div>
+  <p>이 구조의 장점은 API 쿼리가 단순해진다는 점입니다. raw 이벤트를 매번 읽지 않고 이미 집계된 테이블을 읽습니다. 단점은 적재 시점의 계산 결과가 저장되기 때문에, 늦게 도착한 이벤트, 중복 이벤트, 삭제 이벤트, 보정 이벤트를 어떻게 처리할지 미리 정해야 한다는 점입니다.</p>
+</section>
+
+<section class="card">
+  <h2>⚖️ 2강. Query-time 계산과 Insert-time 계산의 교환 관계</h2>
+  <p>통계 시스템에는 두 가지 계산 방식이 있습니다. query-time 계산은 사용자가 조회할 때 raw 또는 fact 데이터를 읽어 즉석에서 계산하는 방식입니다. insert-time 계산은 데이터가 들어올 때 미리 계산해 집계 테이블에 저장하는 방식입니다. MV는 insert-time 계산에 속합니다.</p>
+  <p>query-time 계산은 유연합니다. 집계 기준이 바뀌어도 쿼리만 바꾸면 됩니다. 원본에 가까운 데이터를 읽기 때문에 잘못된 집계를 고칠 때도 비교적 단순합니다. 하지만 데이터가 커지면 느려지고, 사용자 요청이 몰리면 CPU와 메모리를 많이 씁니다.</p>
+  <p>insert-time 계산은 빠릅니다. API가 이미 작아진 집계 테이블을 읽으므로 응답 시간이 안정됩니다. 하지만 집계 기준을 바꾸려면 과거 데이터를 다시 계산해야 합니다. 또한 원본 이벤트가 중복되거나 늦게 도착하면 target 집계에 그 영향이 저장됩니다. 즉, 성능을 얻는 대신 유연성과 재처리 비용을 지불합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>방식</th><th>장점</th><th>단점</th><th>적합한 상황</th></tr></thead>
+      <tbody>
+        <tr><td>Query-time 계산</td><td>유연하고 검증이 쉽습니다.</td><td>대량 데이터에서 느릴 수 있습니다.</td><td>탐색 분석, 낮은 트래픽, 자주 바뀌는 기준</td></tr>
+        <tr><td>Insert-time 계산</td><td>조회가 빠르고 API 안정성이 좋습니다.</td><td>정합성 보정과 재처리가 어렵습니다.</td><td>대시보드, 반복 조회, 명확한 집계 기준</td></tr>
+        <tr><td>혼합 방식</td><td>핵심 지표는 빠르게, 예외 분석은 유연하게 처리합니다.</td><td>테이블 계층이 늘어납니다.</td><td>실무 통계 시스템 대부분</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>📊 3강. 집계 테이블은 “줄어든 데이터”가 아니라 “의미가 굳어진 데이터”입니다</h2>
+  <p>집계 테이블을 단순히 raw보다 작은 테이블로만 보면 설계가 약해집니다. 집계 테이블은 어떤 차원과 어떤 시간 단위로 숫자의 의미를 확정한 결과입니다. 예를 들어 `agg_daily_campaign`은 “하루 단위”, “캠페인 단위”, “클릭/노출/구매 같은 지표 단위”로 의미를 굳힌 테이블입니다.</p>
+  <p>이 의미가 굳어지면 조회는 쉬워지지만 질문의 형태가 제한됩니다. `agg_daily_campaign`으로는 캠페인별 일간 추세를 빠르게 볼 수 있지만, 사용자 세그먼트별 시간대 분석을 하려면 부족할 수 있습니다. 그래서 집계 테이블을 만들기 전에는 “이 테이블이 답해야 할 질문”을 명확히 해야 합니다.</p>
+  <p>집계 테이블을 너무 많이 만들면 적재와 운영이 복잡해집니다. 반대로 너무 적게 만들면 API가 raw를 자주 읽어야 해서 느려집니다. 실무적으로는 트래픽이 높은 화면, SLA가 중요한 API, 반복되는 리포트부터 집계 테이블 후보로 삼는 것이 좋습니다.</p>
+</section>
+
+<section class="card">
+  <h2>🧱 4강. `SummingMergeTree`와 `AggregatingMergeTree`의 차이</h2>
+  <p>ClickHouse에서 집계 target table을 만들 때 자주 나오는 엔진이 `SummingMergeTree`와 `AggregatingMergeTree`입니다. 둘 다 같은 정렬 키를 가진 행들을 merge 과정에서 합치는 방향으로 동작하지만, 다루는 값의 의미가 다릅니다.</p>
+  <p>`SummingMergeTree`는 이름 그대로 숫자 합산에 적합합니다. 클릭 수, 노출 수, 주문 수처럼 같은 키의 숫자를 더하면 되는 지표에 직관적입니다. 예를 들어 같은 `date`, `campaign_id`에 대해 여러 블록에서 `clicks = 10`, `clicks = 15`가 들어오면 merge 후 합산된 값으로 볼 수 있습니다. 단순하고 읽기 쉽다는 장점이 있습니다.</p>
+  <p>`AggregatingMergeTree`는 집계 함수의 중간 상태를 저장합니다. 예를 들어 순 사용자 수를 계산하는 `uniq` 계열, 평균을 위한 sum/count 상태, percentile을 위한 quantile 상태처럼 단순 합산만으로 최종 결과를 만들 수 없는 경우에 사용합니다. 강력하지만 조회할 때 상태를 finalize(최종화)해야 하고, 컬럼 타입도 `AggregateFunction` 또는 `SimpleAggregateFunction`을 이해해야 합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>엔진</th><th>쉽게 말하면</th><th>예시 지표</th><th>주의점</th></tr></thead>
+      <tbody>
+        <tr><td>`SummingMergeTree`</td><td>숫자 컬럼을 더하는 집계 저장소</td><td>클릭 수, 노출 수, 총 매출</td><td>중복 이벤트가 들어오면 중복만큼 더해집니다.</td></tr>
+        <tr><td>`AggregatingMergeTree`</td><td>집계 함수의 중간 상태를 합치는 저장소</td><td>순 사용자 수, 평균, 분위수</td><td>상태 타입과 최종화 함수를 이해해야 합니다.</td></tr>
+        <tr><td>일반 `MergeTree` 집계 테이블</td><td>직접 계산한 결과를 그대로 저장</td><td>배치 산출물, serving snapshot</td><td>동일 키 중복 처리 규칙을 직접 관리해야 합니다.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧠 5강. “MV로 할 것인가, Flink로 할 것인가” 판단하기</h2>
+  <p>규완님 환경에는 Flink가 이미 파이프라인에 있습니다. 그러면 당연히 질문이 생깁니다. 집계를 Flink에서 할지, ClickHouse MV에서 할지, API 조회 시점에 할지 어떻게 나눠야 할까요? 정답은 하나가 아니라 데이터 의미와 운영 책임에 따라 달라집니다.</p>
+  <p>Flink는 stream processing(스트림 처리)에 강합니다. 이벤트 시간, watermark(늦게 도착한 이벤트를 처리하기 위한 시간 기준), window(시간 창), exactly-once에 가까운 상태 관리, 외부 시스템과의 조합이 필요하면 Flink 쪽이 유리합니다. 예를 들어 5분 윈도우 집계에서 늦게 도착한 이벤트를 일정 시간 기다렸다가 반영해야 한다면 Flink가 자연스럽습니다.</p>
+  <p>ClickHouse MV는 ClickHouse 내부에 들어온 데이터를 기준으로 빠르게 변환하고 집계하는 데 강합니다. 별도 스트림 상태 관리가 필요 없고, source insert에 맞춰 간단한 rollup을 만들 때 효과적입니다. 예를 들어 raw 이벤트가 이미 중복 제거되어 들어오고, 일자·캠페인별 단순 합계를 만드는 경우 MV가 단순합니다.</p>
+  <p>API query-time 계산은 기준이 자주 바뀌거나 사용량이 낮은 탐색성 분석에 적합합니다. 모든 지표를 미리 만들면 테이블이 너무 많아지고, 변경 비용이 커집니다. 따라서 “트래픽이 높고 기준이 안정적인 지표”부터 insert-time 집계로 옮기는 것이 현실적입니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>계산 위치</th><th>선택하면 좋은 경우</th><th>피해야 할 경우</th></tr></thead>
+      <tbody>
+        <tr><td>Flink</td><td>이벤트 시간, 늦은 이벤트, 상태 기반 보정, 복잡한 스트림 join이 필요할 때</td><td>단순 rollup인데 운영 복잡도만 늘어날 때</td></tr>
+        <tr><td>ClickHouse MV</td><td>ClickHouse에 들어온 데이터를 기준으로 단순·반복 집계를 만들 때</td><td>source update/delete를 자동 반영한다고 기대할 때</td></tr>
+        <tr><td>API query-time</td><td>낮은 트래픽, 탐색성 조건, 자주 바뀌는 분석 기준</td><td>대량 데이터와 높은 동시성에서 매번 raw를 읽을 때</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🪜 6강. MV chaining은 가능하지만 디버깅 비용이 올라갑니다</h2>
+  <p>MV chaining은 MV의 target table을 다시 다른 MV의 source로 삼아 여러 단계의 집계를 만드는 방식입니다. 예를 들어 raw 이벤트에서 분 단위 집계를 만들고, 분 단위 집계에서 시간 단위 집계를 만들고, 시간 단위에서 일 단위 집계를 만드는 구조입니다. 데이터량을 단계적으로 줄일 수 있어 매력적입니다.</p>
+  <p>하지만 단계가 늘어날수록 디버깅 비용이 올라갑니다. 일 단위 숫자가 틀렸을 때 원인이 raw 이벤트 중복인지, 분 단위 MV 누락인지, 시간 단위 집계 merge 지연인지, 일 단위 target의 중복인지 추적해야 합니다. 각 단계마다 재처리 방법도 필요합니다.</p>
+  <p>따라서 처음부터 깊은 MV chain을 만드는 것은 피하는 편이 좋습니다. 먼저 raw에서 daily 집계 하나를 만드는 단순 구조로 시작하고, 병목이 명확해졌을 때 중간 집계를 추가하는 방식이 안전합니다. “구조가 멋진가”보다 “틀렸을 때 어디서 고칠 수 있는가”가 중요합니다.</p>
+  <div class="diagram">단순 구조
+raw_events → MV → agg_daily
+
+복잡한 구조
+raw_events → MV → agg_minute → MV → agg_hour → MV → agg_day
+
+복잡한 구조는 읽기는 빠를 수 있지만, 재처리와 원인 추적 비용이 증가합니다.</div>
+</section>
+
+<section class="card">
+  <h2>🪞 7강. Projection은 MV와 비슷해 보이지만 역할이 다릅니다</h2>
+  <p>Projection(프로젝션)은 같은 테이블 안에 다른 정렬 순서나 사전 집계 형태를 추가로 저장해 쿼리 최적화에 활용하는 기능입니다. MV와 비슷하게 insert 시점에 추가 데이터를 만들 수 있지만, 별도 target table을 명시적으로 운영하는 MV와는 사용 감각이 다릅니다.</p>
+  <p>Projection은 원본 테이블과 더 밀접하게 연결되어 있고, 쿼리 옵티마이저가 적절하다고 판단하면 사용합니다. 반면 MV는 source에서 target으로 데이터를 명시적으로 흘려보냅니다. MV는 데이터 파이프라인의 한 단계로 눈에 보이고, Projection은 특정 테이블의 물리 최적화 옵션에 가깝습니다.</p>
+  <p>규완님이 처음 집중할 것은 MV와 집계 테이블입니다. Projection은 “같은 데이터에 대해 조회 패턴이 두세 개 있고, 별도 테이블을 만들기보다 내부 최적화를 원할 때” 검토하면 됩니다. 특히 CDC 정합성, 백필, serving API 경계가 중요한 상황에서는 명시적인 target table이 운영상 설명하기 쉬운 경우가 많습니다.</p>
+</section>
+
+<section class="card">
+  <h2>🧯 8강. MV가 깨지는 대표 상황</h2>
+  <p>첫 번째는 source에 중복 이벤트가 들어오는 상황입니다. MV는 들어온 블록을 기준으로 target에 insert하므로, 중복 이벤트가 들어오면 target 집계에도 중복이 반영됩니다. source table이 나중에 `ReplacingMergeTree` merge로 정리되더라도 target 집계가 자동으로 되돌아간다고 기대하면 위험합니다.</p>
+  <p>두 번째는 삭제와 수정이 뒤늦게 들어오는 상황입니다. raw 이벤트를 기준으로 이미 클릭 수를 더했는데, 나중에 그 이벤트가 무효 처리되면 target에서 빼야 합니다. 이때 delta 이벤트를 설계하지 않았다면 집계를 다시 만들어야 합니다. 단순 합계 지표라면 음수 보정 이벤트를 넣는 방식이 가능하지만, 순 사용자 수 같은 고급 지표는 더 어렵습니다.</p>
+  <p>세 번째는 backfill입니다. 과거 30일 데이터를 다시 넣으면 MV도 다시 실행되어 target에 중복 집계가 생길 수 있습니다. 백필을 안전하게 하려면 staging table(임시 적재 테이블), target partition 교체, 또는 특정 기간 target 삭제 후 재삽입 같은 절차가 필요합니다.</p>
+  <div class="callout bad">
+    <strong>위험한 전제</strong><br />“source만 고치면 MV target도 알아서 맞아진다”는 전제는 CDC 통계 시스템에서 위험합니다. MV target은 별도 산출물로 보고 재처리 전략을 가져야 합니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>📐 9강. 실무형 집계 설계 예시</h2>
+  <p>캠페인 대시보드를 예로 들어 보겠습니다. raw 이벤트에는 `tenant_id`, `event_time`, `campaign_id`, `event_type`, `user_id`, `revenue`가 들어옵니다. API는 최근 30일 캠페인별 노출, 클릭, 구매, 매출, 순사용자 수를 보여줘야 합니다. 모든 API 요청이 raw를 읽으면 느릴 가능성이 높습니다.</p>
+  <p>먼저 단순 지표인 노출 수, 클릭 수, 구매 수, 매출은 일자·캠페인 단위 집계 테이블로 만들 수 있습니다. `SummingMergeTree`나 일반 `MergeTree` 기반 집계 테이블이 후보입니다. 순사용자 수는 단순 합산이 안 됩니다. 같은 사용자가 여러 이벤트를 만들 수 있기 때문입니다. 이 경우 `AggregatingMergeTree`로 `uniqState` 계열 상태를 저장하거나, Flink에서 별도 dedup/window 집계를 수행할 수 있습니다.</p>
+  <p>여기서 중요한 판단은 모든 지표를 같은 방식으로 처리하지 않는 것입니다. 클릭 수는 단순 합산으로 충분할 수 있지만, 순사용자 수는 중복과 시간 창 의미가 중요합니다. 매출은 정산과 연결되면 수정·취소 이벤트 반영이 중요합니다. 한 대시보드 안에서도 지표마다 적절한 집계 방식이 다릅니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>지표</th><th>난이도</th><th>집계 후보</th><th>주의점</th></tr></thead>
+      <tbody>
+        <tr><td>노출 수</td><td>낮음</td><td>MV + 단순 합산</td><td>중복 이벤트가 있으면 그대로 증가합니다.</td></tr>
+        <tr><td>클릭 수</td><td>낮음~중간</td><td>event_id dedup 후 합산</td><td>재시도 중복을 제거해야 합니다.</td></tr>
+        <tr><td>구매 수</td><td>중간</td><td>주문 상태 기준 집계</td><td>취소/환불/상태 변경이 반영되어야 합니다.</td></tr>
+        <tr><td>매출</td><td>중간~높음</td><td>delta 또는 재집계</td><td>정산 기준이면 감사 가능성이 필요합니다.</td></tr>
+        <tr><td>순사용자 수</td><td>높음</td><td>`AggregatingMergeTree` 또는 Flink 상태 집계</td><td>단순 일별 합산으로 월간 순사용자를 만들 수 없습니다.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<section class="card">
+  <h2>🕰️ 10강. 늦게 도착한 이벤트는 MV 설계의 시험대입니다</h2>
+  <p>실시간 통계에서 late event(늦게 도착한 이벤트)는 흔합니다. 이벤트 발생 시각은 10시 03분인데, 네트워크 지연이나 재처리 때문에 10시 20분에 ClickHouse에 들어올 수 있습니다. MV가 insert 시점에 일자·시간대 집계를 만든다면 이 이벤트는 “늦었지만 원래 10시 03분에 속하는 값”으로 집계되어야 합니다.</p>
+  <p>단순 append 이벤트라면 늦게 들어와도 해당 시간 bucket에 더하면 됩니다. 문제는 대시보드가 이미 그 시간을 조회했고, 사용자가 숫자를 봤다는 점입니다. 이후 숫자가 바뀔 수 있습니다. 이것은 장애가 아니라 eventual consistency의 일부일 수 있습니다. 하지만 리포트가 마감된 뒤에도 숫자가 바뀌면 문제가 됩니다.</p>
+  <p>따라서 집계에는 window closing(집계 창 마감) 개념이 필요합니다. 최근 1시간은 계속 변할 수 있고, 하루가 지나면 확정으로 본다든지, 정산 리포트는 D+1 배치가 끝난 뒤 확정한다든지 기준을 정해야 합니다. ClickHouse MV는 이 정책을 자동으로 결정하지 않습니다. 시스템과 비즈니스가 함께 정해야 합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>이벤트 도착 패턴</th><th>대시보드 영향</th><th>설계 대응</th></tr></thead>
+      <tbody>
+        <tr><td>몇 초 늦음</td><td>실시간 숫자가 조금 변동</td><td>최종적 일관성으로 허용 가능</td></tr>
+        <tr><td>몇 시간 늦음</td><td>이미 본 시간대 숫자 변경</td><td>최근 구간 재계산 또는 늦은 이벤트 보정</td></tr>
+        <tr><td>며칠 늦음</td><td>마감 리포트 변경 가능</td><td>마감 정책, 별도 보정 리포트 필요</td></tr>
+        <tr><td>백필로 대량 재도착</td><td>중복 집계 위험</td><td>staging 후 target 교체</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧭 11강. 차원 변경이 집계에 미치는 영향</h2>
+  <p>집계는 숫자만의 문제가 아닙니다. 캠페인 이름, 상품 카테고리, 광고주 등 차원 값이 바뀌면 과거 집계를 어떻게 볼지 결정해야 합니다. 예를 들어 상품 카테고리가 “A”에서 “B”로 바뀌었습니다. 과거 매출도 새 카테고리 B로 보여야 할까요, 아니면 당시 카테고리 A로 남아야 할까요?</p>
+  <p>이 질문에 따라 테이블 설계가 달라집니다. 당시 상태를 보존하려면 이벤트 또는 fact 테이블에 category 값을 복사해 넣어야 합니다. 현재 상태 기준으로 항상 다시 분류하려면 최신 차원 테이블과 join 또는 dictionary 참조가 필요합니다. 두 방식은 모두 맞을 수 있지만 비즈니스 의미가 다릅니다.</p>
+  <p>MV로 집계할 때 차원 값을 target에 같이 저장하면 조회는 빨라집니다. 하지만 차원 값이 변경된 뒤 과거 target을 자동으로 수정하기 어렵습니다. 반대로 target에는 ID만 저장하고 조회 시 차원을 붙이면 최신 이름 반영은 쉽지만 join 비용과 정합성 기준이 생깁니다. 따라서 집계 설계에는 “차원 변경의 과거 반영 여부”를 반드시 포함해야 합니다.</p>
+  <div class="callout">
+    <strong>실무 질문</strong><br />“이 리포트는 당시 기준으로 봐야 하나요, 현재 기준으로 다시 분류해야 하나요?” 이 질문은 MV 설계에서 지표 정의만큼 중요합니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>📦 12강. MV target은 API 계약에 가까운 산출물입니다</h2>
+  <p>MV target table은 내부 최적화 산출물로만 볼 수도 있지만, API가 직접 읽는다면 사실상 API 계약의 일부입니다. 컬럼명, 집계 단위, 시간 기준, 중복 처리 방식, 삭제 반영 방식이 모두 사용자 화면의 의미로 이어집니다. 그래서 target table 설계는 백엔드 API 설계와 함께 봐야 합니다.</p>
+  <p>예를 들어 `agg_daily_campaign`에 `clicks`, `orders`, `revenue`가 있으면 API 개발자는 이 값이 이미 정합성 보정된 값이라고 기대할 수 있습니다. 하지만 실제로는 중복 이벤트가 그대로 누적된 값이라면 화면 숫자가 과장됩니다. target table에는 “어떤 보정이 끝났고, 어떤 보정은 아직 안 됐는지”가 문서화되어야 합니다.</p>
+  <p>팀 운영 관점에서는 집계 테이블별로 owner, source, update path, backfill path, freshness SLA를 남기는 것이 좋습니다. 이 정보가 없으면 장애 때 어느 테이블을 다시 만들어야 하는지, 누가 책임지는지, 어느 정도 지연이 정상인지 판단하기 어렵습니다.</p>
+</section>
+
+
+<section class="card">
+  <h2>🧪 13강. 작은 MV부터 시작해야 실패 비용이 작습니다</h2>
+  <p>MV를 처음 도입할 때 가장 안전한 방식은 핵심 지표 하나와 좁은 집계 단위 하나로 시작하는 것입니다. 예를 들어 “테넌트별 일간 클릭 수”처럼 의미가 단순하고, 중복 처리 기준이 명확하고, API 트래픽 개선 효과가 큰 지표가 좋습니다. 처음부터 모든 대시보드 지표를 MV로 옮기면 문제가 생겼을 때 원인 범위가 커집니다.</p>
+  <p>작은 MV는 검증도 쉽습니다. 같은 기간에 대해 raw에서 query-time으로 계산한 값과 MV target 값을 비교하면 됩니다. 차이가 난다면 중복 이벤트, 늦은 이벤트, 필터 조건 차이, 시간대 처리, 삭제 이벤트 반영 여부를 하나씩 확인할 수 있습니다. 이 비교 과정 자체가 팀의 지표 정의를 선명하게 만듭니다.</p>
+  <p>MV가 안정화되면 다음 지표로 확장합니다. 이때 기존 MV를 복잡하게 고치기보다 지표 성격에 따라 target을 나누는 편이 나을 수 있습니다. 단순 카운트 지표, 매출/정산 지표, 순사용자 지표는 정합성 요구와 집계 방식이 다르기 때문입니다. 작은 성공을 누적하는 방식이 ClickHouse 집계 시스템을 운영 가능한 형태로 만듭니다.</p>
+</section>
+
+<section class="card">
+  <h2>✅ 3주차 정리</h2>
+  <p>이번 주의 핵심은 MV를 “자동 집계 마법”이 아니라 “insert 시점 계산을 target table에 저장하는 파이프라인 단계”로 보는 것입니다. MV는 API 조회 성능을 크게 개선할 수 있지만, source의 중복·수정·삭제·백필을 자동으로 해결하지 않습니다.</p>
+  <p>집계 위치는 Flink, ClickHouse MV, API query-time 중에서 선택해야 합니다. 이벤트 시간과 늦은 이벤트 보정이 중요하면 Flink가 유리하고, ClickHouse에 이미 정제된 append 데이터가 들어온다면 MV가 단순합니다. 기준이 자주 바뀌고 트래픽이 낮으면 query-time 계산이 비용 대비 낫습니다.</p>
+  <div class="tile"><h3>핵심 용어</h3><p>`Materialized View`는 source insert에 반응해 target table에 계산 결과를 저장하는 구조입니다. `rollup`은 더 작은 단위 데이터를 큰 단위로 집계하는 것입니다. `AggregateFunction state`는 최종 값이 아니라 집계 중간 상태입니다. `Projection`은 같은 테이블 안에 추가 정렬·집계 구조를 저장하는 최적화 기능입니다.</p></div>
+</section>
+
+    <section class="card compact"><h2>📚 참고한 공식 문서</h2><ul class="sources"><li><a href="https://clickhouse.com/docs/materialized-view/incremental-materialized-view" target="_blank" rel="noopener">ClickHouse Docs · Incremental materialized view</a></li><li><a href="https://clickhouse.com/docs/managing-data/materialized-views-versus-projections" target="_blank" rel="noopener">ClickHouse Docs · Materialized views versus projections</a></li><li><a href="https://clickhouse.com/docs/engines/table-engines/mergetree-family/aggregatingmergetree" target="_blank" rel="noopener">ClickHouse Docs · AggregatingMergeTree table engine</a></li><li><a href="https://clickhouse.com/docs/data-modeling/projections" target="_blank" rel="noopener">ClickHouse Docs · Projections</a></li></ul><p class="small">문서는 2026년 7월 기준으로 다시 확인한 ClickHouse 공식 문서 중심입니다. 운영 버전과 Cloud/OSS 차이는 실제 환경에서 별도 확인하세요.</p></section>
+    <div class="footer-nav"><a href="week2-cdc-consistency.html">← 이전 주차</a><a href="week4-query-optimization.html">다음 주차 →</a></div>
+  </main>
+</body>
+</html>

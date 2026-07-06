@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CDC 정합성과 ReplacingMergeTree</title>
+  <style>
+:root {
+  --bg: #f6f7fb;
+  --paper: #ffffff;
+  --ink: #172033;
+  --muted: #607086;
+  --line: #dce3ee;
+  --soft: #eef3ff;
+  --soft2: #fff8e6;
+  --accent: #325dff;
+  --accent2: #111827;
+  --good: #0f766e;
+  --warn: #b45309;
+  --bad: #b91c1c;
+  --code: #111827;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.82;
+  word-break: keep-all;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { max-width: 1120px; margin: 0 auto; padding: 28px 20px 80px; }
+.hero {
+  background: linear-gradient(135deg, #111827 0%, #26375f 60%, #325dff 100%);
+  color: white;
+  border-radius: 28px;
+  padding: 44px 38px;
+  margin-bottom: 24px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, .18);
+}
+.hero .eyebrow { opacity: .78; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.hero h1 { margin: 0 0 16px; font-size: 38px; line-height: 1.25; letter-spacing: -0.03em; }
+.hero p { max-width: 820px; margin: 0; color: rgba(255,255,255,.88); font-size: 17px; }
+.navbar {
+  background: rgba(255,255,255,.82);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+  padding: 12px;
+  border-radius: 18px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.navbar a { padding: 8px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; color: var(--accent2); font-size: 14px; }
+.navbar a.active { background: #111827; color: white; border-color: #111827; }
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 28px;
+  margin: 18px 0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .05);
+}
+.card.compact { padding: 22px; }
+h2 { margin: 0 0 18px; font-size: 27px; letter-spacing: -0.02em; line-height: 1.35; }
+h3 { margin: 28px 0 10px; font-size: 21px; line-height: 1.45; letter-spacing: -0.01em; }
+h4 { margin: 20px 0 8px; font-size: 17px; color: var(--accent2); }
+p { margin: 12px 0; }
+ul, ol { padding-left: 1.35rem; }
+li { margin: 8px 0; }
+.kicker { color: var(--muted); font-weight: 700; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+.badge { display:inline-flex; align-items:center; gap:6px; font-size:13px; padding:4px 10px; border-radius:999px; background:var(--soft); border:1px solid #cfdaff; color:#1e3a8a; margin-right:6px; }
+.callout { border-left: 5px solid var(--accent); background: var(--soft); padding: 16px 18px; border-radius: 14px; margin: 18px 0; }
+.callout.warn { border-left-color: var(--warn); background: var(--soft2); }
+.callout.bad { border-left-color: var(--bad); background: #fff1f2; }
+.callout.good { border-left-color: var(--good); background: #ecfdf5; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tile { background: #fbfdff; border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+.tile h3, .tile h4 { margin-top: 0; }
+.table-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--line); border-radius: 16px; }
+table { width: 100%; border-collapse: collapse; background: white; min-width: 760px; }
+th, td { text-align: left; padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: #f1f5f9; color: #243247; }
+tr:last-child td { border-bottom: 0; }
+code { background: #eef2f7; padding: 2px 6px; border-radius: 6px; color: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+pre { background: var(--code); color: #f8fafc; padding: 18px; border-radius: 18px; overflow-x: auto; line-height: 1.6; }
+pre code { background: transparent; color: inherit; padding: 0; }
+.diagram { border: 1px dashed #b7c4d8; background: #fbfdff; border-radius: 18px; padding: 18px; margin: 16px 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; line-height: 1.6; color: #233047; }
+.footer-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.footer-nav a { flex: 1; text-align: center; padding: 14px 16px; background: #111827; color: white; border-radius: 16px; }
+.sources li { margin: 6px 0; }
+.small { color: var(--muted); font-size: 14px; }
+.quote { border-left: 4px solid #94a3b8; padding: 10px 16px; color: #334155; background: #f8fafc; border-radius: 10px; }
+@media (max-width: 820px) {
+  .hero { padding: 34px 24px; border-radius: 22px; }
+  .hero h1 { font-size: 30px; }
+  .grid, .grid3 { grid-template-columns: 1fr; }
+  .card { padding: 22px; }
+  body { line-height: 1.76; }
+}
+</style>
+</head>
+<body>
+  <main class="layout">
+    <section class="hero">
+      <div class="eyebrow">ClickHouse 학습 로드맵 V2 · Week 2</div>
+      <h1>🔁 CDC 정합성과 ReplacingMergeTree</h1>
+      <p>업데이트·삭제·중복 이벤트가 통계 결과에 미치는 영향을 이해합니다.</p>
+    </section>
+    <nav class="navbar"><a href="index.html">🏠 전체</a><a href="week1-mergetree.html">🧱 1주차</a><a href="week2-cdc-consistency.html" class="active">🔁 2주차</a><a href="week3-materialized-view-aggregation.html">🧮 3주차</a><a href="week4-query-optimization.html">🔍 4주차</a><a href="week5-observability-runbook.html">🚨 5주차</a><a href="week6-ingestion-cost-retention.html">📥 6주차</a></nav>
+    
+<section class="card">
+  <div class="kicker">이번 주의 관점</div>
+  <h2>🔁 CDC 데이터는 “들어왔다”보다 “어떤 의미로 들어왔는가”가 중요합니다</h2>
+  <p>2주차의 핵심은 ClickHouse가 update/delete 중심의 OLTP DB가 아니라는 사실을 CDC(Change Data Capture, 원천 DB 변경 이벤트 수집) 관점에서 다시 이해하는 것입니다. MySQL에서 어떤 행이 수정되면 애플리케이션 입장에서는 “기존 행이 바뀌었다”고 느낍니다. 하지만 CDC 파이프라인을 거쳐 ClickHouse에 도착하면 그것은 보통 “새 버전의 행이 하나 더 들어왔다”는 형태가 됩니다.</p>
+  <p>이 차이를 놓치면 통계 숫자가 중복되거나, 삭제된 데이터가 계속 보이거나, 최신 상태가 아닌 과거 상태가 API에 노출됩니다. 특히 `MySQL → CDC → Kafka → Flink → ClickHouse → API` 구조에서는 데이터가 여러 단계를 지나며 재시도, 순서 뒤섞임, 중복 이벤트, 지연이 생길 수 있습니다. ClickHouse 학습에서 CDC 정합성을 별도 주차로 둬야 하는 이유입니다.</p>
+  <div class="callout good">
+    <strong>핵심 문장</strong><br />CDC 기반 ClickHouse 설계는 “행을 갱신한다”가 아니라 “여러 버전의 이벤트 중 어떤 것을 최종 진실로 볼 것인가”를 정하는 작업입니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>📦 1강. CDC 이벤트는 상태가 아니라 변화의 기록입니다</h2>
+  <p>CDC는 원천 DB의 insert, update, delete를 이벤트로 흘려보내는 방식입니다. 예를 들어 `orders` 테이블에서 주문 상태가 `READY`에서 `PAID`로 바뀌면, CDC는 “주문 123번의 상태가 바뀌었다”는 이벤트를 Kafka에 보냅니다. 이 이벤트를 어떻게 저장하느냐에 따라 ClickHouse의 의미가 달라집니다.</p>
+  <p>가장 단순한 저장은 모든 변경 이벤트를 append-only 로그로 남기는 것입니다. 이 방식은 감사 로그나 추적에는 좋습니다. 하지만 API가 “현재 주문 상태별 주문 수”를 물을 때는 문제가 생깁니다. 같은 주문이 `READY`, `PAID`, `CANCELED`로 여러 번 등장하면 단순 count는 실제 현재 상태와 다르게 나옵니다.</p>
+  <p>반대로 최신 상태만 보려면 같은 주문 ID의 여러 버전 중 가장 최신 버전만 남겨야 합니다. 이때 ClickHouse에서 자주 검토하는 엔진이 `ReplacingMergeTree`입니다. 단, 이 엔진은 이름 때문에 “즉시 교체된다”고 오해하기 쉽습니다. 실제로는 백그라운드 merge 과정에서 중복 후보가 정리되며, 쿼리 시점에 항상 하나만 보장된다고 생각하면 안 됩니다.</p>
+  <div class="diagram">원천 DB 상태 변화
+order_id=123, status=READY
+order_id=123, status=PAID
+order_id=123, status=CANCELED
+
+ClickHouse에 들어온 CDC 이벤트
+(123, READY, version=1)
+(123, PAID, version=2)
+(123, CANCELED, version=3)
+
+질문
+이 세 줄을 모두 사실로 볼 것인가?
+아니면 version=3만 현재 상태로 볼 것인가?</div>
+</section>
+
+<section class="card">
+  <h2>🧬 2강. `ReplacingMergeTree`는 최신 상태 테이블을 흉내내는 도구입니다</h2>
+  <p>`ReplacingMergeTree`는 같은 sorting key(정렬 키)를 가진 여러 행이 있을 때, merge 과정에서 하나의 행으로 정리하는 엔진입니다. version 컬럼을 지정하면 더 큰 version을 최신으로 볼 수 있습니다. 이 구조는 CDC update를 “새 버전 insert”로 모델링할 때 유용합니다.</p>
+  <p>예를 들어 주문 테이블에서 `ORDER BY (tenant_id, order_id)`로 잡고 version 컬럼을 `updated_at` 또는 CDC sequence로 둔다고 합시다. 같은 주문 ID의 여러 버전이 들어와도, 결국 merge가 진행되면 최신 버전만 남는 방향으로 정리됩니다. 이 덕분에 ClickHouse에서 OLTP식 update를 직접 반복하지 않고도 최신 상태 테이블에 가까운 모델을 만들 수 있습니다.</p>
+  <p>하지만 여기에는 중요한 조건이 있습니다. 중복 제거는 merge가 일어나야 반영됩니다. merge는 백그라운드에서 일어나고, 사용자가 정확한 시점을 계획할 수 없습니다. 따라서 plain `SELECT`가 중복 행을 볼 수 있습니다. 쿼리 시점에 정확한 최신 상태가 반드시 필요하면 `FINAL`을 사용해야 할 수 있지만, `FINAL`은 비용이 큽니다. 이것이 ClickHouse CDC 설계의 핵심 딜레마입니다.</p>
+  <div class="callout warn">
+    <strong>중요한 오해</strong><br />`ReplacingMergeTree`는 중복을 “언젠가 정리”하는 엔진이지, insert 순간 유니크 제약을 강제하는 엔진이 아닙니다. API 정합성이 강하게 필요하면 `FINAL` 비용, 집계 방식, upstream 보정 중 하나를 설계해야 합니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧮 3강. 정합성 요구 수준을 먼저 나눠야 합니다</h2>
+  <p>모든 통계가 같은 수준의 정합성을 요구하지는 않습니다. 실시간 대시보드의 최근 1분 클릭 수는 약간의 지연을 허용할 수 있습니다. 반면 정산, 과금, 고객 리포트 다운로드는 숫자가 틀리면 신뢰 문제가 됩니다. ClickHouse 설계에서 가장 먼저 해야 할 일은 지표별로 “어느 정도까지 맞아야 하는가”를 나누는 것입니다.</p>
+  <p>정합성을 3단계로 생각할 수 있습니다. 첫째, eventual consistency(최종적 일관성)입니다. 몇 초 또는 몇 분 뒤에는 맞으면 되는 지표입니다. 둘째, query-time correctness(조회 시점 정확성)입니다. 조회하는 순간에는 중복과 삭제가 반영되어야 합니다. 셋째, audit-level correctness(감사 수준 정확성)입니다. 왜 그 숫자가 나왔는지 원본 이벤트와 변경 이력을 추적할 수 있어야 합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>정합성 수준</th><th>예시</th><th>ClickHouse 설계 방향</th><th>비용</th></tr></thead>
+      <tbody>
+        <tr><td>최종적 일관성</td><td>실시간 모니터링, 추세 대시보드</td><td>`ReplacingMergeTree` merge에 일부 의존 가능</td><td>낮음</td></tr>
+        <tr><td>조회 시점 정확성</td><td>고객 화면의 현재 상태 수</td><td>`FINAL`, 별도 최신 상태 테이블, upstream 정제 필요</td><td>중간~높음</td></tr>
+        <tr><td>감사 수준 정확성</td><td>정산, 과금, 리포트 검증</td><td>raw 변경 로그 보존, 버전 추적, 재처리 경로 필요</td><td>높음</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>규완님 업무에서는 이 구분이 특히 중요합니다. 모든 지표를 정산 수준으로 만들면 비용이 커지고 개발 속도가 느려집니다. 반대로 정산 지표를 eventual consistency로 처리하면 장애가 아니라 신뢰도 문제가 됩니다. 그래서 ClickHouse 기술 선택은 지표의 비즈니스 의미와 함께 결정해야 합니다.</p>
+</section>
+
+<section class="card">
+  <h2>⏱️ 4강. out-of-order는 생각보다 자주 생깁니다</h2>
+  <p>out-of-order(순서 뒤섞임)는 나중에 발생한 이벤트가 먼저 도착하거나, 먼저 발생한 이벤트가 나중에 도착하는 상황입니다. Kafka partition, CDC connector 재시도, Flink checkpoint 복구, 네트워크 지연 때문에 충분히 발생할 수 있습니다. 원천 DB에서는 update 순서가 명확해 보여도 ClickHouse에 도착하는 순서는 다를 수 있습니다.</p>
+  <p>예를 들어 주문 123번이 `PAID`가 된 뒤 `CANCELED`가 되었다고 합시다. 정상 순서라면 version 2가 `PAID`, version 3이 `CANCELED`입니다. 하지만 ClickHouse에는 version 3이 먼저 들어오고 version 2가 나중에 들어올 수 있습니다. 이때 단순히 “마지막으로 insert된 행”을 최신으로 보면 잘못됩니다. 최신성 기준은 insert 시간보다 원천 변경 순서 또는 version이어야 합니다.</p>
+  <p>그래서 CDC 테이블에는 version 컬럼이 중요합니다. version은 원천 DB의 update timestamp일 수도 있고, binlog position, LSN(Log Sequence Number, 로그 순서 번호), Debezium source offset, Flink가 만든 sequence일 수도 있습니다. 중요한 것은 “같은 비즈니스 키 안에서 어느 이벤트가 더 최신인지 비교 가능해야 한다”는 점입니다.</p>
+  <div class="callout bad">
+    <strong>위험한 설계</strong><br />`inserted_at`을 최신성 기준으로 쓰는 설계는 재시도와 지연에 취약합니다. CDC 정합성에서는 “ClickHouse에 들어온 시간”보다 “원천에서 변경된 순서”가 더 중요합니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>🗑️ 5강. delete는 실제 삭제가 아니라 “삭제 상태”로 보는 편이 안전합니다</h2>
+  <p>ClickHouse에서 CDC delete를 처리할 때 가장 단순한 생각은 “삭제 이벤트가 오면 ClickHouse에서도 해당 행을 지우자”입니다. 하지만 대량 분석 DB에서 빈번한 row-level delete는 비용이 큽니다. 또한 삭제 이벤트가 늦게 오거나, 과거 이벤트가 재처리되어 다시 들어오면 상태가 꼬일 수 있습니다.</p>
+  <p>실무에서는 delete를 물리 삭제보다 tombstone(삭제 표시)로 모델링하는 경우가 많습니다. 즉, 같은 키의 최신 버전 행에 `is_deleted = 1`을 넣습니다. 조회할 때는 최신 버전을 고른 뒤 삭제 표시가 있는 행을 제외합니다. 이렇게 하면 update와 delete를 모두 “새 버전 insert”로 통일할 수 있습니다.</p>
+  <p>이 방식의 장점은 재처리와 감사가 쉬워진다는 것입니다. 주문이 왜 사라졌는지, 언제 삭제되었는지, 어떤 version에서 삭제되었는지 추적할 수 있습니다. 단점은 쿼리나 집계에서 삭제 상태를 반드시 고려해야 한다는 점입니다. 특히 MV나 집계 테이블로 넘어갈 때 삭제 이벤트를 단순히 빼먹으면 과거 집계가 계속 남습니다.</p>
+</section>
+
+<section class="card">
+  <h2>🔄 6강. 중복 이벤트는 예외가 아니라 정상 상황으로 봐야 합니다</h2>
+  <p>분산 파이프라인에서 중복 이벤트는 장애가 아니라 설계 대상입니다. Kafka consumer가 재시작되거나, Flink checkpoint 이후 재처리되거나, ClickHouse insert 요청이 성공했지만 클라이언트가 응답을 받지 못해 재시도하면 같은 데이터가 다시 들어올 수 있습니다. 이런 상황에서 “중복이 안 들어온다”는 가정은 운영에서 깨지기 쉽습니다.</p>
+  <p>중복에는 두 종류가 있습니다. 첫째는 완전히 같은 이벤트가 여러 번 들어오는 duplicate insert입니다. 둘째는 같은 비즈니스 키의 서로 다른 version이 들어오는 update history입니다. 전자는 deduplication(중복 제거) 문제이고, 후자는 latest-state(최신 상태) 문제입니다. 두 문제를 섞으면 설계가 복잡해집니다.</p>
+  <p>예를 들어 클릭 이벤트는 append-only라면 같은 `event_id` 중복을 제거해야 합니다. 주문 상태는 같은 `order_id`의 여러 version 중 최신을 골라야 합니다. 둘 다 `ReplacingMergeTree`로 해결할 수 있어 보여도 의미가 다릅니다. 클릭 이벤트는 중복을 없애는 것이 목표이고, 주문 상태는 과거 버전과 최신 버전을 구분하는 것이 목표입니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>상황</th><th>비즈니스 키</th><th>목표</th><th>설계 포인트</th></tr></thead>
+      <tbody>
+        <tr><td>같은 클릭 이벤트 재전송</td><td>`event_id`</td><td>중복 1건만 남김</td><td>event_id 기반 dedup, retry 정책 확인</td></tr>
+        <tr><td>주문 상태 변경</td><td>`order_id`</td><td>최신 상태 선택</td><td>version, deleted flag, FINAL 여부</td></tr>
+        <tr><td>집계 이벤트 보정</td><td>`metric_key + window`</td><td>기존 집계 보정</td><td>양수/음수 delta 또는 재집계 전략</td></tr>
+        <tr><td>백필 재삽입</td><td>기간 + entity</td><td>과거 구간 재생성</td><td>파티션 교체, staging 테이블, 원자적 전환</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧯 7강. `FINAL`은 정확성을 사는 비용입니다</h2>
+  <p>`FINAL`은 `ReplacingMergeTree` 같은 엔진에서 쿼리 시점에 중복 제거와 최신 버전 선택을 강제로 수행하게 만드는 장치입니다. plain `SELECT`가 아직 merge되지 않은 중복 행을 볼 수 있다면, `FINAL`은 조회할 때 정리된 결과를 보도록 도와줍니다. 그래서 정합성이 중요한 API에서는 매력적으로 보입니다.</p>
+  <p>문제는 비용입니다. `FINAL`은 읽는 데이터 범위 안에서 같은 키의 여러 버전을 비교하고 정리해야 합니다. 데이터 범위가 넓고 키가 많으면 CPU와 메모리를 많이 씁니다. 특히 `FINAL`에 `JOIN`, 넓은 날짜 범위, 낮은 선택도 조건이 결합되면 장애성 쿼리가 될 수 있습니다.</p>
+  <p>따라서 `FINAL`은 금지할 기능이 아니라 사용처를 제한해야 할 기능입니다. 예를 들어 관리자 상세 화면에서 특정 주문 하나의 최신 상태를 볼 때는 괜찮을 수 있습니다. 반면 대시보드 메인 화면에서 최근 90일 전체 데이터를 매번 `FINAL`로 집계하는 것은 위험합니다. 이런 경우에는 upstream에서 최신 상태 테이블을 만들거나, 주기적으로 집계 테이블을 재생성하거나, 조회 범위를 강하게 제한하는 방식이 필요합니다.</p>
+  <div class="callout">
+    <strong>판단 기준</strong><br />`FINAL`은 “정확성 보정 비용을 조회 시점에 지불하는 방식”입니다. 사용자 트래픽이 많은 API에 넣기 전에 데이터 범위, 키 수, 동시성, SLA를 함께 봐야 합니다.
+  </div>
+</section>
+
+<section class="card">
+  <h2>📊 8강. CDC 기반 통계에서 집계가 어려운 이유</h2>
+  <p>append-only 이벤트라면 집계는 쉽습니다. 클릭 이벤트가 오면 클릭 수를 1 더하면 됩니다. 하지만 CDC update/delete가 섞이면 집계는 어려워집니다. 예를 들어 주문 금액이 10,000원에서 12,000원으로 수정되면 매출 집계에는 +2,000만 반영해야 할까요, 아니면 기존 10,000을 빼고 12,000을 다시 더해야 할까요? 주문이 삭제되면 과거 일자 매출에서 빼야 할까요?</p>
+  <p>이 문제를 해결하려면 이벤트의 의미를 정해야 합니다. “상태 스냅샷”을 저장하는지, “변경 delta(차이)”를 저장하는지, “원본 이벤트를 재처리해서 집계를 다시 만드는지”에 따라 방식이 달라집니다. ClickHouse 테이블 엔진만으로 자동 해결되지는 않습니다.</p>
+  <p>실무에서 안전한 접근은 원본 변경 로그를 보존하고, 집계 테이블은 재생성 가능하게 만드는 것입니다. 빠른 대시보드는 약간의 지연을 허용하고, 정산성 리포트는 백필 또는 검증된 배치 집계를 거치게 할 수 있습니다. 모든 것을 실시간 MV 하나로 해결하려 하면 수정·삭제·중복·재처리의 의미가 한곳에 뒤섞입니다.</p>
+</section>
+
+<section class="card">
+  <h2>🧭 9강. 규완님 상황에 맞는 CDC 설계 기준</h2>
+  <p>규완님 입장에서 가장 먼저 나눌 것은 원본 이벤트형 데이터와 최신 상태형 데이터입니다. 클릭, 노출, 로그처럼 한 번 발생하면 바뀌지 않는 데이터는 append-only로 보고 `MergeTree` 또는 event_id 기반 dedup을 검토합니다. 주문, 캠페인 설정, 상품 상태처럼 변경되는 데이터는 최신 상태와 이력의 관계를 따로 설계합니다.</p>
+  <p>두 번째는 API가 보는 테이블과 검증용 원본을 분리하는 것입니다. API가 매번 raw CDC 테이블에 `FINAL`을 걸고 복잡한 집계를 하면 성능 예측이 어렵습니다. raw는 보존과 검증용으로 두고, API는 `agg_*`나 `serving_*` 테이블을 보게 하는 편이 운영에 유리합니다. 이때 serving 테이블이 틀리면 raw에서 재생성할 수 있어야 합니다.</p>
+  <p>세 번째는 version과 delete flag의 표준화입니다. 모든 CDC 테이블에 `source_version`, `source_updated_at`, `is_deleted`, `ingested_at` 같은 컬럼 의미를 통일하면 장애 분석이 쉬워집니다. 어떤 테이블은 timestamp를 version으로 쓰고, 어떤 테이블은 Kafka offset을 version으로 쓰면 팀 내 커뮤니케이션 비용이 커집니다.</p>
+  <div class="grid">
+    <div class="tile"><h3>강한 추천</h3><p>최신 상태형 테이블에는 비즈니스 키, version, 삭제 표시, 수집 시간을 명확히 둡니다. API가 보는 집계 테이블은 raw CDC 테이블과 분리합니다.</p></div>
+    <div class="tile"><h3>주의</h3><p>`ReplacingMergeTree`를 쓴다는 이유만으로 중복과 삭제가 즉시 해결된다고 보면 안 됩니다. 조회 시점 정확성이 필요하면 별도 전략이 필요합니다.</p></div>
+  </div>
+</section>
+
+
+<section class="card">
+  <h2>🧩 10강. partial update는 ClickHouse에서 더 까다롭게 느껴집니다</h2>
+  <p>원천 DB에서는 partial update(부분 갱신)가 자연스럽습니다. 예를 들어 주문의 배송 주소만 바뀌면 `address` 컬럼만 update하면 됩니다. 하지만 CDC 이벤트가 ClickHouse에 도착할 때는 전체 row snapshot이 오는지, 변경된 컬럼만 오는지에 따라 설계 난이도가 달라집니다. 전체 snapshot이면 최신 버전을 고르기 쉽지만 데이터량이 늘고, 부분 변경 이벤트면 이전 상태와 합쳐야 최신 상태를 만들 수 있습니다.</p>
+  <p>부분 변경 이벤트를 그대로 ClickHouse에 넣으면 특정 version의 행에 일부 컬럼만 있고 나머지는 비어 있는 상태가 될 수 있습니다. 이때 `ReplacingMergeTree`만으로 “빈 값이 아닌 최신 컬럼들을 합쳐 하나의 완전한 행”을 만들 수 있다고 기대하면 위험합니다. 최신 row 전체가 필요하다면 Flink나 별도 정제 단계에서 full snapshot 형태로 만들어 넣거나, ClickHouse에서 해당 패턴을 지원하는 엔진과 버전 조건을 정확히 검토해야 합니다.</p>
+  <p>실무에서는 원천 CDC 포맷을 먼저 확인해야 합니다. Debezium 같은 CDC 도구는 before/after 구조를 제공할 수 있고, connector 설정에 따라 이벤트 형태가 달라질 수 있습니다. 중요한 것은 downstream인 ClickHouse가 “이 이벤트 하나만 보고 최종 행을 구성할 수 있는가”입니다. 구성할 수 없다면 ClickHouse 앞단에서 상태를 보완하는 설계가 필요합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>CDC 이벤트 형태</th><th>ClickHouse 난이도</th><th>권장 접근</th></tr></thead>
+      <tbody>
+        <tr><td>전체 row snapshot</td><td>낮음~중간</td><td>version 기반 최신 행 선택</td></tr>
+        <tr><td>변경 컬럼만 포함</td><td>높음</td><td>Flink 등에서 상태 병합 후 full row 생성</td></tr>
+        <tr><td>delta 이벤트</td><td>중간</td><td>집계 target에 양수/음수 보정으로 반영</td></tr>
+        <tr><td>delete tombstone</td><td>중간</td><td>`is_deleted`와 version으로 최신 삭제 상태 표현</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧾 11강. 최신 상태 테이블과 이력 테이블을 분리해서 생각합니다</h2>
+  <p>CDC 데이터를 다루다 보면 “최신 상태”와 “변경 이력”이 모두 필요합니다. 최신 상태는 API가 현재 값을 빠르게 보여주기 위해 필요합니다. 변경 이력은 왜 값이 바뀌었는지 검증하고, 과거 특정 시점의 상태를 재현하고, 정산이나 감사에 대응하기 위해 필요합니다. 하나의 테이블이 두 목적을 동시에 완벽히 만족하기는 어렵습니다.</p>
+  <p>예를 들어 캠페인 예산이 여러 번 바뀐다고 합시다. 대시보드는 현재 예산만 빠르게 보면 됩니다. 하지만 “어제 오후 3시에 이 캠페인의 예산이 얼마였는가”를 묻는 감사성 질문에는 이력이 필요합니다. 최신 상태 테이블만 남기면 과거를 잃고, 이력 테이블만 보면 API가 매번 최신 버전을 계산해야 합니다.</p>
+  <p>따라서 `raw_campaign_cdc` 또는 `campaign_history`는 append-only 이력으로 보존하고, `campaign_current` 같은 최신 상태 테이블을 별도로 만들 수 있습니다. API는 current를 보고, 검증과 재처리는 history를 봅니다. 이 분리가 있으면 `FINAL` 의존도를 줄이고 장애 분석도 쉬워집니다.</p>
+  <div class="diagram">campaign_history
+- 모든 변경 이벤트 보존
+- source_version, is_deleted, changed_at 포함
+
+campaign_current
+- 현재 API 응답용 최신 상태
+- 같은 campaign_id당 최신 1행을 목표
+
+집계/리포트
+- current 또는 history 중 비즈니스 의미에 맞는 입력 선택</div>
+</section>
+
+<section class="card">
+  <h2>✅ 2주차 정리</h2>
+  <p>이번 주의 핵심은 CDC 이벤트를 “행의 현재 상태”가 아니라 “변경의 기록”으로 보는 것입니다. ClickHouse는 update/delete 중심의 저장소가 아니므로, 변경을 새 버전 insert로 모델링하고 어떤 버전을 최신으로 볼지 정해야 합니다. `ReplacingMergeTree`는 이 모델에 유용하지만 중복 제거가 즉시 보장되지 않습니다.</p>
+  <p>정합성은 지표마다 다르게 요구됩니다. 실시간 추세는 최종적 일관성으로 충분할 수 있지만, 정산과 고객 리포트는 조회 시점 정확성 또는 감사 수준 정확성이 필요합니다. `FINAL`은 정확성을 보정하지만 비용이 크므로 API 트래픽과 데이터 범위를 기준으로 제한적으로 써야 합니다.</p>
+  <div class="tile"><h3>핵심 용어</h3><p>`CDC`는 원천 DB의 변경 이벤트를 수집하는 방식입니다. `version`은 같은 비즈니스 키 안에서 최신 이벤트를 판단하는 기준입니다. `tombstone`은 물리 삭제 대신 삭제 상태를 표시하는 행입니다. `FINAL`은 조회 시점에 중복 제거와 최신 버전 정리를 수행하게 하는 기능입니다.</p></div>
+</section>
+
+    <section class="card compact"><h2>📚 참고한 공식 문서</h2><ul class="sources"><li><a href="https://clickhouse.com/docs/engines/table-engines/mergetree-family/replacingmergetree" target="_blank" rel="noopener">ClickHouse Docs · ReplacingMergeTree table engine</a></li><li><a href="https://clickhouse.com/docs/guides/developer/deduplication" target="_blank" rel="noopener">ClickHouse Docs · Deduplication strategies</a></li><li><a href="https://clickhouse.com/docs/guides/replacing-merge-tree" target="_blank" rel="noopener">ClickHouse Docs · Working with the ReplacingMergeTree engine</a></li></ul><p class="small">문서는 2026년 7월 기준으로 다시 확인한 ClickHouse 공식 문서 중심입니다. 운영 버전과 Cloud/OSS 차이는 실제 환경에서 별도 확인하세요.</p></section>
+    <div class="footer-nav"><a href="week1-mergetree.html">← 이전 주차</a><a href="week3-materialized-view-aggregation.html">다음 주차 →</a></div>
+  </main>
+</body>
+</html>

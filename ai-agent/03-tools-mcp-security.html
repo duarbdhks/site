@@ -1,0 +1,266 @@
+    <!doctype html>
+    <html lang="ko">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="description" content="도구·MCP·권한 설계 — 백엔드 개발자를 위한 AI Agent Engineering 학습 자료" />
+      <title>도구·MCP·권한 설계 · AI Agent Engineering</title>
+      <link rel="stylesheet" href="styles.css" />
+      <script src="app.js" defer></script>
+    </head>
+    <body data-current-module="03">
+      <div class="reading-progress" aria-hidden="true"><span></span></div>
+      <main class="layout">
+        <section class="hero">
+          <div class="eyebrow">AI Agent Engineering · Session 3</div>
+          <h1>🔌 도구·MCP·권한 설계</h1>
+          <p>에이전트가 안전하게 현실의 시스템을 바꾸게 만드는 인터페이스</p>
+          <div class="hero-meta">
+            <span>⏱️ 약 20분</span>
+            <span>🎯 우선순위 P0</span>
+            <span>🧪 캡스톤 연계</span>
+          </div>
+        </section>
+        <nav class="navbar" aria-label="강의 목차"><a href="index.html">🏠 전체</a><a href="01-agent-harness.html" data-module-link="01">🧭 1강</a><a href="02-context-engineering.html" data-module-link="02">🧠 2강</a><a href="03-tools-mcp-security.html" class="active" data-module-link="03">🔌 3강</a><a href="04-memory-rag.html" data-module-link="04">🗂️ 4강</a><a href="05-coding-agent.html" data-module-link="05">🛠️ 5강</a><a href="06-evals-observability.html" data-module-link="06">📏 6강</a><a href="07-production-architecture.html" data-module-link="07">🏗️ 7강</a><a href="08-multi-agent-career.html" data-module-link="08">🤝 8강</a></nav>
+        <section class="card compact session-strip">
+          <div>
+            <div class="kicker">이번 세션 완료 기준</div>
+            <p>본문을 읽은 뒤 캡스톤 설계 질문에 답하고, 마지막 체크리스트를 스스로 설명할 수 있으면 완료입니다.</p>
+          </div>
+          <button type="button" class="complete-button" data-complete-module="03">학습 완료로 표시</button>
+        </section>
+
+<section class="card">
+  <div class="kicker">20분 학습 지도</div>
+  <h2>⏱️ 이번 세션의 시간 배분</h2>
+  <div class="timeline">
+    <div class="step"><span class="minute">0–4분</span><strong>도구를 보는 법</strong><br><span class="small">API가 아니라 ACI 관점으로 전환합니다.</span></div>
+    <div class="step"><span class="minute">4–10분</span><strong>MCP 구조</strong><br><span class="small">Host·Client·Server의 책임을 나눕니다.</span></div>
+    <div class="step"><span class="minute">10–16분</span><strong>권한과 격리</strong><br><span class="small">자격 증명·승인·샌드박스를 설계합니다.</span></div>
+    <div class="step"><span class="minute">16–20분</span><strong>캡스톤 도구</strong><br><span class="small">읽기·쓰기·검증 도구의 계약을 만듭니다.</span></div>
+  </div>
+  <div class="callout good"><strong>핵심 결론</strong><br>도구 품질은 모델이 무엇을 할 수 있는지가 아니라, 언제 써야 하는지·무엇을 할 수 없는지·실패와 부작용을 어떻게 표현하는지가 결정합니다.</div>
+</section>
+
+<section class="card">
+  <h2>🔌 API가 아니라 ACI로 설계하기</h2>
+  <p>전통적인 API는 사람이 문서를 읽고 코드를 작성한다는 전제가 있습니다. Agent가 사용하는 도구는 모델이 이름과 설명, 스키마만 보고 호출을 결정합니다. 이를 <span class="term" title="Agent가 컴퓨터 시스템과 상호작용하기 위한 인터페이스">ACI</span> 관점이라고 부를 수 있습니다. 좋은 ACI는 모델의 추론 부담을 줄이고, 잘못된 행동을 인터페이스 단계에서 막습니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>나쁜 설계</th><th>문제</th><th>개선 방향</th></tr></thead>
+      <tbody>
+        <tr><td><code>execute(action, data)</code></td><td>행동 범위와 파라미터 의미가 불명확</td><td><code>create_draft_pr</code>처럼 목적별 계약 제공</td></tr>
+        <tr><td>“파일을 처리합니다”라는 설명</td><td>언제 사용하고 무엇을 못 하는지 모름</td><td>사용 조건·비사용 조건·예시를 명시</td></tr>
+        <tr><td>성공 문자열만 반환</td><td>검증·재시도·감사가 어려움</td><td>구조화 결과, 변경 ID, 부작용, 재시도 가능 여부 반환</td></tr>
+        <tr><td>모든 쓰기에 같은 권한</td><td>최소 권한과 승인 정책 적용 불가</td><td>위험도와 리소스 범위를 도구 메타데이터로 분리</td></tr>
+        <tr><td>내부 예외를 그대로 노출</td><td>모델이 대응 방법을 판단하기 어려움</td><td>안정된 오류 코드와 안전한 메시지 제공</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>설명에는 “무엇을 하는가”보다 “언제 사용해야 하는가”가 먼저 나와야 합니다. 예를 들어 <code>grep_code</code>는 정확한 심볼·오류 문자열을 찾을 때 쓰고, 의미가 비슷한 코드를 찾는 용도가 아니라는 경계를 써야 합니다. 반례는 모델이 도구를 오용하지 않게 만드는 가장 값싼 장치입니다.</p>
+</section>
+
+<section class="card">
+  <h2>🧰 전용 도구와 Skill·범용 실행기의 선택</h2>
+  <p>원문은 모든 능력을 개별 함수로 만들지 말고, 범용 실행기와 Skill 문서를 조합하는 방식을 강조합니다. 하지만 범용성이 무조건 정답은 아닙니다. 보안·감사·파라미터 제약이 중요할수록 전용 도구가 유리합니다.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>판단 기준</th><th>전용 도구</th><th>Skill + 범용 실행기</th></tr></thead>
+      <tbody>
+        <tr><td>파라미터</td><td>중첩 구조·엄격한 검증·권한 필드가 많음</td><td>단순 CLI 인자와 문서형 절차</td></tr>
+        <tr><td>변경 빈도</td><td>안정된 핵심 시스템 API</td><td>자주 바뀌는 운영 절차와 가이드</td></tr>
+        <tr><td>위험도</td><td>결제, DB 쓰기, 배포, 외부 메시지</td><td>읽기, 분석, 샌드박스 내부 변환</td></tr>
+        <tr><td>감사</td><td>행동별 명확한 로그와 승인 필요</td><td>실행 로그로 충분</td></tr>
+        <tr><td>모델 능력</td><td>약한 모델도 구조로 유도</td><td>강한 코딩 모델이 절차를 조합</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>캡스톤의 <code>read_file</code>, <code>grep_code</code>, <code>run_tests</code>는 범용 도구가 적합합니다. 반면 <code>merge_pr</code>나 <code>deploy_production</code>은 범용 쉘에 맡기지 않고, 권한·승인·감사를 내장한 전용 도구로 분리해야 합니다.</p>
+</section>
+
+<section class="card">
+  <h2>🔗 MCP의 역할과 책임 경계</h2>
+  <p><span class="term" title="Model Context Protocol, 모델과 외부 도구·리소스·프롬프트를 표준 방식으로 연결하는 프로토콜">MCP</span>는 Agent가 외부 시스템을 발견하고 호출하는 연결 규약입니다. 핵심 가치는 특정 모델 SDK와 도구 구현을 분리하는 데 있습니다. Slack, GitHub, 데이터베이스 도구를 MCP Server로 제공하면 여러 Agent Host가 같은 계약을 재사용할 수 있습니다.</p>
+  <div class="diagram">┌──────────────── Agent Host ────────────────┐
+│ 실행 상태 · 정책 · 승인 UI · 자격 증명 보관 │
+│                                             │
+│   MCP Client ───── transport ───── MCP Server│
+│      │                              │        │
+│      ├─ tools/list                  ├─ 도구  │
+│      ├─ tools/call                  ├─ 리소스│
+│      └─ resources/read              └─ 프롬프트│
+└─────────────────────────────────────────────┘</div>
+  <div class="grid">
+    <div class="tile"><h3>Host</h3><p>사용자와 Agent 실행을 소유합니다. 정책, 승인, 세션, 자격 증명, 최종 도구 허용 여부를 책임집니다.</p></div>
+    <div class="tile"><h3>Client</h3><p>Server 연결과 프로토콜 메시지를 처리합니다. 도구 목록을 가져오고 호출 결과를 Host에 전달합니다.</p></div>
+    <div class="tile"><h3>Server</h3><p>도구·리소스·프롬프트를 노출하고 입력을 검증합니다. Host의 정책 판단을 대신하지 않습니다.</p></div>
+    <div class="tile"><h3>Transport</h3><p>로컬 프로세스에는 stdio, 원격 서비스에는 Streamable HTTP 등을 선택합니다. 배포 경계와 인증 요구가 달라집니다.</p></div>
+  </div>
+  <p>MCP를 붙였다고 안전해지는 것은 아닙니다. 표준화되는 것은 연결 방식이고, 어떤 사용자가 어떤 리소스에 어떤 권한으로 접근할지는 여전히 애플리케이션의 책임입니다. 특히 Server가 반환한 콘텐츠도 신뢰할 수 없는 외부 입력으로 취급해야 합니다.</p>
+</section>
+
+<section class="card">
+  <h2>📌 TypeScript SDK의 현재 선택</h2>
+  <p><strong>2026년 7월 22일 기준</strong>, 공식 MCP TypeScript SDK 저장소는 v2 안정판을 2026년 7월 28일 사양과 함께 공개할 예정이라고 안내하고 있으며, 그 전까지 프로덕션에는 v1.x를 지원 릴리스로 권장합니다. 신규 프로젝트에서는 프로토콜 어댑터를 애플리케이션 코어에서 분리해 v1.x로 운영하고, v2 안정판 이후 계약 테스트를 통과한 뒤 교체하는 접근이 안전합니다.</p>
+  <div class="callout warn"><strong>호환성 전략</strong><br><code>AgentCore → ToolPort → McpV1Adapter</code> 구조로 두세요. 비즈니스 로직이 MCP SDK 타입을 직접 참조하면 v2 전환 비용이 전체 코드베이스로 번집니다.</div>
+
+    <div class="code-shell">
+      <div class="code-head"><span>tool-port.ts</span><button type="button" class="copy-button">복사</button></div>
+      <pre><code class="language-typescript">export interface ToolCall {
+  name: string;
+  arguments: unknown;
+  actorId: string;
+  runId: string;
+}
+
+export interface ToolResult&lt;T = unknown&gt; {
+  ok: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    retryable: boolean;
+  };
+  sideEffects: Array&lt;{
+    resource: string;
+    action: string;
+    reversible: boolean;
+  }&gt;;
+}
+
+export interface ToolPort {
+  list(capability?: string): Promise&lt;Array&lt;{
+    name: string;
+    description: string;
+    risk: &quot;read&quot; | &quot;write&quot; | &quot;external&quot; | &quot;destructive&quot;;
+  }&gt;&gt;;
+  call&lt;T&gt;(input: ToolCall): Promise&lt;ToolResult&lt;T&gt;&gt;;
+}</code></pre>
+    </div>
+
+  <p>이 추상화는 MCP를 버리자는 뜻이 아닙니다. 반대로 프로토콜을 경계에 두어 SDK 버전, 로컬 stdio, 원격 HTTP, 테스트용 가짜 구현을 교체 가능하게 만드는 방식입니다.</p>
+</section>
+
+<section class="card">
+  <h2>🛡️ 도구 실행의 6중 안전 경계</h2>
+  <div class="decision-ladder">
+    <div><h4>입력 스키마</h4><p>타입, 길이, enum, 경로 정규화, URL 허용 목록을 도구 진입 전에 검증합니다.</p></div>
+    <div><h4>행위 정책</h4><p>읽기·워크스페이스 쓰기·외부 변경·파괴적 작업을 위험 등급으로 분류합니다.</p></div>
+    <div><h4>사용자·Agent 권한</h4><p>사용자의 권한을 그대로 무제한 위임하지 말고, 실행별로 축소된 권한을 발급합니다.</p></div>
+    <div><h4>실행 격리</h4><p>파일 시스템, 프로세스, 네트워크 경계를 샌드박스나 VM으로 강제합니다.</p></div>
+    <div><h4>부작용 검증</h4><p>도구의 성공 응답뿐 아니라 실제 파일 diff, DB 상태, API 응답을 확인합니다.</p></div>
+    <div><h4>감사와 취소</h4><p>누가 무엇을 왜 호출했는지 기록하고, 가능한 행동은 보상 작업이나 롤백 경로를 제공합니다.</p></div>
+  </div>
+  <p>자격 증명은 모델 컨텍스트와 샌드박스 파일 시스템 안에 넣지 않는 것이 원칙입니다. Host나 외부 Broker가 비밀을 보관하고, 도구 호출 시 대상과 범위가 제한된 토큰으로 교환합니다. 샌드박스 안에 비밀이 없다면 프롬프트 주입이 성공하더라도 유출 가능한 범위가 줄어듭니다.</p>
+  <div class="callout bad"><strong>금지 패턴</strong><br><code>process.env.GITHUB_TOKEN</code>을 Agent가 실행하는 쉘에 그대로 전달한 뒤 “출력하지 마”라고 프롬프트에 적는 것은 보안 통제가 아닙니다. 비밀의 부재와 네트워크 차단처럼 모델이 우회할 수 없는 경계를 사용해야 합니다.</div>
+</section>
+
+<section class="card">
+  <h2>🚦 위험도 기반 승인 정책</h2>
+  <p>모든 도구 호출을 승인받으면 승인 피로가 생기고, 결국 사용자는 내용을 읽지 않고 허용하게 됩니다. 반대로 전부 자동 허용하면 Agent의 한 번의 판단 오류가 외부 시스템 변경으로 이어집니다. 행동의 위험과 되돌릴 수 있는지를 기준으로 세 단계로 나눕니다.</p>
+
+    <div class="code-shell">
+      <div class="code-head"><span>approval-policy.ts</span><button type="button" class="copy-button">복사</button></div>
+      <pre><code class="language-typescript">type Risk = &quot;read&quot; | &quot;workspace_write&quot; | &quot;external_write&quot; | &quot;destructive&quot;;
+
+interface Decision {
+  mode: &quot;allow&quot; | &quot;require_approval&quot; | &quot;deny&quot;;
+  reason: string;
+}
+
+export function decide(
+  risk: Risk,
+  input: { insideWorkspace: boolean; reversible: boolean; targetApproved: boolean }
+): Decision {
+  if (!input.targetApproved) {
+    return { mode: &quot;deny&quot;, reason: &quot;Target is outside the approved scope&quot; };
+  }
+
+  if (risk === &quot;read&quot;) {
+    return { mode: &quot;allow&quot;, reason: &quot;Read-only within approved scope&quot; };
+  }
+
+  if (risk === &quot;workspace_write&quot; &amp;&amp; input.insideWorkspace &amp;&amp; input.reversible) {
+    return { mode: &quot;allow&quot;, reason: &quot;Sandboxed and reversible workspace change&quot; };
+  }
+
+  if (risk === &quot;external_write&quot;) {
+    return { mode: &quot;require_approval&quot;, reason: &quot;Changes an external system&quot; };
+  }
+
+  return { mode: &quot;deny&quot;, reason: &quot;Destructive actions are not enabled&quot; };
+}</code></pre>
+    </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>행동</th><th>기본 정책</th><th>필요 통제</th></tr></thead>
+      <tbody>
+        <tr><td>승인된 저장소 파일 읽기</td><td>자동 허용</td><td>경로 정규화·크기 제한</td></tr>
+        <tr><td>임시 브랜치 파일 수정</td><td>자동 허용</td><td>샌드박스·Git diff·되돌리기</td></tr>
+        <tr><td>의존성 설치</td><td>조건부 승인</td><td>네트워크 허용 목록·lockfile 검토</td></tr>
+        <tr><td>Draft PR 생성</td><td>계획 승인 범위 안이면 자동 가능</td><td>base/head 확인·변경 요약</td></tr>
+        <tr><td>PR 병합·배포</td><td>승인 필수</td><td>보호 규칙·CI·감사 로그</td></tr>
+        <tr><td>비밀 읽기·외부 업로드</td><td>차단</td><td>비밀 비주입·egress 차단</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧪 캡스톤 도구 계약</h2>
+  <p>처음부터 GitHub 전체 API를 연결하지 말고, 다음 7개 도구로 시작합니다. 각 도구는 한 가지 관찰 또는 부작용을 명확히 표현해야 합니다.</p>
+  <div class="grid">
+    <div class="tile"><h3><code>list_tree</code></h3><p>경로와 깊이를 제한해 저장소 구조만 반환합니다.</p></div>
+    <div class="tile"><h3><code>grep_code</code></h3><p>정확한 문자열·정규식과 파일 glob으로 결과를 제한합니다.</p></div>
+    <div class="tile"><h3><code>read_file</code></h3><p>라인 범위와 최대 바이트를 요구해 컨텍스트 폭주를 막습니다.</p></div>
+    <div class="tile"><h3><code>edit_file</code></h3><p>기대하는 기존 문자열과 새 문자열을 받아 충돌 시 실패합니다.</p></div>
+    <div class="tile"><h3><code>run_command</code></h3><p>허용된 명령 집합과 타임아웃 안에서 샌드박스 실행합니다.</p></div>
+    <div class="tile"><h3><code>get_diff</code></h3><p>변경 파일과 통계를 반환해 계획 범위 이탈을 검증합니다.</p></div>
+    <div class="tile"><h3><code>create_draft_pr</code></h3><p>승인된 계획 해시, 통과한 검사, base/head를 입력으로 요구합니다.</p></div>
+    <div class="tile"><h3><code>request_approval</code></h3><p>행동·이유·영향·되돌리기 방법을 구조화해 사용자에게 보여줍니다.</p></div>
+  </div>
+  <div class="callout violet"><strong>4분 과제</strong><br><code>create_draft_pr</code>의 JSON Schema를 작성하세요. 필수 필드에 <code>approvedPlanHash</code>, <code>baseBranch</code>, <code>headBranch</code>, <code>passedChecks</code>, <code>changeSummary</code>를 넣고, <code>passedChecks</code>가 비어 있으면 도구가 거부하도록 정의합니다.</div>
+</section>
+
+<section class="card">
+  <h2>📊 도구 품질을 측정하는 지표</h2>
+  <div class="grid">
+    <div class="tile"><h3>선택 정확도</h3><p>정답 도구 선택률, 불필요한 호출 수, 서로 겹치는 도구의 혼동률을 측정합니다.</p></div>
+    <div class="tile"><h3>입력 정확도</h3><p>스키마 오류, 경로·ID 오류, 재호출로 수정된 비율을 측정합니다.</p></div>
+    <div class="tile"><h3>실행 신뢰성</h3><p>성공률, p95 지연, 타임아웃, 재시도 후 성공률을 측정합니다.</p></div>
+    <div class="tile"><h3>안전성</h3><p>정책 차단, 승인 요청, 범위 이탈, 되돌릴 수 없는 변경 시도를 측정합니다.</p></div>
+  </div>
+  <p>도구 설명을 바꿀 때는 모델의 느낌이 아니라 고정된 도구 선택 평가 세트를 실행해야 합니다. “파일 이름 찾기”, “파일 내용 찾기”, “정확한 심볼 참조 찾기”처럼 경계가 비슷한 사례를 넣으면 설명과 분리가 충분한지 확인할 수 있습니다.</p>
+</section>
+
+<section class="card">
+  <h2>👔 리더십 관점: MCP 도입보다 Tool Governance</h2>
+  <p>조직에서 MCP Server 수를 늘리는 일은 어렵지 않습니다. 더 어려운 문제는 소유자, 버전, 권한, 데이터 분류, 폐기 정책을 정하는 것입니다. 중앙 카탈로그에는 도구 이름뿐 아니라 담당 팀, 안정성 등급, 허용 데이터, 부작용, 승인 정책, SLA, 마지막 평가 결과가 있어야 합니다.</p>
+  <p>규완님이 플랫폼 리드 관점에서 제안할 수 있는 원칙은 “프로토콜은 표준화하고 권한은 중앙에서 통제하며, 도구 구현은 도메인 팀이 소유한다”입니다. 이렇게 하면 중앙 팀이 모든 비즈니스 API를 병목으로 소유하지 않으면서도 보안과 관측 기준은 일관되게 유지할 수 있습니다.</p>
+</section>
+
+<section class="card">
+  <h2>✅ 셀프 체크</h2>
+  <ol>
+    <li>도구 설명에 사용 조건과 비사용 조건을 모두 적었습니까?</li>
+    <li>MCP Host, Client, Server의 보안 책임을 구분할 수 있습니까?</li>
+    <li>자격 증명이 모델 컨텍스트와 샌드박스에 들어가지 않게 설계했습니까?</li>
+    <li>읽기·워크스페이스 쓰기·외부 쓰기·파괴적 행동의 승인 정책이 다릅니까?</li>
+    <li>MCP SDK 버전이 바뀌어도 비즈니스 코어를 유지할 어댑터 경계가 있습니까?</li>
+  </ol>
+</section>
+
+        <section class="card">
+          <h2>🔗 원문과 확장 자료</h2>
+          <p>이 세션은 원문을 그대로 번역하지 않고, 규완님의 Node.js·TypeScript 백엔드 경험과 팀 리드·CTO 트랙에 맞게 재구성했습니다.</p>
+          <ul class="sources"><li><a href="https://github.com/bojieli/ai-agent-book/blob/main/book/chapter4.md" target="_blank" rel="noreferrer">AI Agent Book · Chapter 4</a><span class="source-note"> — 도구 분류, 전용 도구와 Skill, MCP, 능동적 발견, 비동기 Agent</span></li>
+<li><a href="https://modelcontextprotocol.io/docs/develop/build-server" target="_blank" rel="noreferrer">Model Context Protocol · Build an MCP server</a><span class="source-note"> — 공식 Server 구성과 TypeScript 예제</span></li>
+<li><a href="https://github.com/modelcontextprotocol/typescript-sdk" target="_blank" rel="noreferrer">MCP TypeScript SDK</a><span class="source-note"> — 2026년 7월의 v1.x·v2 릴리스 상태와 공식 구현</span></li>
+<li><a href="https://modelcontextprotocol.io/docs/develop/clients/client-best-practices" target="_blank" rel="noreferrer">MCP · Client best practices</a><span class="source-note"> — 자격 증명 Broker, 도구 호출 검토, 샌드박스 경계</span></li>
+<li><a href="https://www.anthropic.com/engineering/how-we-contain-claude" target="_blank" rel="noreferrer">Anthropic · How we contain Claude across products</a><span class="source-note"> — 프로세스·VM·파일·네트워크 격리와 비밀 비주입</span></li></ul>
+        </section>
+        <div class="footer-nav"><a href="02-context-engineering.html">← 🧠 컨텍스트 엔지니어링</a><a href="04-memory-rag.html">🗂️ 기억과 RAG →</a></div>
+      </main>
+    </body>
+    </html>

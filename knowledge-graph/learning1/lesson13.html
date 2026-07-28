@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 13강: 일관성은 충돌을 없애는 것이 아니라 드러내는 능력이다" />
+  <title>13강 · 일관성은 충돌을 없애는 것이 아니라 드러내는 능력이다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-2">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 13 · 약 20분</span>
+    </header>
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 02 · TRUST · LESSON 13</p>
+        <h1>일관성은 충돌을 없애는 것이 아니라<br />드러내는 능력이다</h1>
+        <p class="lead">같은 대상을 찾았다고 사실까지 하나로 정리되는 것은 아닙니다. 출처와 시점을 잃지 않아야 충돌이 오류인지, 변화인지, 관점 차이인지 판단할 수 있습니다.</p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>충돌을 판단하려면 서로 다른 사실의 의미, 출처, 유효 시점을 함께 보존해야 합니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div><div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div><div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div><div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#previous">01 · 이전 강의와의 연결</a><a href="#goals">02 · 학습 목표</a>
+        <a href="#situation">03 · 익숙한 상황</a><a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a><a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a><a href="#misunderstanding">08 · 오해와 판단</a>
+        <a href="#summary">09 · 요약과 확인</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="previous">
+          <span class="section-tag">PREVIOUS CONNECTION</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>12강에서는 여러 원천에서 같은 엔티티를 찾는 근거를 살펴봤습니다. 대상을 하나로 묶고 나면 서로 다른 타입, 속성, 상태가 한곳에 모이며 충돌이 보이기 시작합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">0–2 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>의미·타입·사실 충돌을 구분합니다.</p></article>
+            <article class="goal"><span>02</span><p>출처와 시점이 충돌 판단에 필요한 이유를 설명합니다.</p></article>
+            <article class="goal"><span>03</span><p>즉시 덮어쓰기와 미확정 보존 사이의 경계를 판단합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">2–5 MIN · WHY</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>서비스 카탈로그에는 결제 API의 소유 팀이 A팀, 장애 문서에는 B팀, 배포 기록에는 A팀으로 남아 있습니다. 하나만 선택해 덮어쓰면 깔끔해 보이지만 왜 값이 다른지는 사라집니다.</p>
+            <p>장애 당시 임시로 B팀이 대응했을 수도 있고, 조직 변경 뒤 카탈로그만 갱신됐을 수도 있습니다. 값, 출처, 관측 시점을 함께 보존해야 충돌을 설명할 수 있습니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–13 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+          <div class="definition">
+            <span class="term">CONSISTENCY · 쉬운 정의</span>
+            <p>일관성은 모든 값을 억지로 하나로 만드는 상태가 아니라, 함께 참일 수 없는 주장과 그 이유를 식별하고 설명할 수 있는 상태입니다.</p>
+          </div>
+
+          <h3>1. 의미 충돌</h3>
+          <p><span class="source-badge">저장소 근거</span> 원본 융합 강의는 서로 다른 온톨로지의 어휘와 제약 차이를 다룹니다. 같은 이름이 다른 뜻을 갖거나 다른 이름이 같은 뜻을 가질 때, 값보다 먼저 의미 체계를 맞춰야 합니다.</p>
+
+          <h3>2. 타입 충돌</h3>
+          <p>한 원천에서는 대상을 서비스로, 다른 원천에서는 조직으로 분류할 수 있습니다. 두 타입이 공존 가능한 역할 차이인지, 모델 경계가 어긋난 오류인지 온톨로지 제약과 문맥으로 판단합니다.</p>
+
+          <h3>3. 사실 충돌</h3>
+          <p>같은 엔티티의 같은 속성에 서로 다른 값이 주장되면 사실 충돌이 됩니다. 하지만 시점이나 적용 범위가 다르면 충돌처럼 보이는 정상 변화일 수 있습니다.</p>
+
+          <h3>4. 출처 문맥</h3>
+          <p><span class="source-badge added">추가 설명</span> <code>provenance</code>는 주장이 어디서, 언제, 어떤 방식으로 얻어졌는지를 나타내는 이력입니다. 원본은 융합과 매칭을 설명하지만 이 강의의 출처 보존 모델은 추가 설명입니다.</p>
+
+          <h3>5. 유효 시점</h3>
+          <p><span class="source-badge added">추가 설명</span> 기록된 시각과 현실에서 유효한 시각은 다를 수 있습니다. 7월의 소유 팀과 8월의 소유 팀은 서로 다른 기간에 모두 참일 수 있으므로 시간 범위를 잃으면 거짓 충돌이 생깁니다.</p>
+
+          <h3>6. 미확정 상태</h3>
+          <p><span class="source-badge added">추가 설명</span> 근거가 부족할 때 한 값을 정답으로 고르지 않고 경쟁하는 주장을 함께 유지합니다. 미확정은 실패가 아니라 불확실성을 숨기지 않는 표현입니다.</p>
+
+          <h3>7. 충돌 처리</h3>
+          <p><span class="source-badge added">추가 설명</span> 충돌은 범위 분리, 시점 분리, 근거 우선순위, 추가 확인으로 다룰 수 있습니다. 원본 자료가 전용 충돌 해결 절차를 제시하는 것은 아니므로, 이 판단 틀은 학습을 위한 보완 설명입니다.</p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="scenario">
+            <p><code>[출처: 카탈로그]</code> ─ 7월 관측 ─▶ <code>[결제 API의 소유 팀 = A]</code></p>
+            <p><code>[출처: 장애 문서]</code> ─ 장애 시점 관측 ─▶ <code>[결제 API의 대응 팀 = B]</code></p>
+            <p><code>[판단]</code> ─ 속성 의미·유효 시점 비교 ─▶ <code>[충돌 아님 / 충돌 / 미확정]</code></p>
+          </div>
+          <p class="diagram-caption">이 도식에서 봐야 할 핵심: 값만 비교하면 A와 B가 모순처럼 보입니다. “소유”와 “대응”의 의미, 출처, 유효 시점을 함께 보면 다른 주장일 수 있습니다.</p>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">13–17 MIN · COMPARE</span>
+          <h2>충돌 처리 방식 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>방식</th><th>장점</th><th>잃는 것</th><th>적합한 조건</th></tr></thead>
+              <tbody>
+                <tr><td>최신 값 덮어쓰기</td><td>단순하고 빠름</td><td>과거 상태와 출처</td><td>값의 의미와 시계가 동일할 때</td></tr>
+                <tr><td>우선 출처 선택</td><td>일관된 기준</td><td>예외와 보조 증거</td><td>권위 범위가 명확할 때</td></tr>
+                <tr><td>시점·범위 분리</td><td>정상 변화를 보존</td><td>모델 복잡도 증가</td><td>주장이 서로 다른 구간에 참일 때</td></tr>
+                <tr><td>미확정 병존</td><td>불확실성을 투명하게 유지</td><td>단일 답을 즉시 못 줌</td><td>근거가 부족하거나 대등할 때</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>배포 시스템은 롤백 성공, 장애 문서는 복구 완료, 모니터링은 일부 지역 오류 지속으로 기록했습니다. 하나의 “복구됨” 값으로 합치면 지역 범위와 관측 차이를 잃습니다.</p>
+            <p>배포 실행 결과, 문서의 운영 판단, 지역별 관측을 서로 다른 주장으로 보존합니다. 이후 시점과 적용 범위를 맞춰 보면 전역 복구가 아니라 부분 복구였다는 설명이 가능해집니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–19 MIN · JUDGMENT</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“일관성은 값이 하나인 상태다.” 시간과 범위가 다르면 여러 값이 모두 유효할 수 있습니다.</p></article>
+            <article class="misconception"><span>02</span><p>“최신 기록이 항상 참이다.” 늦게 적힌 값이 더 오래된 현실을 복사했을 수도 있습니다.</p></article>
+            <article class="misconception"><span>03</span><p>“충돌은 바로 제거해야 한다.” 제거 전에 의미, 범위, 출처를 비교해야 오류와 정상 변화를 구분할 수 있습니다.</p></article>
+          </div>
+
+          <h3>적용 판단</h3>
+          <p>두 출처가 같은 서비스의 상태를 각각 “정상”과 “장애”로 기록해도 더 최신인 “정상”만 남기지 않습니다. 시각 기준과 관측 범위를 먼저 확인합니다. 지역, 기능, 관측 창이 다르면 두 값이 동시에 참일 수 있으므로 판단 전에는 출처·시점·범위와 함께 두 주장을 보존합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>충돌은 의미, 타입, 사실의 어느 층에서 생겼는지 먼저 나눠야 합니다.</li>
+            <li>출처와 유효 시점을 보존해야 오류와 정상 변화를 구분할 수 있습니다.</li>
+            <li>근거가 부족하면 하나를 덮어쓰기보다 미확정 상태를 드러내는 편이 정확합니다.</li>
+          </ol>
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>값이 달라도 의미, 적용 범위, 유효 시점이 다르면 사실 충돌이 아닐 수 있습니다.</li>
+            <li>기록 시각과 유효 시각을 구분해야 과거 상태와 현재 상태를 잘못 합치지 않습니다.</li>
+            <li>미확정 상태는 근거가 부족한 결론을 숨기지 않아 지식의 신뢰도를 보존합니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거와 추가 설명</h3>
+          <ul><li><a href="https://github.com/npubird/KnowledgeGraphCourse/tree/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7" target="_blank" rel="noreferrer">KnowledgeGraphCourse 고정 버전</a> · 지식 융합 강의 p.2–6, 15–22: 지식 이질성, 온톨로지·인스턴스 매칭, 의미·제약 차이</li></ul>
+          <p><code>provenance</code>, 유효 시점, 미확정 상태, 충돌 처리 방식은 원본에 전용 장으로 제시되지 않은 추가 해설입니다. 원본 근거와 보완 판단을 같은 것으로 인용하지 않습니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson14.html">
+          <small>NEXT · LESSON 14</small>
+          <h2>품질은 정확도 하나가 아니라 질문 가능성의 총합이다</h2>
+          <p>다음 강의에서는 충돌을 드러낼 수 있는 그래프가 실제 질문에 쓸 만한지 여러 품질 축으로 평가합니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

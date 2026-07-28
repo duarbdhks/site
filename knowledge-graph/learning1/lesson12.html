@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 12강: 융합의 첫 문제는 합치기가 아니라 같은 것 찾기다" />
+  <title>12강 · 융합의 첫 문제는 합치기가 아니라 같은 것 찾기다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-2">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 12 · 약 20분</span>
+    </header>
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 02 · TRUST · LESSON 12</p>
+        <h1>융합의 첫 문제는 합치기가 아니라<br />같은 것 찾기다</h1>
+        <p class="lead">서로 다른 원천의 이름과 구조가 비슷하다고 같은 대상은 아닙니다. 융합은 먼저 의미 체계를 맞추고, 그다음 개별 대상을 동일한 것으로 볼 근거를 세우는 일입니다.</p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>동일성은 이름 하나가 아니라 식별자, 속성, 관계, 문맥이 함께 지지하는 판단입니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div><div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div><div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div><div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#previous">01 · 이전 강의와의 연결</a><a href="#goals">02 · 학습 목표</a>
+        <a href="#situation">03 · 익숙한 상황</a><a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a><a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a><a href="#misunderstanding">08 · 오해와 판단</a>
+        <a href="#summary">09 · 요약과 확인</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="previous">
+          <span class="section-tag">PREVIOUS CONNECTION</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>11강에서는 변화와 참여자를 사건으로 묶었습니다. 같은 사건과 엔티티가 문서, 로그, 업무 시스템마다 다른 이름과 구조로 나타날 때 하나의 그래프로 모으려면 먼저 “같은 것”을 찾아야 합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">0–2 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>온톨로지 매칭과 인스턴스 매칭을 구분합니다.</p></article>
+            <article class="goal"><span>02</span><p>동일성 판단에 필요한 여러 증거를 설명합니다.</p></article>
+            <article class="goal"><span>03</span><p>후보 생성과 최종 동일성 결정을 분리합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">2–5 MIN · WHY</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>모니터링에는 <code>payment-api</code>, 배포 시스템에는 <code>payments</code>, 장애 문서에는 “결제 API”가 기록돼 있습니다. 세 이름이 같은 서비스를 가리킬 가능성은 높지만 문자열만으로 확정할 수는 없습니다.</p>
+            <p>반대로 서로 다른 환경에 같은 이름의 서비스가 있을 수 있습니다. 너무 빨리 합치면 관계가 오염되고, 지나치게 분리하면 하나의 대상을 여러 개로 세어 경로가 끊깁니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–13 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+          <div class="definition">
+            <span class="term">KNOWLEDGE FUSION · 쉬운 정의</span>
+            <p>지식 융합은 서로 다른 원천의 의미 체계와 개별 대상을 대응시켜, 중복과 이질성을 줄인 하나의 지식 구조를 만드는 과정입니다.</p>
+          </div>
+
+          <h3>1. 지식 이질성</h3>
+          <p><span class="source-badge">저장소 근거</span> 원본 강의는 서로 다른 지식베이스의 개념, 구조, 표현 차이를 융합의 출발점으로 둡니다. 같은 현실을 설명해도 이름, 계층, 속성 범위, 식별 기준이 다를 수 있습니다.</p>
+
+          <h3>2. 온톨로지 매칭</h3>
+          <p>온톨로지 매칭은 개념과 관계의 대응을 찾습니다. 한 원천의 “서비스”가 다른 원천의 “애플리케이션”과 같은 범위를 뜻하는지, 더 넓거나 좁은지는 개별 레코드를 합치기 전에 확인해야 합니다.</p>
+
+          <h3>3. 인스턴스 매칭</h3>
+          <p>인스턴스 매칭은 실제 개별 대상의 동일성을 판단합니다. 원본은 온톨로지 매칭과 인스턴스 매칭을 별도 축으로 다루며, <code>sameAs</code> 연결 사례를 제시합니다.</p>
+
+          <h3>4. 동일성 증거</h3>
+          <p>이름 일치 외에도 안정적인 식별자, 소유 범위, 환경, 인접 관계, 속성 조합이 증거가 됩니다. 증거는 서로 보강하거나 충돌할 수 있으므로 하나의 유사도만으로 결론을 고정하면 위험합니다.</p>
+
+          <h3>5. 후보 생성</h3>
+          <p><span class="source-badge added">추가 설명</span> 모든 대상을 서로 비교하기보다 타입·환경·식별자 일부처럼 안전한 조건으로 가능한 짝을 먼저 좁힙니다. 후보는 “같을 수 있음”이지 “같음”의 확정이 아닙니다.</p>
+
+          <h3>6. 유사성과 문맥</h3>
+          <p>원본 강의는 문자열, 구조, 속성 등 다양한 유사성 근거와 <code>Dice</code>, <code>Jaccard</code> 같은 비교 관점을 소개합니다. 수치가 높아도 서로 다른 문맥의 동명이면 같은 엔티티가 아닐 수 있습니다.</p>
+
+          <h3>7. 결정 경계</h3>
+          <p><span class="source-badge added">추가 설명</span> 자동 병합, 별도 유지, 검토 필요의 경계를 나누면 불확실성을 보존할 수 있습니다. 되돌리기 어려운 병합일수록 더 강한 근거가 필요합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="scenario">
+            <p><code>[원천 A: 서비스 / payment-api]</code> ─ 개념 대응 ─▶ <code>[공통 개념: 서비스]</code></p>
+            <p><code>[원천 B: 애플리케이션 / payments]</code> ─ 개념 대응 ─▶ <code>[공통 개념: 서비스]</code></p>
+            <p><code>[두 개별 대상]</code> ─ 식별자·환경·관계 증거 ─▶ <code>[동일 / 별도 / 미확정]</code></p>
+          </div>
+          <p class="diagram-caption">이 도식에서 봐야 할 핵심: 개념 이름이 대응한다고 개별 대상까지 자동으로 같아지는 것은 아닙니다. 온톨로지와 인스턴스의 두 층을 차례로 판단합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">13–17 MIN · COMPARE</span>
+          <h2>동일성 판단 방식 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>근거</th><th>강점</th><th>위험</th><th>적합한 역할</th></tr></thead>
+              <tbody>
+                <tr><td>이름 일치</td><td>빠르고 이해하기 쉬움</td><td>별칭과 동명이인</td><td>초기 후보 찾기</td></tr>
+                <tr><td>안정 식별자</td><td>정확한 직접 대응</td><td>원천 간 공유되지 않을 수 있음</td><td>강한 확정 근거</td></tr>
+                <tr><td>속성 유사성</td><td>복수 단서 결합</td><td>오래되거나 복제된 값</td><td>후보 순위 보강</td></tr>
+                <tr><td>관계·문맥</td><td>주변 구조까지 반영</td><td>잘못된 이웃에 영향받음</td><td>최종 판단 보강</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p><code>payment-api</code>와 “결제 API”는 같은 운영 계정, 저장소, 배포 대상을 가리킵니다. <code>payments</code>는 이름이 비슷하지만 분석 환경에만 존재하고 다른 저장소와 연결됩니다.</p>
+            <p>이름만 보면 세 대상을 합치기 쉽습니다. 환경·저장소·배포 관계를 함께 보면 앞의 둘은 같은 서비스의 별칭으로 볼 근거가 강하고, 마지막 대상은 별도로 유지해야 합니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–19 MIN · JUDGMENT</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“이름이 같으면 같은 엔티티다.” 이름은 후보를 만들지만 동일성을 보장하지 않습니다.</p></article>
+            <article class="misconception"><span>02</span><p>“온톨로지를 맞추면 데이터도 합쳐진다.” 개념 대응과 개별 대상의 동일성은 서로 다른 문제입니다.</p></article>
+            <article class="misconception"><span>03</span><p>“유사도가 가장 높은 짝을 합치면 된다.” 비교 집합과 문맥이 잘못되면 높은 점수도 틀릴 수 있습니다.</p></article>
+          </div>
+
+          <h3>적용 판단</h3>
+          <p>이름과 소유 팀은 같지만 실행 환경과 저장소가 다른 두 서비스는 바로 합치지 않습니다. 환경이 단순 속성 차이인지 서로 다른 배포 단위를 구별하는 식별 조건인지 먼저 판단합니다. 모호하면 별도 엔티티로 유지한 채 관련 후보임을 남기는 편이 안전합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>융합은 개념 체계를 맞추는 일과 개별 대상을 맞추는 일로 나뉩니다.</li>
+            <li>이름은 후보 근거일 뿐이며 식별자·속성·관계·문맥을 함께 봐야 합니다.</li>
+            <li>후보 생성과 확정 결정을 분리하면 잘못된 병합의 범위를 줄일 수 있습니다.</li>
+          </ol>
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>온톨로지 매칭은 개념과 관계를 비교하고, 인스턴스 매칭은 개별 대상의 동일성을 비교합니다.</li>
+            <li>문자열 유사도가 높아도 환경과 식별 범위가 다르면 서로 다른 엔티티일 수 있습니다.</li>
+            <li>근거가 부족하거나 서로 충돌할 때는 병합보다 미확정 상태가 안전합니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul><li><a href="https://github.com/npubird/KnowledgeGraphCourse/tree/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7" target="_blank" rel="noreferrer">KnowledgeGraphCourse 고정 버전</a> · 지식 융합 강의 p.2, 15–22, 24–42: 온톨로지·인스턴스 매칭, <code>sameAs</code>, 유사성 기반 대응</li></ul>
+          <p>후보 생성과 결정 경계, 서비스 식별 사례는 원본의 매칭 개념을 판단 흐름으로 풀어낸 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson13.html">
+          <small>NEXT · LESSON 13</small>
+          <h2>일관성은 충돌을 없애는 것이 아니라 드러내는 능력이다</h2>
+          <p>다음 강의에서는 동일 대상을 묶은 뒤 서로 다른 타입과 사실이 충돌할 때 무엇을 보존할지 판단합니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

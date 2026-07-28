@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 19강: 모든 연결 문제에 지식 그래프가 필요한 것은 아니다" />
+  <title>19강 · 모든 연결 문제에 지식 그래프가 필요한 것은 아니다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true">
+    <span data-reading-progress></span>
+  </div>
+
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-3">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 19 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 03 · VALUE · LESSON 19</p>
+        <h1>모든 연결 문제에<br />지식 그래프가 필요한 것은 아니다</h1>
+        <p class="lead">
+          지식 그래프의 가능성을 아는 것만큼 적용하지 않을 이유를 설명하는 일도 중요합니다.
+          이번 강의에서는 질문의 모양과 유지 비용을 함께 놓고 적합성을 판단합니다.
+        </p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>관계 중심 질문의 가치가 지속적인 품질 비용보다 클 때 지식 그래프가 적합합니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 관점</div>
+      <div class="time-step">3분 · 이유</div>
+      <div class="time-step">8분 · 판단</div>
+      <div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 정리</div>
+      <div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#goals">01 · 학습 목표</a>
+        <a href="#connection">02 · 이전 강의 연결</a>
+        <a href="#situation">03 · 익숙한 상황</a>
+        <a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a>
+        <a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a>
+        <a href="#practice">08 · 적용 판단</a>
+        <a href="#misunderstanding">09 · 흔한 오해</a>
+        <a href="#summary">10 · 요약과 개념 정리</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">0–2 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <p>
+            이 강의가 끝나면 연결이 많다는 이유만으로 지식 그래프를 선택하지 않고,
+            관계 중심 질문의 가치와 구축·품질 비용을 나란히 설명할 수 있어야 합니다.
+          </p>
+          <div class="goals">
+            <article class="goal">
+              <span>01</span>
+              <p>지식 그래프가 유리한 문제 신호를 구분합니다.</p>
+            </article>
+            <article class="goal">
+              <span>02</span>
+              <p>단순 조회와 원문 탐색으로 충분한 경우를 알아봅니다.</p>
+            </article>
+            <article class="goal">
+              <span>03</span>
+              <p>예상 효용과 지속적인 품질 비용을 함께 평가합니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="connection">
+          <span class="section-tag">CONNECTION · LESSON 18 → 19</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>
+            18강은 <code>Graph RAG</code>가 관계 경로와 다중 홉 문맥을 검색에 활용하는 차이를 살폈습니다.
+            이번 강의는 그 가능성에 곧바로 도구를 대입하지 않고, 문제 가치가 구축·품질 비용보다 큰지 판단합니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">2–5 MIN · WHY</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>
+              운영 담당자가 특정 배포의 담당자와 완료 시각만 확인한다고 가정해 봅시다.
+              대상과 조건이 분명하고 한 시스템에 정답이 있다면 기존 데이터 조회가 가장 직접적입니다.
+            </p>
+            <p>
+              반대로 최근 반복된 장애와 서비스·변경·담당 팀의 연결을 찾는 문제는
+              여러 출처와 여러 단계의 관계를 해석해야 하므로 질문의 모양이 달라집니다.
+            </p>
+          </div>
+          <p>
+            <span class="source-badge added">추가 설명</span>
+            지식 그래프의 적합성은 데이터가 복잡한지가 아니라, 의미 관계를 반복해서 따라가야 하는지가 좌우합니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–13 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+
+          <div class="definition">
+            <span class="term">FIT · 쉬운 정의</span>
+            <p>
+              지식 그래프 적합성은 관계를 명시하고 연결했을 때 얻는 질문 가치가,
+              그 의미와 품질을 계속 유지하는 비용보다 큰지를 판단하는 일입니다.
+            </p>
+          </div>
+
+          <h3>적합성을 높이는 세 가지 신호</h3>
+          <p>
+            첫째, 질문의 중심이 개별 레코드보다 대상 사이의 관계에 있습니다.
+            둘째, 답이 여러 시스템이나 문서에 흩어져 있어 동일한 대상을 맞춰야 합니다.
+            셋째, 한 번의 연결이 아니라 여러 단계를 따라가야 답의 근거가 드러납니다.
+          </p>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본 강의는 엔티티 관계·사건·시공간의 표현, 이종 데이터 통합, 대규모 추론을 핵심 가치로 설명합니다.
+            또한 의미 검색과 지능형 질의응답을 지식 활용의 주요 예로 듭니다.
+          </p>
+
+          <h3>과한 선택이 되는 세 가지 신호</h3>
+          <p>
+            정답이 한 데이터 원천에 있고 조건도 안정적이면 단순 조회로 충분합니다.
+            문서의 원문을 읽는 것이 목적이라면 텍스트 검색이 더 자연스럽습니다.
+            관계의 뜻을 합의할 수 없거나 최신 상태를 유지할 책임이 없다면, 그래프는 빠르게 오래된 주장 모음이 됩니다.
+          </p>
+
+          <h3>비용은 최초 변환보다 이후에 생긴다</h3>
+          <p>
+            대상 식별, 관계 유형, 출처, 시점의 정확성은 지속적으로 달라집니다.
+            따라서 시작할 때의 변환 규모보다 잘못된 연결을 찾고 고치며 사용 결과를 되돌려 받는 비용을 봐야 합니다.
+          </p>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본 강의는 지식 품질의 평가·측정, 오류 식별·시험, 수리, 응용 피드백을 별도 도전으로 제시합니다.
+            지식 그래프가 있다는 사실만으로 활용 가치가 보장되지 않는다는 뜻입니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">DECISION MAP</span>
+          <h2>개념 도식</h2>
+          <p>적용 여부를 제품 이름이 아니라 질문에서 출발해 네 단계로 좁혀 봅니다.</p>
+          <div class="diagram-lab">
+          <div class="goals">
+            <article class="goal">
+              <span>1</span>
+                <p>답이 한 출처의 단순 조건으로 끝나는지 확인합니다.</p>
+              </article>
+              <article class="goal">
+                <span>2</span>
+                <p>여러 출처의 같은 대상을 맞춰야 하는지 확인합니다.</p>
+              </article>
+              <article class="goal">
+                <span>3</span>
+                <p>관계의 종류와 다중 홉 경로가 답의 일부인지 확인합니다.</p>
+              </article>
+              <article class="goal">
+                <span>4</span>
+                <p>그 의미와 품질을 계속 확인할 수 있는지 평가합니다.</p>
+              </article>
+            </div>
+            <p class="diagram-caption">
+              이 도식에서 봐야 할 핵심: <code>1</code>에서 끝나면 기존 조회가 우선입니다. <code>2–4</code>가 모두 중요할수록 지식 그래프의 상대적 가치가 커집니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">13–17 MIN · COMPARE</span>
+          <h2>선택지 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th>문제 형태</th>
+                  <th>먼저 볼 선택</th>
+                  <th>지식 그래프가 주는 추가 가치</th>
+                  <th>주의할 비용</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>한 출처의 정형 조건</td>
+                  <td>관계형 데이터 조회</td>
+                  <td>대체로 작음</td>
+                  <td>중복된 의미 모델</td>
+                </tr>
+                <tr>
+                  <td>원문과 유사 표현 탐색</td>
+                  <td>문서·벡터 검색</td>
+                  <td>관계 근거가 필요할 때 증가</td>
+                  <td>추출 오류와 최신성</td>
+                </tr>
+                <tr>
+                  <td>다중 출처의 동일 대상 연결</td>
+                  <td>통합 모델과 식별 체계</td>
+                  <td>관계별 통합 탐색</td>
+                  <td>엔티티 정합성</td>
+                </tr>
+                <tr>
+                  <td>다중 홉의 설명 가능한 질문</td>
+                  <td>지식 그래프 검토</td>
+                  <td>경로와 근거의 명시</td>
+                  <td>관계 품질과 평가</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>
+              “어제 실패한 배포 수”는 정해진 상태와 시간 범위를 세면 됩니다.
+              여기에 지식 그래프를 붙여도 답의 설명력은 거의 늘지 않습니다.
+            </p>
+            <p>
+              그러나 반복 장애에 영향을 준 변경의 서비스 의존성과 공통 원인을 찾는 문제는
+              장애·변경·배포·서비스를 서로 다른 의미 관계로 이어야 합니다.
+              이때 관계 경로를 여러 조사에서 재사용한다면 지식 그래프의 편익이 커집니다.
+            </p>
+            <p>
+              <span class="source-badge added">추가 설명</span>
+              그래도 책임 있는 출처와 갱신 신호가 없다면 적용하지 않는 편이 낫습니다.
+              틀린 연결을 빠르게 탐색하는 시스템은 단순한 수작업보다 더 큰 확신 오류를 만들 수 있습니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="practice">
+          <span class="section-tag">APPLICATION DECISION</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>여러 문서에서 특정 장애의 원인 한 건만 찾고, 관계를 재사용할 후속 질문은 없는 상황입니다.</p>
+            <p>
+              이 경우 원문 검색과 검증으로 충분할 가능성이 큽니다. 출처가 여러 개여도 관계를 반복 탐색하지 않고 의미 유지 책임도 없다면,
+              지식 그래프의 지속 비용을 정당화하기 어렵습니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–19 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception">
+              <span>01</span>
+              <p>“데이터가 많으면 KG가 필요하다.” 규모보다 관계 중심 질문과 다중 출처 여부가 먼저입니다.</p>
+            </article>
+            <article class="misconception">
+              <span>02</span>
+              <p>“Graph RAG를 원하면 KG부터 만들어야 한다.” 원문 검색으로 충분한 질문인지 먼저 확인해야 합니다.</p>
+            </article>
+            <article class="misconception">
+              <span>03</span>
+              <p>“구축이 끝나면 비용도 끝난다.” 의미, 출처, 최신성, 오류 수정은 사용 기간 내내 이어집니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>관계 중심·다중 출처·다중 홉 질문은 지식 그래프의 적합성을 높입니다.</li>
+            <li>단순 조회와 원문 탐색으로 충분하면 더 작은 선택이 낫습니다.</li>
+            <li>적용 판단에는 예상 가치와 지속적인 품질 비용이 함께 들어가야 합니다.</li>
+          </ol>
+
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>특정 배포의 완료 시각은 단순 조건 조회이고, 반복 장애의 공통 관계는 다중 단계 탐색입니다.</li>
+            <li>다중 출처만으로는 충분하지 않으며, 관계를 반복 탐색하고 재사용할 가치가 함께 필요합니다.</li>
+            <li>의미와 품질을 계속 확인할 책임이 없다면 관계 탐색의 가치가 있어도 적용을 보류합니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2025-pub-1%20%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1-%E7%90%86%E8%AE%BA-%E6%8A%80%E6%9C%AF-%E5%AE%9E%E8%B7%B5%E5%92%8C%E6%8C%91%E6%88%98B.pdf" target="_blank" rel="noreferrer">
+                2025-pub-1 지식 그래프 이론·기술·실천과 도전 B
+              </a>
+              · 엔티티 관계·이종 데이터 통합·추론의 가치, 지식 품질 평가·수리·응용 피드백
+            </li>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2025-pub-9%20KG%E4%B8%8ELLM.pdf" target="_blank" rel="noreferrer">
+                2025-pub-9 KG와 LLM
+              </a>
+              · p.10–14: 일반 RAG의 흐름과 관계·전역 문맥 관점의 Graph RAG
+            </li>
+          </ul>
+          <p>적용·비적용 판단 사다리와 운영 사례는 원본의 가치·도전 설명을 의사결정에 연결한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson20.html">
+          <small>NEXT · LESSON 20</small>
+          <h2>통합의 핵심은 저장소가 아니라 의미의 왕복이다</h2>
+          <p>다음 강의에서는 1–19강의 개념을 원천부터 활용과 피드백까지 하나의 생명주기로 연결합니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

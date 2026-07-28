@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 2강: 지식은 점이 아니라 의미 있는 연결이다" />
+  <title>2강 · 지식은 점이 아니라 의미 있는 연결이다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true">
+    <span data-reading-progress></span>
+  </div>
+
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 02 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 01 · STRUCTURE · LESSON 02</p>
+        <h1>지식은 점이 아니라<br />의미 있는 연결이다</h1>
+        <p class="lead">
+          대상을 모으는 것만으로는 지식이 되지 않습니다.
+          엔티티·관계·속성·타입·문맥이 서로 다른 역할을 할 때 비로소 질문 가능한 사실이 만들어집니다.
+        </p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>지식 그래프의 최소 단위는 엔티티 하나가 아니라, 여러 요소가 의미 있게 결합한 사실입니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div>
+      <div class="time-step">2분 · 상황</div>
+      <div class="time-step">9분 · 개념</div>
+      <div class="time-step">3분 · 비교</div>
+      <div class="time-step">2분 · 판단</div>
+      <div class="time-step">2분 · 정리</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#connection">01 · 이전 강의</a>
+        <a href="#question">02 · 핵심 관점</a>
+        <a href="#goals">03 · 학습 목표</a>
+        <a href="#situation">04 · 익숙한 상황</a>
+        <a href="#concept">05 · 핵심 개념</a>
+        <a href="#diagram">06 · 개념 도식</a>
+        <a href="#compare">07 · 기술 비교</a>
+        <a href="#case">08 · 현실 사례</a>
+        <a href="#misunderstanding">09 · 흔한 오해</a>
+        <a href="#practice">10 · 적용 판단</a>
+        <a href="#summary">11 · 요약과 정리</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="connection">
+          <span class="section-tag">0–1 MIN · CONNECT</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>
+            1강에서는 링크가 있다는 사실과 관계의 의미가 표현됐다는 사실을 구분했습니다.
+            이번에는 그 의미 있는 연결을 구성하는 재료를 분해합니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="question">
+          <span class="section-tag">1–2 MIN · VIEW</span>
+          <h2>이번 강의의 핵심 관점</h2>
+          <div class="definition">
+            <span class="term">CORE VIEW</span>
+            <p>엔티티와 링크만으로는 사실의 뜻이 충분하지 않으며, 타입·속성·문맥이 함께 필요합니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">2–3 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal">
+              <span>01</span>
+              <p>엔티티·관계·속성·타입·사실·문맥의 역할을 구분합니다.</p>
+            </article>
+            <article class="goal">
+              <span>02</span>
+              <p>주체·관계·대상의 조합이 왜 지식의 기본 문장이 되는지 설명합니다.</p>
+            </article>
+            <article class="goal">
+              <span>03</span>
+              <p>익숙한 테이블 구조와 의미 구조가 같은 점과 다른 점을 판단합니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">3–5 MIN · WHY</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>
+              장애 문서에 <code>payment-api</code>, <code>timeout</code>, <code>deploy-142</code>라는 세 단어가 적혀 있습니다.
+              검색하면 모두 찾을 수 있지만, 어느 것이 서비스이고 어느 것이 증상인지 드러나지 않습니다.
+            </p>
+            <p>
+              더구나 배포가 장애의 원인인지, 해결인지, 단지 같은 시각에 있었던 일인지도 알 수 없습니다.
+              이 상태에서는 세 대상을 어떤 요소로 분류하고 연결해야 조사에 사용할 수 있는지조차 불분명합니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–14 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+
+          <div class="definition">
+            <span class="term">KNOWLEDGE FACT · 쉬운 정의</span>
+            <p>
+              지식의 기본 문장은 구별 가능한 대상인 엔티티와, 그 대상을 다른 대상에 연결하는 의미 관계로 이루어진 사실입니다.
+            속성·타입·문맥은 사실을 해석할 기준을 더합니다.
+            </p>
+          </div>
+
+          <h3>왜 여러 요소가 필요한가</h3>
+          <p>
+            <code>장애 A</code>라는 점만 있으면 존재는 알 수 있지만 무엇과 관련 있는지는 모릅니다.
+            <code>장애 A → 서비스 B</code>라고만 쓰면 방향은 있어도 뜻이 모호합니다.
+            <code>장애 A가 서비스 B에 영향을 준다</code>처럼 관계 유형을 붙여야 하나의 판단 가능한 사실이 됩니다.
+          </p>
+
+          <h3>구성 요소</h3>
+          <ul>
+            <li>엔티티(Entity, 개체): 다른 대상과 구별되는 실제 대상이나 사건입니다.</li>
+            <li>타입(Type, 종류): 엔티티가 어떤 범주에 속하는지 나타냅니다. <code>장애 A</code>의 타입은 장애입니다.</li>
+            <li>관계(Relation, 의미 연결): 두 엔티티 사이의 의미와 방향을 나타냅니다.</li>
+            <li>속성(Attribute, 설명 값): 이름, 심각도, 발생 시각처럼 한 대상을 설명하는 값입니다.</li>
+            <li>사실(Fact, 주장): 주체·관계·대상을 묶어 세계에 대해 말하는 한 문장입니다.</li>
+            <li>문맥(Context, 해석 조건): 시점, 환경, 출처, 상태처럼 사실이 성립하는 범위를 설명합니다.</li>
+          </ul>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본 강의는 개념을 세계의 추상 용어, 관계를 개념 사이의 연결, 인스턴스를 유일한 개체로 구분합니다.
+            또한 용어에 관한 지식과 개체에 관한 사실을 서로 다른 층으로 설명합니다.
+          </p>
+
+          <h3>작동 구조</h3>
+          <p>
+            먼저 엔티티의 정체성과 타입을 정합니다. 다음으로 관계의 방향과 뜻을 붙이고, 속성으로 엔티티를 설명합니다.
+            마지막으로 출처와 유효 시점 같은 문맥을 결합하면 “무엇이 무엇과 어떤 조건에서 관련되는가”를 탐색할 수 있습니다.
+          </p>
+          <p>
+            관계형 데이터베이스에도 행, 외래 키, 컬럼이 있습니다.
+            그러나 외래 키는 참조 무결성을 표현하는 데 강하고, 지식 그래프의 관계는 현실에서 그 참조가 무엇을 뜻하는지 드러내는 데 초점을 둡니다.
+            같은 구조처럼 보여도 보존하려는 의미가 다릅니다.
+          </p>
+
+          <h3>가능한 것과 불가능한 것</h3>
+          <p>
+            요소가 정확히 구분되면 서비스에서 장애, 원인, 배포까지 의미를 따라 탐색하고 그 경로를 설명할 수 있습니다.
+            서로 다른 문서도 같은 엔티티를 중심으로 묶을 수 있습니다.
+            하지만 사실의 형태가 내용의 진실성이나 누락된 문맥까지 보장하지는 않습니다.
+          </p>
+
+          <h3>현실적인 한계</h3>
+          <p>
+            속성과 관계의 경계는 질문에 따라 달라집니다. 예를 들어 담당자를 단순 문자열로 둘 수도 있고,
+            조직·역할·변경 이력을 질문하려면 별도 엔티티와 관계로 다뤄야 합니다.
+            <span class="source-badge added">추가 설명</span>
+            속성·문맥을 어디까지 독립된 구조로 올릴지는 정답이 아니라 필요한 질문과 설명 수준의 선택입니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">CONCEPT DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="diagram-lab">
+            <div class="scenario">
+              <p>엔티티 <code>PR C</code> → 관계 <code>해결한다</code> → 엔티티 <code>장애 A</code></p>
+              <p>타입 <code>변경</code> · 속성 <code>작성일</code> · 문맥 <code>운영 환경 / 출처 / 유효 시점</code></p>
+              <p>↓ 이 요소들이 함께 해석됨</p>
+              <p>사실: 운영 환경에서 <code>PR C</code>가 <code>장애 A</code>를 해결했다</p>
+            </div>
+            <p class="diagram-caption">
+              이 도식에서 봐야 할 핵심: 주체와 대상만으로는 부족하며, 관계의 뜻과 사실의 범위를 정하는 문맥이 함께 있어야 합니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">14–17 MIN · COMPARE</span>
+          <h2>기존 기술과 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th>구조</th>
+                  <th>중심 단위</th>
+                  <th>관계의 의미</th>
+                  <th>강한 질문</th>
+                  <th>한계</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>관계형 DB</td>
+                  <td>행과 컬럼</td>
+                  <td>키·제약과 애플리케이션에 분산</td>
+                  <td>정해진 구조의 정확한 조건 조회</td>
+                  <td>출처가 늘며 관계 뜻이 달라질 때 해석이 흩어짐</td>
+                </tr>
+                <tr>
+                  <td>그래프 DB</td>
+                  <td>노드와 간선</td>
+                  <td>간선 유형과 속성에 저장</td>
+                  <td>가변적인 다단계 경로 탐색</td>
+                  <td>공통 의미 계약이 없으면 이름만 다른 연결이 쌓임</td>
+                </tr>
+                <tr>
+                  <td>지식 그래프</td>
+                  <td>엔티티와 사실</td>
+                  <td>타입·관계·문맥으로 명시</td>
+                  <td>의미가 이어지는 탐색과 설명</td>
+                  <td>식별과 사실 품질이 낮으면 그럴듯한 오답 경로 생성</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>
+              장애 기록에는 결제 서비스, 연결 풀 고갈, 배포 <code>D</code>, 수정 <code>PR C</code>가 등장합니다.
+              결제 서비스와 장애는 엔티티이고, <code>영향을 받는다</code>는 관계입니다.
+              심각도는 장애의 속성이며, 배포 전후라는 시점은 사실을 해석하는 문맥입니다.
+            </p>
+            <p>
+              <code>PR C 관련 장애 A</code>라고만 저장하면 원인인지 해결인지 판단할 수 없습니다.
+              <code>PR C가 장애 A를 해결한다</code>는 사실과 배포 후 관측 결과를 분리하면,
+              변경의 의도와 실제 회복 증거를 같은 것으로 오해하지 않게 됩니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–18 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception">
+              <span>01</span>
+              <p>“모든 명사는 엔티티다.” 독립적으로 식별하고 관계를 추적할 필요가 없는 값은 속성이 더 적절할 수 있습니다.</p>
+            </article>
+            <article class="misconception">
+              <span>02</span>
+              <p>“관계는 양방향이다.” <code>배포가 PR을 포함한다</code>와 <code>PR이 배포에 포함된다</code>는 관점은 연결되지만 방향과 표현은 구분해야 합니다.</p>
+            </article>
+            <article class="misconception">
+              <span>03</span>
+              <p>“타입을 붙이면 의미가 완성된다.” 같은 타입의 엔티티라도 시점·출처·상태가 다르면 같은 판단에 사용할 수 없습니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="practice">
+          <span class="section-tag">18–19 MIN · JUDGMENT</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>
+              한 시스템이 <code>배포 D → 장애 A</code>라는 간선과 두 노드의 이름만 보유하고 있습니다.
+              이 정보만으로 배포를 장애 원인이라고 판단할 수 없습니다.
+              간선의 관계 유형과 방향, 두 사건의 시점, 판단 출처가 빠져 있기 때문입니다.
+              <code>유발했다</code>, <code>완화했다</code>, <code>동시에 발생했다</code>를 구분할 의미와 근거가 있어야 인과 사실로 사용할 수 있습니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>엔티티는 대상, 타입은 범주, 속성은 설명 값, 관계는 대상 사이의 의미입니다.</li>
+            <li>주체·관계·대상은 사실을 만들고, 문맥은 그 사실이 성립하는 범위를 정합니다.</li>
+            <li>잘 구조화된 사실도 출처와 검증 없이 자동으로 참이 되지는 않습니다.</li>
+          </ol>
+
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>담당자의 조직·역할·변경 이력을 추적하려면 문자열 속성이 아니라 엔티티로 다뤄야 합니다.</li>
+            <li>관계의 방향과 문맥이 빠지면 동시 발생을 인과 관계로 오해할 수 있습니다.</li>
+            <li>외래 키는 참조 무결성을, 지식 그래프의 관계는 현실 연결의 뜻을 중심으로 보존합니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2024-pub-2%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA.pdf" target="_blank" rel="noreferrer">
+                2024-pub-2 지식 표현
+              </a>
+              · p.29–32: 개념·관계·인스턴스의 구분, 용어 지식과 개체 사실의 분리
+            </li>
+          </ul>
+          <p>장애·배포 사례와 속성·문맥의 판단 기준은 원본 개념을 백엔드 경험에 연결한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson3.html">
+          <small>NEXT · LESSON 03</small>
+          <h2>표현 방식은 저장 형식보다 먼저 결정된다</h2>
+          <p>다음 강의에서는 같은 요소를 의미망·프레임·개념 그래프·규칙으로 표현할 때 가능한 질문이 어떻게 달라지는지 살펴봅니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

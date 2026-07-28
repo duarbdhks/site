@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 20강: 통합의 핵심은 저장소가 아니라 의미의 왕복이다" />
+  <title>20강 · 통합의 핵심은 저장소가 아니라 의미의 왕복이다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true">
+    <span data-reading-progress></span>
+  </div>
+
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-3">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 20 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 03 · VALUE · LESSON 20</p>
+        <h1>통합의 핵심은 저장소가 아니라<br />의미의 왕복이다</h1>
+        <p class="lead">
+          지식 그래프는 한 번 만든 결과물이 아니라 원천과 질문 사이를 오가는 생명주기입니다.
+          마지막 강의에서는 1–19강의 개념을 하나의 종단 흐름으로 다시 연결합니다.
+        </p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>지식 그래프의 생명주기는 원천에서 활용까지 이어지고 피드백으로 다시 돌아옵니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 관점</div>
+      <div class="time-step">3분 · 이유</div>
+      <div class="time-step">8분 · 통합</div>
+      <div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 정리</div>
+      <div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#goals">01 · 학습 목표</a>
+        <a href="#connection">02 · 이전 강의 연결</a>
+        <a href="#situation">03 · 익숙한 상황</a>
+        <a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a>
+        <a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a>
+        <a href="#practice">08 · 적용 판단</a>
+        <a href="#misunderstanding">09 · 흔한 오해</a>
+        <a href="#summary">10 · 요약과 개념 정리</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">0–2 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <p>
+            이 강의가 끝나면 표현, 추출, 융합, 저장, 검색, 활용을 따로 외우지 않고
+            질문과 피드백이 다시 원천으로 돌아오는 하나의 흐름으로 설명할 수 있어야 합니다.
+          </p>
+          <div class="goals">
+            <article class="goal">
+              <span>01</span>
+              <p>1–19강의 핵심 활동을 종단 순서로 연결합니다.</p>
+            </article>
+            <article class="goal">
+              <span>02</span>
+              <p>의미 계약과 품질 게이트가 흐름 전체에 필요한 이유를 설명합니다.</p>
+            </article>
+            <article class="goal">
+              <span>03</span>
+              <p>사용 결과가 다시 원천과 모델을 바꾸는 왕복 구조를 이해합니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="connection">
+          <span class="section-tag">CONNECTION · LESSON 19 → 20</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>
+            19강은 관계 중심성·다중 출처·다중 홉의 가치와 품질 비용으로 적용 여부를 판별했습니다.
+            이번 강의는 적용할 가치가 확인된 문제에서 1–19강의 활동이 어떻게 연결되고 되돌아오는지 통합합니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">2–5 MIN · WHY</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>
+              장애 문서, 변경 기록, 배포 이벤트를 모아 하나의 저장소에 넣었다고 가정해 봅시다.
+              저장은 끝났지만 동일한 서비스가 서로 다른 이름으로 남고, “원인”과 “관련”이 섞이면 질문의 답은 흔들립니다.
+            </p>
+            <p>
+              반대로 사용자가 답의 근거를 확인하고 잘못된 관계를 발견하면, 그 피드백은 대상 식별과 관계 정의로 돌아가야 합니다.
+              이 왕복이 없다면 저장소는 커져도 의미는 낡습니다.
+            </p>
+          </div>
+          <p>
+            <span class="source-badge added">추가 설명</span>
+            통합의 완성 조건은 모든 데이터를 한곳에 두는 것이 아니라,
+            같은 의미가 원천에서 답까지 유지되고 답의 오류가 다시 앞 단계로 돌아가는 것입니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–13 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+
+          <div class="definition">
+            <span class="term">SEMANTIC ROUND TRIP · 쉬운 정의</span>
+            <p>
+              의미의 왕복은 원천에서 해석한 대상과 관계가 검색·응답까지 일관되게 전달되고,
+              사용 중 발견한 오류와 새 질문이 다시 모델·융합·추출 판단으로 돌아가는 생명주기입니다.
+            </p>
+          </div>
+
+          <h3>앞선 19강을 한 줄로 잇기</h3>
+          <p>
+            먼저 현실의 대상과 관계를 어떤 의미로 볼지 정합니다.
+            원천에서 엔티티·관계·사건을 추출하고, 같은 대상을 식별해 충돌과 중복을 융합합니다.
+            검증된 지식을 저장한 뒤 경로와 근거를 검색해 사람이나 LLM의 답에 제공합니다.
+          </p>
+          <p>
+            이 순서는 일방통행이 아닙니다.
+            검색 결과의 누락, 잘못된 연결, 설명되지 않는 답은 앞 단계의 의미 정의나 식별 규칙이 부족하다는 신호가 됩니다.
+            사용은 마지막 단계이면서 다음 개선의 시작입니다.
+          </p>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본 강의는 다중 이종 원천, 엔티티·관계·사건 추출, 정보 출처 추적, 본체·엔티티 정합,
+            지식 저장과 추론을 하나의 기술 체계로 배열합니다.
+          </p>
+
+          <h3>흐름을 지키는 두 개의 가로축</h3>
+          <p>
+            의미 계약은 “무엇을 같은 대상으로 보고, 관계가 무엇을 뜻하며, 어느 문맥에서 유효한가”를 단계 사이에 보존합니다.
+            품질 게이트는 출처, 식별 확신, 충돌, 최신성, 답의 근거를 각 전환점에서 확인합니다.
+          </p>
+          <p>
+            <span class="source-badge added">추가 설명</span>
+            의미 계약과 품질 게이트는 원본의 표현·융합·품질 개념을 종단 관점으로 묶은 설명입니다.
+            별도 단계라기보다 모든 단계가 공유하는 판단 기준입니다.
+          </p>
+
+          <h3>저장소는 중간 매개다</h3>
+          <p>
+            그래프 저장소는 연결을 보존하고 탐색하는 중요한 매개입니다.
+            그러나 원천의 의미를 잃었거나 사용 결과가 되돌아오지 않으면 저장 구조만으로 통합을 만들 수 없습니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">END-TO-END MAP</span>
+          <h2>개념 도식</h2>
+          <p>세로 흐름과 가로 기준을 함께 보면 되돌아오는 피드백까지 하나의 생명주기로 연결됩니다.</p>
+          <div class="diagram-lab">
+            <div class="goals">
+              <article class="goal">
+                <span>1</span>
+                <p>원천: 문서·데이터·사건에서 근거를 확보합니다.</p>
+              </article>
+              <article class="goal">
+                <span>2</span>
+                <p>추출: 엔티티·관계·사건 후보를 만듭니다.</p>
+              </article>
+              <article class="goal">
+                <span>3</span>
+                <p>융합: 같은 대상을 맞추고 충돌을 드러냅니다.</p>
+              </article>
+              <article class="goal">
+                <span>4</span>
+                <p>저장·검색: 의미 경로와 근거를 보존하고 찾습니다.</p>
+              </article>
+              <article class="goal">
+                <span>5</span>
+                <p>활용·피드백: 답을 평가하고 오류를 앞 단계로 돌려보냅니다.</p>
+              </article>
+            </div>
+            <p class="diagram-caption">
+              이 도식에서 봐야 할 핵심: 의미 계약과 품질 게이트는 <code>1→5</code> 전체를 가로지릅니다. 피드백은 <code>5→1</code>로 돌아가 다음 왕복의 정확도를 높입니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">13–17 MIN · COMPARE</span>
+          <h2>관점 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th>관점</th>
+                  <th>완료로 보는 시점</th>
+                  <th>놓치기 쉬운 것</th>
+                  <th>통합 관점의 확인점</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>수집 중심</td>
+                  <td>원천을 모았을 때</td>
+                  <td>대상과 관계의 의미</td>
+                  <td>근거가 주장으로 바뀐 경로를 확인합니다.</td>
+                </tr>
+                <tr>
+                  <td>저장 중심</td>
+                  <td>노드와 간선이 쌓였을 때</td>
+                  <td>충돌·출처·최신성</td>
+                  <td>경로를 신뢰할 조건을 확인합니다.</td>
+                </tr>
+                <tr>
+                  <td>응답 중심</td>
+                  <td>그럴듯한 답이 나왔을 때</td>
+                  <td>근거와 누락의 원인</td>
+                  <td>오답 신호가 돌아갈 단계를 찾습니다.</td>
+                </tr>
+                <tr>
+                  <td>의미 왕복</td>
+                  <td>질문과 피드백이 순환할 때</td>
+                  <td>종단 책임의 단절</td>
+                  <td>처음의 의미가 답까지 보존됐는지 확인합니다.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>
+              운영 질문이 “이 장애에 영향을 준 변경과 배포를 보여 달라”라고 들어옵니다.
+              장애 문서와 배포 이벤트에서 후보를 찾고, 서비스와 변경의 식별을 맞춘 뒤 관계의 출처와 시점을 보존합니다.
+            </p>
+            <p>
+              검색 결과가 오래된 배포를 원인으로 제시했지만 실제 관측과 맞지 않는다면,
+              답만 지우는 것으로 끝나지 않습니다.
+              관계 시점, 사건 상태, 동일 대상 식별 중 어느 판단이 틀렸는지 앞 단계로 되돌아가야 합니다.
+            </p>
+            <p>
+              <span class="source-badge added">추가 설명</span>
+              이 사례에서 품질은 저장된 사실 수가 아니라 질문에 필요한 의미가 근거와 함께 왕복하는 능력입니다.
+              그래서 종단 흐름의 출발점과 종착점은 모두 현실의 문제입니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="practice">
+          <span class="section-tag">APPLICATION DECISION</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>검색 결과가 같은 서비스를 서로 다른 대상으로 나눠 보여 주는 상황입니다.</p>
+            <p>
+              답 화면만 고치면 다음 검색에서 문제가 반복됩니다. 원천 표기와 식별 근거를 확인한 뒤 융합 단계의 동일 대상 판단으로 되돌리고,
+              수정 결과가 저장과 검색까지 반영됐는지 다시 왕복해야 합니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–19 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception">
+              <span>01</span>
+              <p>“저장이 생명주기의 중심이다.” 저장은 의미가 이동하는 여러 전환점 중 하나입니다.</p>
+            </article>
+            <article class="misconception">
+              <span>02</span>
+              <p>“품질 검사는 마지막에 한 번 하면 된다.” 식별·융합·검색의 작은 오류가 다음 단계에서 증폭됩니다.</p>
+            </article>
+            <article class="misconception">
+              <span>03</span>
+              <p>“사용은 완성된 지식을 소비하기만 한다.” 실제 질문과 오답은 모델을 고치는 핵심 피드백입니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>지식 그래프의 생명주기는 원천→추출→융합→저장→검색·활용으로 이어집니다.</li>
+            <li>의미 계약과 품질 게이트는 이 전체 흐름을 가로지릅니다.</li>
+            <li>활용 결과가 앞 단계로 돌아올 때 저장된 연결은 살아 있는 지식이 됩니다.</li>
+          </ol>
+
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>원천에서 답까지 의미가 유지됐는지는 출처·식별 근거·관계 문맥·최신성을 함께 보고 판단합니다.</li>
+            <li>잘못된 관계는 원천 후보, 동일 대상 판단, 관계 시점을 거슬러 올라가며 발생 단계를 구분합니다.</li>
+            <li>사용 피드백이 없으면 오류와 새 질문이 앞 단계로 돌아가지 않아 지식이 현실에서 멀어집니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2025-pub-1%20%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1-%E7%90%86%E8%AE%BA-%E6%8A%80%E6%9C%AF-%E5%AE%9E%E8%B7%B5%E5%92%8C%E6%8C%91%E6%88%98B.pdf" target="_blank" rel="noreferrer">
+                2025-pub-1 지식 그래프 이론·기술·실천과 도전 B
+              </a>
+              · 다중 원천→추출→융합→저장·추론의 기술 체계, 지식 품질의 평가·수리·응용 피드백
+            </li>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2025-pub-9%20KG%E4%B8%8ELLM.pdf" target="_blank" rel="noreferrer">
+                2025-pub-9 KG와 LLM
+              </a>
+              · p.10–14: 검색→증강→생성의 흐름, 관계와 전역 문맥을 보완하는 Graph RAG 관점
+            </li>
+          </ul>
+          <p>의미 계약, 품질 게이트, 피드백 왕복은 원본의 기술 체계와 품질 도전을 종단 생명주기로 통합한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="index.html#curriculum">
+          <small>COURSE COMPLETE · RETURN TO MAP</small>
+          <h2>처음의 문제를 다시 평가하는 기준</h2>
+          <p>실제 문제는 관계 중심성·다중 출처·다중 홉·품질 비용을 함께 놓고 다시 판단할 수 있습니다. 지식 그래프를 적용하지 않는 결론도 충분히 좋은 학습 결과입니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 6강: 모델의 깊이는 정답보다 비용을 결정한다" />
+  <title>6강 · 모델의 깊이는 정답보다 비용을 결정한다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 06 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 01 · STRUCTURE · LESSON 06</p>
+        <h1>모델의 깊이는 정답보다<br />비용을 결정한다</h1>
+        <p class="lead">
+          세밀한 모델이 언제나 좋은 모델은 아닙니다.
+          구분 하나를 추가할 때마다 표현력과 함께 수집·판정·변경 비용도 늘어납니다.
+        </p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>모델의 적정 깊이는 질문의 분해능과 원천의 판별 능력이 결정합니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div>
+      <div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div>
+      <div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div>
+      <div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#previous">01 · 이전 연결</a>
+        <a href="#goals">02 · 학습 목표</a>
+        <a href="#situation">03 · 필요한 상황</a>
+        <a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a>
+        <a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a>
+        <a href="#judgment">08 · 판단과 요약</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="previous">
+          <span class="section-tag">0–2 MIN · CONNECT</span>
+          <h2>이전 강의와 연결</h2>
+          <p>
+            5강에서는 질문을 기준으로 엔티티·관계·속성을 선택했습니다.
+            이제 여러 모델 중 어느 깊이가 충분한지, 세밀한 구분의 편익과 비용을 봅니다.
+          </p>
+          <div class="definition">
+            <span class="term">CORE VIEW</span>
+            <p>실제 판단을 바꾸지 않는 추가 구분은 정교함보다 유지 비용을 만듭니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">2–4 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>추상화 수준이 질문과 운영 비용에 미치는 영향을 설명합니다.</p></article>
+            <article class="goal"><span>02</span><p>재사용 가능한 상위 개념과 도메인 특화 개념의 경계를 판단합니다.</p></article>
+            <article class="goal"><span>03</span><p>과잉 모델링의 신호와 확장을 미룰 기준을 구분합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">4–6 MIN · SITUATION</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>
+              배포를 <code>정규 배포</code>, <code>긴급 배포</code>, <code>롤백</code>으로 나누면 장애 분석에 도움이 됩니다.
+              여기에 실행 주체, 승인 방식, 변경 종류, 영향 범위를 조합해 수십 개 하위 타입을 만들 수도 있습니다.
+            </p>
+            <p>
+              하지만 원천마다 분류 기준이 다르고 값이 자주 비어 있다면 세밀한 계층은 답보다 예외를 더 많이 만듭니다.
+              모델이 구별할 수 있는 것과 실제 데이터가 신뢰성 있게 판별할 수 있는 것은 다릅니다.
+            </p>
+          </div>
+          <p><span class="source-badge added">추가 설명</span> 모델의 해상도는 표현력뿐 아니라 판정 책임과 데이터 요구량을 정합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">6–14 MIN · SEVEN ELEMENTS</span>
+          <h2>핵심 개념 7요소</h2>
+
+          <h3>1. 쉬운 정의</h3>
+          <p>
+            모델의 깊이는 현실을 몇 단계의 개념과 구분으로 나눌지 정한 해상도입니다.
+            추상화 수준(세부를 덜어 공통점을 보는 높이)이 높으면 여러 사례를 함께 보고, 낮으면 의사결정에 필요한 차이를 드러냅니다.
+            너무 높으면 답이 모호하고 너무 낮으면 분류와 변경이 어려워집니다.
+          </p>
+
+          <h3>2. 필요한 이유</h3>
+          <p>
+            질문의 분해능(답에서 구별해야 하는 세밀함)에 맞는 깊이를 골라야 유용한 차이만 보존할 수 있습니다.
+            “롤백 여부에 따라 회복 시간을 비교한다”면 롤백 구분은 필요하지만, 배포 버튼의 위치는 답을 바꾸지 않습니다.
+          </p>
+
+          <h3>3. 구성 요소</h3>
+          <p>
+            깊이를 정하는 요소는 상위 개념, 하위 개념, 속성, 관계, 제약입니다.
+            <code>사건</code>, <code>변경</code>, <code>시스템</code> 같은 상위 개념은 도메인을 가로지르는 질문에 유리합니다.
+            <code>결제 승인 지연 장애</code> 같은 특수 개념은 특정 판단에는 정확하지만 다른 영역에서 재사용하기 어렵습니다.
+          </p>
+
+          <h3>4. 작동 구조</h3>
+          <p>
+            공통 질문은 상위 개념에서 답하고, 차이를 요구하는 질문은 하위 타입이나 속성으로 내려갑니다.
+            사례를 분류할 근거가 안정적인지 확인하고, 근거가 약한 구분은 상위 개념에 남겨 둡니다.
+            하위 타입이 많지만 사례가 거의 없고, 구분 기준을 설명하기 어렵거나, 질문에서 사용되지 않는다면 과잉 모델링 신호입니다.
+            빈 값과 임의 분류가 늘어나는 것도 모델의 깊이가 원천의 해상도를 넘었다는 신호입니다.
+          </p>
+
+          <h3>5. 기존 방식과의 차이</h3>
+          <p>
+            닫힌 목록은 정해진 값 바깥을 오류로 다루기 쉽지만, 지식 그래프는 새 개념과 사실이 뒤에 추가될 가능성을 열어 둡니다.
+            개방 세계 관점(기록되지 않았다고 거짓으로 단정하지 않는 태도)이 중요한 이유입니다.
+            “승인자가 없다”와 “승인자를 아직 모른다”를 구분하지 않으면 누락을 부정으로 오해할 수 있습니다.
+          </p>
+
+          <h3>6. 가능한 것과 불가능한 것</h3>
+          <p>
+            적절한 계층은 다양한 사례를 공통 질문으로 묶으면서 필요한 차이까지 탐색하게 합니다.
+            그러나 미래의 모든 사례를 예측하거나, 원천에 없는 세부를 모델의 구분만으로 판별할 수는 없습니다.
+          </p>
+
+          <h3>7. 현실적인 한계</h3>
+          <p>
+            새 타입과 제약은 기존 인스턴스 재분류, 원천 매핑, 품질 규칙, 사용자 해석을 함께 바꿉니다.
+            모델 변경은 그림 한 칸의 추가가 아니라 지식 생산 과정 전체의 변경입니다.
+            대표 질문에 답할 수 있고, 주요 사례를 일관되게 분류하며, 새 사례를 무리 없이 수용하면 현재 단계에서 충분합니다.
+            미래 가능성을 모두 선반영하기보다 실제 오답과 반복된 예외가 나타날 때 구분을 추가합니다.
+          </p>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본 강의는 클래스 계층을 위에서 아래로, 아래에서 위로, 또는 혼합해 정의할 수 있다고 설명합니다.
+            클래스·속성값 선택, 형제 클래스, 새 클래스 도입, 범위와 불연속성도 점검 대상으로 제시합니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>깊이에 따라 늘어나는 것</h2>
+          <div class="diagram-lab">
+            <p>얕음 · 변경 → 배포 → 서비스</p>
+            <p>중간 · 코드 변경 / 설정 변경 → 정규 배포 / 긴급 배포 → 서비스</p>
+            <p>깊음 · 설정 종류 × 승인 방식 × 실행 주체 × 영향 범위 → 세분된 배포 유형</p>
+            <p>함께 증가 · 구분 기준 → 필요한 원천 → 판정 예외 → 변경 영향</p>
+            <p class="diagram-caption">
+              이 도식에서 봐야 할 핵심: 하위 타입이 늘어날수록 표현력만 커지는 것이 아니라, 각 사례를 정확히 분류할 책임도 커집니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">14–17 MIN · COMPARE</span>
+          <h2>관련 기술과 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>모델 선택</th><th>장점</th><th>비용</th><th>적합한 상황</th></tr></thead>
+              <tbody>
+                <tr><td>상위 개념 중심</td><td>통합과 확장이 쉬움</td><td>세부 판단이 약함</td><td>출처가 다양하고 공통 탐색이 중요할 때</td></tr>
+                <tr><td>하위 타입 중심</td><td>정밀한 구분과 제약</td><td>분류·변경 부담</td><td>구분 기준과 데이터가 안정적일 때</td></tr>
+                <tr><td>속성 중심</td><td>새 조합을 유연하게 표현</td><td>일관된 의미 통제가 어려움</td><td>축이 독립적이고 조합이 자주 바뀔 때</td></tr>
+                <tr><td>관계 중심</td><td>문맥과 근거를 연결</td><td>경로 해석이 복잡해짐</td><td>대상 사이 역할과 이력이 중요할 때</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            타입과 속성, 관계는 같은 세부를 다른 방식으로 표현합니다.
+            어떤 방식이 더 고급인가보다, 질문의 안정성·분류 가능성·변경 빈도에 맞는지가 판단 기준입니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>
+              장애 회고를 연결하면서 처음에는 모든 경보를 원인, 증상, 영향, 잡음으로 분류하려 했습니다.
+              그러나 표현이 달랐고 하나의 경보가 시점에 따라 증상이자 영향 신호가 되기도 했습니다.
+            </p>
+            <p>
+              팀은 <code>관측 신호</code>라는 상위 개념을 두고, 회고에서 명시된 역할만 관계로 표현했습니다.
+              역할이 안정적으로 반복되는 유형이 쌓일 때 하위 타입을 추가하기로 하자 임의 분류가 줄고 질문의 근거가 선명해졌습니다.
+            </p>
+          </div>
+          <p>실제 근거가 감당할 수 있는 깊이에서 멈춘 결정입니다.</p>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–18 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“타입이 많을수록 의미가 풍부하다.” 판별 근거가 약하면 풍부함이 아니라 불일치가 늘어납니다.</p></article>
+            <article class="misconception"><span>02</span><p>“모르면 거짓이다.” 기록되지 않은 사실은 미확인일 수 있으므로 부정과 누락을 구분해야 합니다.</p></article>
+            <article class="misconception"><span>03</span><p>“미래 확장을 모두 미리 넣어야 한다.” 검증되지 않은 미래 구분은 현재의 수집과 해석 비용을 만듭니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="judgment">
+          <span class="section-tag">18–20 MIN · JUDGMENT</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>
+              <code>배포</code> 아래의 실행 방식별 하위 타입은 방식에 따라 답이 달라지는 대표 질문이 있고,
+              각 원천에서 그 방식을 일관되게 판별할 수 있을 때 유용합니다.
+              그렇지 않다면 상위 타입과 속성으로 시작하고 반복되는 판단 차이가 확인될 때 특수화하는 편이 안전합니다.
+            </p>
+          </div>
+
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>모델의 깊이는 질문의 분해능과 원천의 판별 능력에 맞춰야 합니다.</li>
+            <li>세밀한 구분은 표현력과 함께 분류·수집·변경 비용을 늘립니다.</li>
+            <li>현재 질문에 충분한 깊이에서 시작하고 실제 오답과 반복 예외를 근거로 확장합니다.</li>
+          </ol>
+
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>원천의 해상도보다 깊은 모델은 빈 값과 임의 분류를 늘려 품질을 낮춥니다.</li>
+            <li>상위 개념은 공통 탐색에 강하고 하위 개념은 세부 차이를 묻는 질문에 강합니다.</li>
+            <li>“없다”와 “모른다”를 구분해야 운영 데이터의 누락을 사실의 부정으로 오해하지 않습니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2024-pub-3%E7%9F%A5%E8%AF%86%E5%BB%BA%E6%A8%A1.pdf" target="_blank" rel="noreferrer">2024-pub-3 지식 모델링</a>
+              · p.14–25: 본체 범위, 클래스 계층, 새 클래스 도입, 속성·관계·제약과 인스턴스
+            </li>
+          </ul>
+          <p>질문 분해능, 과잉 모델링 신호, 개방 세계 관점과 운영 비용의 연결은 학습 목적의 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson7.html">
+          <small>NEXT · LESSON 07</small>
+          <h2>추출은 텍스트를 그래프로 바꾸는 일이 아니다</h2>
+          <p>다음 강의에서는 지금까지 설계한 의미 구조에 원천의 사실을 채울 때 필요한 결정과 불확실성을 살펴봅니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

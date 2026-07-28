@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 17강: LLM과 KG는 대체 관계가 아니라 상호 보완 관계다" />
+  <title>17강 · LLM과 KG는 대체 관계가 아니라 상호 보완 관계다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true">
+    <span data-reading-progress></span>
+  </div>
+
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-3">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 17 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 03 · VALUE · LESSON 17</p>
+        <h1>LLM과 KG는 대체 관계가 아니라<br />상호 보완 관계다</h1>
+        <p class="lead">
+          자연어를 유연하게 다루는 능력과 사실을 구조적으로 보존하는 능력은 서로 다릅니다.
+          두 기술의 역할을 구분해야 결합의 가치와 한계를 함께 볼 수 있습니다.
+        </p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>LLM과 지식 그래프는 언어의 유연성과 지식의 명시성을 나눠 맡으며, 결합 뒤에도 품질 한계는 남습니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 관점</div>
+      <div class="time-step">3분 · 이유</div>
+      <div class="time-step">8분 · 개념</div>
+      <div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 정리</div>
+      <div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#goals">01 · 학습 목표</a>
+        <a href="#connection">02 · 이전 강의와 연결</a>
+        <a href="#situation">03 · 필요한 상황</a>
+        <a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a>
+        <a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a>
+        <a href="#judgment">08 · 적용 판단</a>
+        <a href="#misunderstanding">09 · 흔한 오해</a>
+        <a href="#summary">10 · 요약과 정리</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">0–2 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <p>
+            이 강의가 끝나면 <code>LLM for KG</code>와 <code>KG for LLM</code>을 구분하고,
+            한 기술이 다른 기술을 완전히 대신한다는 설명이 왜 부정확한지 판단할 수 있어야 합니다.
+          </p>
+          <div class="goals">
+            <article class="goal">
+              <span>01</span>
+              <p>LLM이 지식 그래프의 구축과 활용을 돕는 방향을 설명합니다.</p>
+            </article>
+            <article class="goal">
+              <span>02</span>
+              <p>지식 그래프가 LLM에 구조화된 외부 근거를 제공하는 이유를 설명합니다.</p>
+            </article>
+            <article class="goal">
+              <span>03</span>
+              <p>결합 뒤에도 남는 품질·최신성·해석 한계를 구분합니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="connection">
+          <span class="section-tag">CONNECTION</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>
+            16강은 질문에 맞는 경로와 부분 그래프를 찾는 법을 다뤘습니다.
+            이번 강의는 그 구조를 LLM의 자연어 이해·설명 능력과 연결해 서로의 역할을 구분합니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">2–5 MIN · WHY</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>
+              운영 문서 수백 개에서 장애, 서비스, 변경, 배포의 관계를 정리해야 한다고 가정해 봅시다.
+              LLM은 문장을 읽고 후보 엔티티와 관계를 빠르게 제안할 수 있지만, 같은 이름의 서비스를 혼동하거나 문장에 없는 관계를 보탤 수 있습니다.
+            </p>
+            <p>
+              반대로 지식 그래프는 확인된 대상과 관계를 일관된 구조로 보존하지만,
+              자연어 문서를 스스로 이해하거나 사용자에게 읽기 쉬운 답을 만드는 능력은 제한적입니다.
+            </p>
+          </div>
+          <p>
+            한쪽에는 언어의 유연성이 있고 다른 쪽에는 지식의 명시성이 있습니다.
+            결합의 출발점은 “누가 더 똑똑한가”가 아니라 “각 기술이 어떤 불확실성을 맡는가”입니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–13 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+
+          <div class="definition">
+            <span class="term">COMPLEMENTARY LOOP · 쉬운 정의</span>
+            <p>
+              LLM은 비정형 언어를 지식 후보로 바꾸고 지식을 자연어로 설명하는 데 강합니다.
+              지식 그래프는 확인된 엔티티와 관계를 외부의 명시적 근거로 제공해 LLM의 답변 범위를 좁힙니다.
+            </p>
+          </div>
+
+          <h3>LLM for KG: 언어에서 지식 후보로</h3>
+          <p>
+            LLM은 문서에서 엔티티·유형·관계 후보를 찾고, 짧은 관계 이름의 의미를 풀어 설명하며,
+            희소한 엔티티의 문맥을 보완하는 데 활용될 수 있습니다.
+            기존 강의에서 배운 추출과 보완 과정의 일부를 언어 모델이 돕는 방향입니다.
+          </p>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본은 온톨로지와 문맥을 함께 사용한 엔티티 인식, LLM을 활용한 엔티티 설명·관계 이해·구조 정보 보강 사례를 소개합니다.
+            다만 생성 결과는 지식 후보이지, 검증을 통과한 사실 그 자체가 아닙니다.
+          </p>
+
+          <h3>KG for LLM: 구조화된 근거에서 답으로</h3>
+          <p>
+            지식 그래프는 질문과 관련된 엔티티, 관계, 부분 그래프를 LLM에 외부 문맥으로 제공할 수 있습니다.
+            모델이 내부 기억만으로 답하게 두는 대신, 어떤 사실과 경로를 참고했는지 범위를 제한하는 것입니다.
+          </p>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본의 환각 억제 사례는 답변 속 주장을 뽑고 관련 삼중항과 부분 그래프를 찾아 사실 충돌을 점검합니다.
+            <code>KG-GPT</code> 사례는 질문을 나누고 엔티티와 관계를 대응시킨 뒤 관련 부분 그래프를 바탕으로 답을 판단합니다.
+          </p>
+
+          <h3>결합해도 사라지지 않는 불확실성</h3>
+          <p>
+            그래프가 오래됐거나 엔티티가 잘못 합쳐졌다면 구조화된 근거도 틀릴 수 있습니다.
+            관련 삼중항을 너무 많이 가져오면 잡음이 늘고, 너무 적게 가져오면 필요한 경로가 끊깁니다.
+            LLM도 제공된 근거를 무시하거나 관계의 방향을 잘못 읽을 수 있습니다.
+          </p>
+          <p>
+            따라서 지식 그래프는 답을 자동으로 진실로 만드는 장치가 아닙니다.
+            확인 가능한 외부 근거와 관계 경로를 제공해, 답변의 불확실성을 더 잘 드러내는 장치에 가깝습니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">STEP-BY-STEP DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="scenario">
+            <ol class="summary-lines">
+              <li><code>문서</code> → LLM이 엔티티·관계 후보를 제안합니다.</li>
+              <li><code>후보</code> → 기존 스키마·출처·문맥과 대조해 지식 그래프에 반영할 사실을 구분합니다.</li>
+              <li><code>질문</code> → 지식 그래프에서 관련 엔티티와 관계 경로를 찾습니다.</li>
+              <li><code>근거</code> → LLM이 선택된 사실을 설명하고, 답과 근거 경로를 함께 제시합니다.</li>
+            </ol>
+          </div>
+          <p class="diagram-caption">
+            <span class="source-badge added">추가 설명</span>
+            이 도식에서 봐야 할 핵심: 이 흐름은 제품 구현 절차가 아니라 두 방향의 역할을 한눈에 보기 위한 개념도입니다.
+            후보 생성과 사실 채택, 근거 제공과 자연어 설명을 같은 단계로 섞지 않는 것이 핵심입니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">13–17 MIN · COMPARE</span>
+          <h2>익숙한 기술과 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th>구성</th>
+                  <th>강점</th>
+                  <th>주요 약점</th>
+                  <th>판단 기준</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LLM 단독</td>
+                  <td>자연어 이해·요약·설명</td>
+                  <td>사실 충돌, 최신성, 근거 경로 불명확</td>
+                  <td>언어 작업이 중심이고 외부 사실 검증 요구가 낮은 상황</td>
+                </tr>
+                <tr>
+                  <td>KG 단독</td>
+                  <td>명시적 관계·다단계 경로·일관된 식별</td>
+                  <td>비정형 언어 처리와 자연스러운 설명의 제약</td>
+                  <td>정해진 관계 탐색만으로 해결되는 상황</td>
+                </tr>
+                <tr>
+                  <td>LLM + KG</td>
+                  <td>언어 유연성과 구조화된 근거의 결합</td>
+                  <td>두 시스템의 오류가 함께 전파될 수 있음</td>
+                  <td>관계 근거와 자연어 상호작용이 모두 필요한 상황</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>
+              어제 결제 장애를 해결한 변경과 그 변경을 포함한 배포를 찾아 달라는 요청이 들어왔습니다.
+              LLM은 요청에서 장애·변경·배포 후보를 파악하고 사용자의 표현을 구조화된 관계와 연결할 수 있습니다.
+            </p>
+            <p>
+              지식 그래프는 <code>장애가 서비스에 영향을 준다</code>,
+              <code>PR이 장애를 해결한다</code>, <code>배포가 PR을 포함한다</code>는 확인된 경로를 제공합니다.
+              LLM은 그 경로를 읽기 쉬운 답으로 바꾸고, 어떤 관계를 근거로 삼았는지 설명합니다.
+            </p>
+            <p>
+              그러나 <code>해결한다</code> 관계가 담당자의 추측에서 만들어졌거나 배포 후 관측이 반영되지 않았다면 답은 틀릴 수 있습니다.
+              자연스러운 문장과 구조화된 경로가 함께 있어도 사실 검증은 별개의 문제입니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="judgment">
+          <span class="section-tag">PRACTICE · DECIDE</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>
+              LLM이 장애 문서에서 추출한 <code>PR X가 장애 A를 해결한다</code>는 관계는 즉시 KG의 사실로 넣지 않습니다.
+              LLM의 결과는 후보이며, 문서 출처·관계 방향·대상 식별과 배포 후 관측이 맞는지 확인해야 합니다.
+              언어 해석은 LLM이 돕지만 사실 채택은 별도 판단입니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–19 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception">
+              <span>01</span>
+              <p>“LLM이 있으면 지식 그래프는 필요 없다.” 언어 모델의 내부 기억은 출처·최신성·관계 경로를 명시적으로 보존하는 외부 지식 구조와 역할이 다릅니다.</p>
+            </article>
+            <article class="misconception">
+              <span>02</span>
+              <p>“KG를 붙이면 환각이 사라진다.” 잘못된 그래프, 누락된 검색, 근거를 무시한 생성은 여전히 오답을 만듭니다.</p>
+            </article>
+            <article class="misconception">
+              <span>03</span>
+              <p>“LLM이 만든 삼중항은 바로 지식이다.” 추출 결과는 검증·식별·융합을 거쳐야 할 후보입니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li><code>LLM for KG</code>는 비정형 언어에서 지식 후보를 찾고 그래프 활용을 돕습니다.</li>
+            <li><code>KG for LLM</code>은 명시적 엔티티·관계·경로를 외부 근거로 제공합니다.</li>
+            <li>결합은 불확실성을 줄이고 드러낼 수 있지만, 품질과 최신성을 자동으로 보장하지는 않습니다.</li>
+          </ol>
+
+          <h3>개념 정리</h3>
+          <ol class="summary-lines">
+            <li>LLM이 문서에서 찾아낸 관계는 검증 전까지 지식 후보로 다룹니다.</li>
+            <li>지식 그래프는 LLM의 내부 지식을 대체하기보다 명시적인 외부 근거를 제공합니다.</li>
+            <li>잘못된 그래프와 누락된 검색, 근거를 무시한 생성은 결합 뒤에도 오답을 만듭니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2025-pub-9%20KG%E4%B8%8ELLM.pdf" target="_blank" rel="noreferrer">
+                2025-pub-9 KG와 LLM
+              </a>
+              · p.2–8: LLM 환각과 KG 기반 사실 충돌 점검, p.16–18: KG 강화 LLM의 주요 방향
+            </li>
+            <li>같은 자료 p.38–43, p.87–103: LLM을 활용한 엔티티 인식·지식 보완과 부분 그래프 기반 추론 사례</li>
+          </ul>
+          <p>운영 장애·PR·배포 사례와 상호 보완 흐름의 단계 구분은 원본 개념을 백엔드 경험에 연결한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson18.html">
+          <small>NEXT · LESSON 18</small>
+          <h2>Graph RAG의 차이는 더 많이 찾는 데 있지 않다</h2>
+          <p>다음 강의에서는 일반 RAG의 유사 문서 검색과 관계 경로·부분 그래프 검색의 차이를 살펴봅니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

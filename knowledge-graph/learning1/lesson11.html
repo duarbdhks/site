@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 11강: 사건은 관계에 변화와 시간을 더한다" />
+  <title>11강 · 사건은 관계에 변화와 시간을 더한다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-2">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 11 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 02 · TRUST · LESSON 11</p>
+        <h1>사건은 관계에<br />변화와 시간을 더한다</h1>
+        <p class="lead">정적인 사실만으로는 “무엇이 바뀌었고, 누가 참여했으며, 언제 일어났는가”를 설명하기 어렵습니다. 사건은 흩어진 관계를 하나의 변화 단위로 묶습니다.</p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>사건 구조는 단순 관계에 상태 변화, 참여자 역할, 시간 순서를 더합니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div><div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div><div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div><div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#previous">01 · 이전 강의와의 연결</a><a href="#goals">02 · 학습 목표</a>
+        <a href="#situation">03 · 익숙한 상황</a><a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a><a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a><a href="#misunderstanding">08 · 오해와 판단</a>
+        <a href="#summary">09 · 요약과 확인</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="previous">
+          <span class="section-tag">PREVIOUS CONNECTION</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>10강에서는 문장 속 두 엔티티 사이의 관계를 식별했습니다. 이제 관계가 성립하거나 사라지는 계기, 참여자의 역할, 발생 시점을 함께 묶어 동적인 지식으로 확장합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">0–2 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>사건을 단순 관계나 상태와 구분합니다.</p></article>
+            <article class="goal"><span>02</span><p>트리거·논항·역할·시점이 만드는 사건 구조를 설명합니다.</p></article>
+            <article class="goal"><span>03</span><p>선후 관계와 인과 관계를 섞지 않고 판단합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">2–5 MIN · WHY</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>“결제 서비스가 버전 42를 사용한다”는 관계는 현재 상태를 알려 줍니다. 그러나 버전 41에서 42로 언제, 어떤 배포를 통해, 누구의 변경으로 전환됐는지는 말하지 않습니다.</p>
+            <p>배포를 하나의 사건으로 보면 서비스·버전·변경·시점이 같은 변화 단위에 참여합니다. 장애와 복구도 각각 사건으로 표현해야 두 사건의 순서와 영향을 비교할 수 있습니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–13 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+          <div class="definition">
+            <span class="term">EVENT · 쉬운 정의</span>
+            <p>사건은 특정 시점이나 구간에 일어난 변화와 그 변화에 참여한 대상의 역할을 하나로 묶은 지식 단위입니다.</p>
+          </div>
+
+          <h3>1. 사건 언급</h3>
+          <p><span class="source-badge">저장소 근거</span> 원본 강의는 텍스트 안에서 사건을 표현하는 범위를 <code>Event Mention</code>으로 둡니다. 한 문장에 사건 표현이 있어도 현실의 같은 사건을 가리키는지는 별도 판단입니다.</p>
+
+          <h3>2. 트리거</h3>
+          <p>트리거는 사건 발생을 드러내는 핵심 표현입니다. 원본은 트리거 탐지와 트리거 유형 판정을 구분합니다. “배포했다”와 “롤백했다”는 모두 변화 표현이지만 사건 유형은 다릅니다.</p>
+
+          <h3>3. 논항</h3>
+          <p>논항은 사건에 참여하거나 영향을 받는 대상입니다. 배포 사건이라면 서비스, 변경 묶음, 버전, 실행 주체가 논항이 될 수 있습니다.</p>
+
+          <h3>4. 참여자 역할</h3>
+          <p>같은 엔티티도 사건마다 역할이 달라집니다. 원본 예시는 퇴임 사건에서 사람·조직·직위·시간을 분리하고 각각의 역할을 부여합니다. 역할이 빠지면 참여 목록은 남아도 변화의 구조는 사라집니다.</p>
+
+          <h3>5. 시점과 구간</h3>
+          <p>사건의 시간은 단순 속성이 아니라 다른 사건과 비교하는 기준입니다. 발생 시각, 시작과 종료, 유효 구간을 구분해야 “현재 상태”와 “과거에 일어난 변화”가 섞이지 않습니다.</p>
+
+          <h3>6. 선후 관계</h3>
+          <p><span class="source-badge added">추가 설명</span> 사건 A 뒤에 사건 B가 일어났다는 사실은 순서를 보여 줍니다. 동시에 발생하거나 일부 구간이 겹치는 경우도 있으므로 단일 타임스탬프만으로 모든 순서를 단정할 수 없습니다.</p>
+
+          <h3>7. 인과와 동적 지식</h3>
+          <p><span class="source-badge added">추가 설명</span> 선행 사건이 후행 사건의 원인이라는 결론에는 추가 근거가 필요합니다. 사건 구조는 인과를 검토할 틀을 제공하지만, 시간상 먼저였다는 이유만으로 원인 간선을 만들지는 않습니다.</p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="scenario">
+            <p><code>[PR C]</code> ─ 참여: 변경 ─▶ <code>[배포 D]</code> ◀─ 참여: 대상 ─ <code>[결제 서비스 B]</code></p>
+            <p><code>[배포 D]</code> ─ 결과 ─▶ <code>[버전 42 상태]</code> · <code>[시점 T]</code> ─ 발생 시각 ─▶ <code>[배포 D]</code></p>
+          </div>
+          <p class="diagram-caption">이 도식에서 봐야 할 핵심: 서비스와 버전을 직접 연결하는 것보다 배포 사건을 사이에 두면 누가, 무엇을, 언제 바꿨는지를 한 구조에서 설명할 수 있습니다.</p>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">13–17 MIN · COMPARE</span>
+          <h2>기술 관점 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>표현</th><th>잘 보존하는 것</th><th>놓치기 쉬운 것</th><th>적합한 판단</th></tr></thead>
+              <tbody>
+                <tr><td>상태 속성</td><td>현재 값</td><td>변경 과정과 참여자</td><td>현재 버전 확인</td></tr>
+                <tr><td>두 엔티티의 관계</td><td>직접 연결</td><td>발생 시점과 역할</td><td>서비스가 사용하는 버전 확인</td></tr>
+                <tr><td>이벤트 로그</td><td>발생 기록과 순서</td><td>도메인 의미의 통합</td><td>기록의 발생 순서 확인</td></tr>
+                <tr><td>사건 중심 지식</td><td>변화·역할·시간·결과</td><td>근거 없는 인과는 확정 못 함</td><td>상태 전환을 만든 변화 설명</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>14시 배포 뒤 14시 5분 오류율이 상승했고 14시 18분 롤백 뒤 회복됐다고 가정합니다. 세 기록을 관계 하나로 축약하면 “배포가 장애를 일으켰다”는 결론을 너무 일찍 고정하기 쉽습니다.</p>
+            <p>배포·오류 증가·롤백·회복을 네 사건으로 두고 각 시점, 대상 서비스, 버전, 관측 지표를 연결하면 순서는 분명해집니다. 원인 판단은 변경 범위와 같은 시간대의 다른 요인을 확인한 뒤 별도 근거로 남겨야 합니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–19 MIN · JUDGMENT</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“동사가 있으면 모두 사건이다.” 상태를 서술하는 표현과 실제 변화를 일으키는 표현은 구분해야 합니다.</p></article>
+            <article class="misconception"><span>02</span><p>“트리거만 찾으면 사건이 완성된다.” 참여자와 역할, 시간이 없으면 무엇이 어떻게 바뀌었는지 설명할 수 없습니다.</p></article>
+            <article class="misconception"><span>03</span><p>“먼저 일어난 사건이 원인이다.” 선후는 인과 판단의 조건일 수 있지만 충분한 증거는 아닙니다.</p></article>
+          </div>
+
+          <h3>적용 판단</h3>
+          <p>“배포 직후 장애가 발생했다”는 기록은 <code>배포 → 원인 → 장애</code>로 바로 연결하지 않습니다. 두 사건과 발생 시점, 대상 서비스, 관측 결과를 먼저 보존하고 “배포가 앞섰다”는 시간 관계만 확정합니다. 인과는 변경 내용과 대안 원인을 검토한 근거가 있을 때 별도로 표현합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>사건은 변화, 참여자 역할, 시간을 하나의 지식 단위로 묶습니다.</li>
+            <li>트리거 탐지와 사건 유형, 논항 식별과 역할 판정은 서로 다른 판단입니다.</li>
+            <li>선후 관계를 보존하되 인과 관계는 별도 근거로 확인해야 합니다.</li>
+          </ol>
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>서비스와 버전의 직접 관계만으로는 변경 과정, 참여자, 발생 시점을 설명하기 어렵습니다.</li>
+            <li>논항은 사건에 참여한 대상이고, 역할은 그 대상이 사건에서 수행한 의미입니다.</li>
+            <li>시간 순서는 사건의 전후를 보여 주지만 인과 관계를 확정하는 충분한 증거는 아닙니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul><li><a href="https://github.com/npubird/KnowledgeGraphCourse/tree/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7" target="_blank" rel="noreferrer">KnowledgeGraphCourse 고정 버전</a> · 이벤트 추출 강의 p.5, 8–10: 사건 언급, 트리거, 논항, 역할, 시간과 사건 추출 과제</li></ul>
+          <p>선후·인과의 구분과 배포·장애 사례는 원본 개념을 백엔드 판단에 연결한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson12.html">
+          <small>NEXT · LESSON 12</small>
+          <h2>융합의 첫 문제는 합치기가 아니라 같은 것 찾기다</h2>
+          <p>다음 강의에서는 여러 원천의 사건과 엔티티를 합치기 전에 같은 대상을 식별하는 근거를 살펴봅니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

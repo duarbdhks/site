@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 8강: 데이터 형태가 달라지면 실패 방식도 달라진다" />
+  <title>8강 · 데이터 형태가 달라지면 실패 방식도 달라진다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-2">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 08 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 02 · TRUST · LESSON 08</p>
+        <h1>데이터 형태가 달라지면<br />실패 방식도 달라진다</h1>
+        <p class="lead">추출은 같은 사실을 옮기는 단순 변환이 아닙니다. 원천이 의미를 드러내는 방식에 따라 잃기 쉬운 정보와 생기는 오류가 달라집니다.</p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>구조화·반구조화·비구조화 데이터는 각각 문맥을 드러내는 방식과 숨기는 정보가 다릅니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div><div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div><div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div><div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#connection">01 · 이전 연결</a><a href="#goals">02 · 학습 목표</a>
+        <a href="#situation">03 · 필요 상황</a><a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a><a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a><a href="#practice">08 · 적용과 정리</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="connection">
+          <span class="section-tag">0–2 MIN · CONNECT</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>7강에서는 지식 추출이 원천의 정보를 그래프 모양으로 바꾸는 일이 아니라, 무엇을 사실로 채택하고 어떤 문맥과 불확실성을 보존할지 결정하는 과정임을 배웠습니다. 이제 그 결정이 원천 데이터의 형태에 따라 어떻게 달라지는지 나눠 봅니다.</p>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">2–4 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>세 데이터 형태를 문법의 존재가 아니라 의미가 드러나는 정도로 구분합니다.</p></article>
+            <article class="goal"><span>02</span><p>원천별 대표 실패인 의미 부족, 구조 변동, 문맥 해석 오류를 설명합니다.</p></article>
+            <article class="goal"><span>03</span><p>한 가지 추출 관점으로 모든 원천을 다뤄서는 안 되는 이유를 판단합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">4–6 MIN · SITUATION</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>장애의 원인을 모으려 합니다. 데이터베이스에는 장애 번호와 서비스 식별자가 있고, 운영 문서에는 제목·태그·본문이 있으며, 채팅에는 “아까 그 배포 이후 다시 느려짐”이라는 문장이 남아 있습니다.</p>
+            <p>세 원천 모두 같은 장애를 말할 수 있습니다. 이때 출처의 신뢰도만 비교하기보다, 각 원천에서 명시된 정보와 별도 해석이 필요한 문맥을 먼저 구분해야 합니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">6–14 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+
+          <h3>1. 쉬운 정의</h3>
+          <div class="definition">
+            <span class="term">DATA SHAPE · 의미가 놓인 자리</span>
+            <p>구조화 데이터는 미리 정한 칸에, 반구조화 데이터는 반복되는 표식과 유연한 틀에, 비구조화 데이터는 자연어와 이미지의 문맥 속에 의미를 담습니다.</p>
+          </div>
+
+          <h3>2. 필요한 이유</h3>
+          <p>같은 “서비스”라도 테이블의 외래 키라면 대상을 가리키는 규칙이 드러납니다. 문서 제목이나 대화 속 이름이라면 별칭, 생략, 시점까지 해석해야 합니다. 형태를 무시하면 추출된 결과가 같은 모양이어도 오류의 원인을 설명할 수 없습니다.</p>
+
+          <h3>3. 구성 요소</h3>
+          <ul>
+            <li>명시적 스키마(미리 선언된 구조): 열의 이름, 타입, 제약처럼 의미 후보를 제한합니다.</li>
+            <li>반복 표식: 문서 필드, 표 제목, 링크처럼 느슨하지만 재사용되는 구조입니다.</li>
+            <li>암묵적 문맥(직접 쓰이지 않은 배경): 문장 순서, 대명사, 관행, 시점으로 해석됩니다.</li>
+            <li>출처와 불확실성: 누가 언제 어떤 근거로 남겼는지를 함께 봐야 합니다.</li>
+          </ul>
+
+          <h3>4. 작동 구조</h3>
+          <p>구조화 원천은 스키마를 개념·속성·인스턴스에 대응시키기 쉽지만, 원래 스키마에 없던 의미는 생기지 않습니다. 반구조화 원천은 표식이 단서가 되지만 출처마다 같은 필드의 뜻이 다를 수 있습니다. 비구조화 원천은 풍부한 맥락을 주는 대신 대상의 경계와 관계를 해석해야 합니다.</p>
+
+          <h3>5. 기존 방식과의 차이</h3>
+          <p>일반 데이터 변환은 정해진 입력을 정해진 출력 형태로 옮기는 데 집중합니다. 지식 추출은 출력이 기계가 해석할 의미 표현이어야 하므로, 값뿐 아니라 대상의 동일성·관계 유형·근거까지 결정합니다.</p>
+
+          <h3>6. 가능한 것과 불가능한 것</h3>
+          <p>여러 형태의 원천을 공통 개념으로 연결하면 한 질문에서 함께 탐색할 수 있습니다. 하지만 표에 없는 인과관계나 문장에 생략된 대상을 원천만으로 확정할 수는 없습니다. 추출은 근거보다 강한 사실을 만들어 내지 못합니다.</p>
+
+          <h3>7. 현실적인 한계</h3>
+          <p><span class="source-badge">저장소 근거</span> 원본 강의는 모호성·불완전성·불일관성을 공통 난제로 제시하고, 비구조화 원천의 단계적 추출에서 품질이 빠르게 낮아질 수 있다고 설명합니다. 원천 수가 늘면 사실의 양뿐 아니라 오류의 종류도 늘어납니다.</p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="definition">
+            <p>테이블 · 명시적 스키마<br />↓ 대응은 쉽지만 의미가 얕을 수 있음<br />개념 · 속성 · 인스턴스</p>
+            <p>문서 필드 · 반복 표식<br />↓ 구조 변동과 필드 의미를 해석<br />개념 · 속성 · 인스턴스</p>
+            <p>본문 · 대화 · 이미지<br />↓ 경계와 문맥을 해석<br />개념 · 관계 · 근거</p>
+          </div>
+          <p class="diagram-caption">이 도식에서 봐야 할 핵심: 출력 형식은 같아 보여도 원천별로 의미를 얻는 단서와 잃기 쉬운 정보가 다릅니다.</p>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">14–17 MIN · COMPARE</span>
+          <h2>데이터 형태 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>원천</th><th>의미의 위치</th><th>강한 점</th><th>대표 실패</th></tr></thead>
+              <tbody>
+                <tr><td>구조화</td><td>스키마·키·제약</td><td>일관된 대응과 반복 처리</td><td>스키마를 현실 의미로 오해</td></tr>
+                <tr><td>반구조화</td><td>필드·표식·링크</td><td>구조와 원문을 함께 보존</td><td>출처별 형식·뜻의 변동</td></tr>
+                <tr><td>비구조화</td><td>표현·문맥·서술</td><td>풍부한 사건과 이유</td><td>경계·동일성·관계의 모호성</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>교육 데이터에서 학습 활동 표는 학생·콘텐츠·완료 시각을 명시합니다. 교사 기록 문서는 “분수 문제에서 반복적으로 막힘”을 설명하고, 상담 메모는 “지난 단원 이후 자신감 저하”라는 맥락을 덧붙입니다.</p>
+            <p>표만 연결하면 완료 사실은 안정적으로 얻지만 어려움의 이유는 놓칩니다. 메모까지 읽으면 이유 후보를 얻지만 이를 확정 사실로 취급해서는 안 됩니다. 원천 형태에 맞춰 사실과 해석의 강도를 구분해야 합니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–18 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“구조화 데이터는 항상 정확하다.” 형식이 안정적이어도 열의 의미와 현실의 뜻이 다를 수 있습니다.</p></article>
+            <article class="misconception"><span>02</span><p>“비구조화 데이터는 구조가 없다.” 문장 순서와 표현 관습이라는 암묵적 구조가 있습니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="practice">
+          <span class="section-tag">18–19 MIN · JUDGMENT</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>장애 표의 <code>cause</code> 열과 회고 문서의 원인 문장을 같은 <code>원인이었다</code> 관계로 합치려는 경우에는 두 값의 의미 강도를 먼저 확인합니다.</p>
+            <p>표의 값이 최종 판정인지 초기 분류인지, 문서의 문장이 확정인지 가설인지, 작성 시점과 출처가 무엇인지 구분해야 합니다. 이 구분이 없으면 서로 다른 상태가 하나의 사실로 합쳐집니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>데이터 형태는 의미가 놓인 자리와 추출 실패의 방식을 결정합니다.</li>
+            <li>명시적 스키마는 해석을 줄이지만, 현실의 의미를 자동으로 보장하지 않습니다.</li>
+            <li>추출한 사실의 강도는 원천의 근거와 문맥보다 강할 수 없습니다.</li>
+          </ol>
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>반구조화 데이터는 유연한 표식을 제공하지만 출처마다 형식과 필드의 뜻이 달라질 수 있습니다.</li>
+            <li>구조화된 장애 표에도 판정 시점과 상태 정의처럼 스키마에 드러나지 않은 문맥이 남습니다.</li>
+            <li>원천별 오류를 구분하지 않으면 해석 오류를 단순 값 오류로 잘못 진단할 수 있습니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li><a href="https://github.com/npubird/KnowledgeGraphCourse/tree/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7" target="_blank" rel="noreferrer">2025 지식 추출 기초: 문제와 방법</a> · p.4–12: 원천 유형, 정보 추출과 지식 추출, 모호성·불완전성·불일관성</li>
+            <li>같은 자료 p.14–19, p.21–38: 관계형 데이터베이스·백과 지식·비구조화 데이터의 추출 특성</li>
+          </ul>
+          <p><span class="source-badge added">추가 설명</span> 장애·교육 사례와 “사실의 의미 강도” 구분은 원본 개념을 백엔드 경험에 연결한 해설입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson9.html">
+          <small>NEXT · LESSON 09</small>
+          <h2>엔티티 인식의 핵심은 이름이 아니라 동일성이다</h2>
+          <p>다음 강의에서는 원천에서 발견한 문자열이 실제 세계의 어느 대상을 가리키는지 식별합니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 15강: 추론은 없는 사실을 상상하는 일이 아니다" />
+  <title>15강 · 추론은 없는 사실을 상상하는 일이 아니다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-3">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 15 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 03 · VALUE · LESSON 15</p>
+        <h1>추론은 없는 사실을<br />상상하는 일이 아니다</h1>
+        <p class="lead">추론은 이미 표현된 사실과 규칙을 따라, 그 전제로부터 성립하는 결론 후보를 드러내는 과정입니다.</p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>명시되지 않은 결론은 이미 표현된 사실과 규칙에서 도출되어야 합니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div><div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div><div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div><div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#previous">01 · 이전 연결</a><a href="#goals">02 · 목표</a>
+        <a href="#situation">03 · 상황</a><a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 도식</a><a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 사례</a><a href="#practice">08 · 적용 판단</a>
+        <a href="#summary">09 · 요약과 확인</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="previous">
+          <span class="section-tag">0–2 MIN · CONNECT</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>14강에서는 그래프가 대표 질문에 답할 만큼 정확하고 충분하며 최신인지 판단했습니다. 이제 그 품질 경계를 전제로, 직접 저장되지 않은 결론을 어떻게 도출하는지 살펴봅니다.</p>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">CORE VIEW &amp; GOALS</span>
+          <h2>학습 목표</h2>
+          <p>명시되지 않은 지식은 확인 가능한 전제와 규칙, 관계 경로를 근거로 도출합니다.</p>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>명시 사실과 추론 결론을 구분합니다.</p></article>
+            <article class="goal"><span>02</span><p>규칙 추론과 경로 추론의 차이를 설명합니다.</p></article>
+            <article class="goal"><span>03</span><p>결론의 설명 가능성과 한계를 판단합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">2–5 MIN · SITUATION</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>그래프에는 “배포 D가 PR C를 포함한다”, “PR C가 장애 A를 해결한다”, “장애 A가 결제 서비스에 영향을 준다”가 저장되어 있습니다.</p>
+            <p>“배포 D와 결제 서비스의 관련성”이라는 결론은 직접 저장되지 않았습니다. 그래도 세 관계를 잇는 경로와 관련성 규칙이 있다면 결론 후보와 그 근거를 함께 제시할 수 있습니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–13 MIN · CORE MODEL</span>
+          <h2>핵심 개념 7요소</h2>
+          <h3>1. 쉬운 정의</h3>
+          <p>추론은 그래프에 명시된 사실과 의미 규칙을 적용해, 전제가 참일 때 따라오는 결론을 도출하는 과정입니다.</p>
+          <h3>2. 왜 필요한가</h3>
+          <p>모든 가능한 결론을 미리 저장하면 중복이 커지고 변화에 취약합니다. 기본 사실과 규칙을 분리하면 질문 시점에 필요한 결론을 만들 수 있습니다.</p>
+          <h3>3. 무엇으로 구성되는가</h3>
+          <p><code>명시 사실</code>, 적용 조건인 <code>규칙</code>, 여러 관계를 잇는 <code>경로</code>, 도출된 <code>결론</code>, 결론이 나온 <code>근거</code>가 필요합니다.</p>
+          <h3>4. 어떻게 작동하는가</h3>
+          <p>규칙 추론은 타입·계층·관계 조건을 적용합니다. 경로 추론은 여러 홉으로 이어진 관계가 질문의 의미 패턴과 맞는지 확인합니다. 둘 다 전제가 바뀌면 결론도 다시 판단해야 합니다.</p>
+          <h3>5. 무엇을 가능하게 하는가</h3>
+          <p>직접 연결되지 않은 대상 사이의 후보 관계를 찾고, “어떤 사실과 규칙 때문에 이 결론에 도달했는가”를 경로로 설명할 수 있습니다.</p>
+          <h3>6. 어디까지가 한계인가</h3>
+          <p>추론은 전제보다 더 확실할 수 없습니다. 누락·오류·낡은 사실을 따라 만든 결론도 같은 결함을 물려받으며, 경로가 길수록 확인해야 할 전제가 늘어납니다.</p>
+          <h3>7. 최종 판단 기준</h3>
+          <p>좋은 추론 결과는 결론만 보여주지 않습니다. 사용한 사실, 적용한 규칙, 경로 길이, 미확정 전제를 함께 보여줘 사람이 결론의 강도를 판단하게 합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="scenario">
+            <p><code>배포 D</code> ─포함→ <code>PR C</code> ─해결→ <code>장애 A</code> ─영향→ <code>결제 서비스</code></p>
+            <p><code>명시 사실 3개</code> + <code>관련성 규칙</code> → “배포 D는 결제 서비스 장애의 해결 경로에 있다”</p>
+          </div>
+          <p class="diagram-caption">이 도식에서 봐야 할 핵심: 마지막 문장은 새로 상상한 사실이 아니라, 어떤 경로와 규칙을 사용했는지 설명할 수 있는 도출 결과입니다.</p>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">13–17 MIN · COMPARE</span>
+          <h2>기술 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>방식</th><th>근거</th><th>강점</th><th>주의점</th></tr></thead>
+              <tbody>
+                <tr><td>규칙 추론</td><td>타입·계층·관계 규칙</td><td>판단 조건이 명확함</td><td>표현력이 커지면 판단 비용도 증가</td></tr>
+                <tr><td>경로 추론</td><td>다중 홉 관계</td><td>연결 근거를 따라가기 쉬움</td><td>긴 경로는 우연한 관련성을 만들 수 있음</td></tr>
+                <tr><td>통계적 예측</td><td>학습된 패턴과 유사성</td><td>누락 관계 후보를 넓게 찾음</td><td>논리적 성립과 예측 점수는 다름</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>통계적 예측은 지식 보완 후보를 찾는 데 유용하지만, 규칙으로 보장된 결론과 같은 강도로 표현하면 안 됩니다.</p>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <p>장애 A가 서비스 B에 영향을 주고, PR C가 장애 A를 해결하며, 배포 D가 PR C를 포함한다고 합시다. 이 경로는 배포 D를 서비스 B의 해결 흐름과 연결합니다. 그러나 “배포 D가 장애를 실제로 종결했다”는 결론에는 배포 후 관측 사실이 더 필요합니다. 관계 경로가 인과 검증을 대신하지는 않습니다.</p>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“추론은 AI가 모르는 사실을 창작하는 것이다.” 추론은 명시된 전제와 규칙의 범위 안에서 결론을 도출합니다.</p></article>
+            <article class="misconception"><span>02</span><p>“경로가 있으면 인과가 증명된다.” 관련 경로와 인과 증거는 다릅니다.</p></article>
+            <article class="misconception"><span>03</span><p>“홉이 많을수록 통찰이 깊다.” 길어진 경로는 오류와 우연한 연결도 함께 늘립니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="practice">
+          <span class="section-tag">17–19 MIN · JUDGMENT</span>
+          <h2>적용 판단</h2>
+          <p>“모든 결제 장애는 중요 사건이다”라는 규칙과 “장애 A는 결제 장애다”라는 사실이 있으면 “장애 A는 중요 사건이다”라는 결론을 도출할 수 있습니다.</p>
+          <div class="definition"><span class="term">판단</span><p>도출 결론은 명시 사실과 구분해야 합니다. 사용한 규칙과 전제, 도출 시점을 함께 보여줘야 규칙 변경이나 전제 오류가 생겼을 때 결론을 다시 평가할 수 있습니다.</p></div>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>추론은 사실과 규칙에서 성립하는 결론을 도출하는 과정입니다.</li>
+            <li>규칙 추론과 경로 추론은 근거가 다르며, 통계적 예측과도 구분해야 합니다.</li>
+            <li>결론의 신뢰도는 전제 품질과 설명 가능한 도출 경로를 넘지 못합니다.</li>
+          </ol>
+          <h3>개념 정리</h3>
+          <ol class="summary-lines">
+            <li>명시 사실과 추론 결론을 분리하면 전제나 규칙이 바뀔 때 결론을 다시 평가할 수 있습니다.</li>
+            <li>관계 경로는 연결 근거를 보여주지만 인과관계를 자동으로 증명하지는 않습니다.</li>
+            <li>추론 결과에는 사용한 사실, 규칙, 경로, 미확정 전제를 함께 제시해야 합니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li><a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2024-pub-2%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA.pdf" target="_blank" rel="noreferrer">2024-pub-2 지식 표현</a> · p.12–13, 24–35: 규칙 시스템, 설명 논리와 추론의 표현력·복잡성 균형</li>
+            <li><a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2024-pub-3%E7%9F%A5%E8%AF%86%E5%BB%BA%E6%A8%A1.pdf" target="_blank" rel="noreferrer">2024-pub-3 지식 모델링</a> · p.48, 64: 관계 제약을 통한 도출 사례와 추론 규칙의 역할</li>
+          </ul>
+          <p>장애·PR·배포의 다중 홉 사례는 원본 추론 개념을 백엔드 경험에 연결한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" id="next" href="lesson16.html">
+          <small>다음 강의 연결 · LESSON 16</small>
+          <h2>그래프 검색은 값 대신 관계의 모양을 찾는다</h2>
+          <p>추론의 근거가 되는 경로와 부분 그래프를 질문에서 어떻게 식별하는지 살펴봅니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

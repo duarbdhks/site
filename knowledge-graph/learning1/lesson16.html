@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 16강: 그래프 검색은 값 대신 관계의 모양을 찾는다" />
+  <title>16강 · 그래프 검색은 값 대신 관계의 모양을 찾는다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-3">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 16 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 03 · VALUE · LESSON 16</p>
+        <h1>그래프 검색은 값 대신<br />관계의 모양을 찾는다</h1>
+        <p class="lead">그래프 검색의 중심은 특정 값 하나가 아니라, 질문을 만족하는 대상·관계·방향의 부분 구조입니다.</p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>여러 대상의 관계를 요구하는 질문은 경로와 부분 구조를 찾는 문제로 바뀝니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div><div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div><div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div><div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#previous">01 · 이전 연결</a><a href="#goals">02 · 목표</a>
+        <a href="#situation">03 · 상황</a><a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 도식</a><a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 사례</a><a href="#practice">08 · 적용 판단</a>
+        <a href="#summary">09 · 요약과 확인</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="previous">
+          <span class="section-tag">0–2 MIN · CONNECT</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>15강에서는 추론이 명시 사실과 관계 경로를 근거로 결론을 도출한다는 점을 배웠습니다. 이번에는 그 근거가 되는 경로와 부분 구조를 질문에서 어떻게 찾는지 살펴봅니다.</p>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">CORE VIEW &amp; GOALS</span>
+          <h2>학습 목표</h2>
+          <p>여러 대상의 관계와 방향을 요구하는 질문은 값 조회가 아니라 관계 구조 탐색으로 다룹니다.</p>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>값 조건과 관계 패턴을 구분합니다.</p></article>
+            <article class="goal"><span>02</span><p>경로 탐색과 부분 그래프의 역할을 설명합니다.</p></article>
+            <article class="goal"><span>03</span><p>질문의 결과 범위를 먼저 제한합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">2–5 MIN · SITUATION</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>“심각도가 높은 장애”는 속성값으로 찾을 수 있습니다. 하지만 “결제 서비스에 영향을 주었고, 수정 PR이 있으며, 아직 운영 배포에 포함되지 않은 장애”는 여러 대상과 관계의 모양을 동시에 만족해야 합니다.</p>
+            <p>이 질문의 답은 한 테이블의 행이나 한 문서가 아닙니다. 조건에 맞는 작은 부분 그래프입니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">5–13 MIN · CORE MODEL</span>
+          <h2>핵심 개념 7요소</h2>
+          <h3>1. 쉬운 정의</h3>
+          <p>그래프 검색은 질문에서 요구한 엔티티 유형, 관계 유형, 방향, 속성 조건을 만족하는 경로나 부분 그래프를 찾는 일입니다.</p>
+          <h3>2. 왜 필요한가</h3>
+          <p>운영 질문은 여러 시스템의 대상을 가로지릅니다. 관계 패턴으로 바꾸면 저장 위치가 아니라 의미 연결을 기준으로 답을 모을 수 있습니다.</p>
+          <h3>3. 무엇으로 구성되는가</h3>
+          <p><code>시작점</code>, 찾으려는 <code>대상 유형</code>, 허용할 <code>관계</code>와 <code>방향</code>, <code>경로 길이</code>, 속성·시간의 <code>범위 조건</code>, 반환할 <code>부분 그래프</code>가 필요합니다.</p>
+          <h3>4. 어떻게 작동하는가</h3>
+          <p>자연어 질문에서 명사만 뽑는 것이 아니라 관계를 읽습니다. “영향을 준”, “해결한”, “포함되지 않은”을 각각 관계와 부재 조건으로 바꾸고, 이어지는 구조 전체가 맞는 후보만 남깁니다.</p>
+          <h3>5. 무엇을 가능하게 하는가</h3>
+          <p>이름을 정확히 모르는 대상도 주변 관계로 찾을 수 있고, 결과가 나온 연결 경로를 함께 제시해 탐색 이유를 설명할 수 있습니다.</p>
+          <h3>6. 어디까지가 한계인가</h3>
+          <p>관계 종류와 경로 길이를 열어 두면 후보가 폭발합니다. 경로가 있다는 사실만으로 관련성이나 인과성이 충분하다고 단정할 수도 없습니다.</p>
+          <h3>7. 최종 판단 기준</h3>
+          <p><span class="source-badge added">추가 설명</span> 좋은 관계 검색은 “얼마나 많이 찾았는가”보다 질문에 필요한 구조와 범위를 얼마나 분명히 제한했는가로 평가합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="scenario">
+            <p><code>찾을 장애</code> ─영향→ <code>결제 서비스</code><br /><code>찾을 PR</code> ─해결→ <code>찾을 장애</code><br /><code>찾을 배포</code> ─포함→ <code>찾을 PR</code> + <code>환경=운영</code></p>
+          </div>
+          <p class="diagram-caption">이 도식에서 봐야 할 핵심: ‘찾을’ 표시는 결과로 식별할 대상을 뜻합니다. 검색 결과는 세 값의 목록이 아니라 이 관계 모양을 만족하는 부분 그래프입니다.</p>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">13–17 MIN · COMPARE</span>
+          <h2>기술 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>검색 방식</th><th>찾는 것</th><th>강한 질문</th><th>결과 범위</th></tr></thead>
+              <tbody>
+                <tr><td>값·필터 검색</td><td>정확한 속성값</td><td>심각도와 기간이 맞는 장애</td><td>행·문서 단위</td></tr>
+                <tr><td>전문 검색</td><td>단어와 의미 유사성</td><td>장애 원인을 설명한 문서</td><td>관련 문서 후보</td></tr>
+                <tr><td>그래프 검색</td><td>관계 패턴과 경로</td><td>서비스–장애–PR–배포 연결</td><td>경로·부분 그래프</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>세 방식은 경쟁 관계가 아닙니다. 값은 범위를 줄이고, 전문 검색은 원문을 찾으며, 그래프 검색은 관계 구조를 확인합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <p>배포 전 점검에서 “이 PR이 해결하는 장애와 영향을 받는 서비스, 같은 장애를 건드린 다른 변경”을 찾는다고 합시다. PR 번호만 조회하면 시작점만 얻습니다. 관계 패턴을 따라 장애와 서비스, 다른 PR까지 범위를 넓히되 관계 종류와 홉 수를 제한해야 검토 가능한 결과가 됩니다.</p>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“그래프 검색은 조인보다 항상 빠르다.” 핵심 차이는 속도가 아니라 질문의 관계 구조를 직접 다루는 방식입니다.</p></article>
+            <article class="misconception"><span>02</span><p>“모든 경로를 열면 더 좋은 답이 나온다.” 범위가 넓어질수록 우연한 연결과 결과 폭발이 커집니다.</p></article>
+            <article class="misconception"><span>03</span><p>“관계 검색이 원문 검색을 대체한다.” 관계 경로는 구조를 주고, 원문은 판단에 필요한 세부 맥락을 줍니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="practice">
+          <span class="section-tag">17–19 MIN · JUDGMENT</span>
+          <h2>적용 판단</h2>
+          <p>“결제 서비스와 연결된 모든 것”을 찾는 검색은 탐색 시작점으로는 가능하지만 판단 범위로는 너무 넓습니다.</p>
+          <div class="definition"><span class="term">판단</span><p>관계 유형, 방향, 기간, 최대 경로 길이, 반환할 대상 유형을 정해야 결과 범위와 의미를 설명할 수 있습니다.</p></div>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>그래프 검색은 값 하나보다 엔티티와 관계가 이루는 패턴을 찾습니다.</li>
+            <li>경로 길이·관계 유형·방향·시간 범위를 제한해야 결과 의미가 선명해집니다.</li>
+            <li>값 검색, 원문 검색, 관계 검색은 서로 다른 질문을 담당하며 함께 사용할 수 있습니다.</li>
+          </ol>
+          <h3>개념 정리</h3>
+          <ol class="summary-lines">
+            <li>단일 속성 조건은 값 검색으로 충분하지만 여러 대상의 연결은 관계 패턴이 필요합니다.</li>
+            <li>경로 길이를 제한하지 않으면 결과 폭발과 우연한 연결이 늘어납니다.</li>
+            <li>부분 그래프는 값 목록과 함께 결과가 성립한 관계 구조를 보여줍니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li><a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2024-pub-2%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA.pdf" target="_blank" rel="noreferrer">2024-pub-2 지식 표현</a> · p.3, 34: 지식 검색의 서비스 위치와 검색 문제</li>
+            <li><a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2024-pub-3%E7%9F%A5%E8%AF%86%E5%BB%BA%E6%A8%A1.pdf" target="_blank" rel="noreferrer">2024-pub-3 지식 모델링</a> · p.12, 64: 온톨로지의 검색·질문 지원과 질의 구성 역할</li>
+          </ul>
+          <p>패턴 질의, 부분 그래프, 결과 범위의 백엔드 사례는 원본의 검색 위치를 구체화한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" id="next" href="lesson17.html">
+          <small>다음 강의 연결 · LESSON 17</small>
+          <h2>LLM과 KG는 대체 관계가 아니라 상호 보완 관계다</h2>
+          <p>관계 구조를 다루는 지식 그래프와 언어를 다루는 LLM이 어떤 약점을 서로 보완하는지 살펴봅니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

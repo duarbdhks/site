@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 5강: 좋은 모델은 현실을 복사하지 않고 질문을 보존한다" />
+  <title>5강 · 좋은 모델은 현실을 복사하지 않고 질문을 보존한다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 05 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 01 · STRUCTURE · LESSON 05</p>
+        <h1>좋은 모델은 현실을 복사하지 않고<br />질문을 보존한다</h1>
+        <p class="lead">
+          현실을 빠짐없이 옮기는 모델은 만들 수도, 유지할 수도 없습니다.
+          모델링은 답해야 할 질문을 기준으로 현실의 일부를 의도적으로 선택하는 일입니다.
+        </p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>엔티티·관계·속성의 경계는 보존해야 할 질문에서 결정됩니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div>
+      <div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div>
+      <div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div>
+      <div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#previous">01 · 이전 연결</a>
+        <a href="#goals">02 · 학습 목표</a>
+        <a href="#situation">03 · 필요한 상황</a>
+        <a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a>
+        <a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a>
+        <a href="#judgment">08 · 판단과 요약</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="previous">
+          <span class="section-tag">0–2 MIN · CONNECT</span>
+          <h2>이전 강의와 연결</h2>
+          <p>
+            4강에서는 온톨로지를 개념과 관계의 뜻을 공유하는 의미 계약으로 보았습니다.
+            이제 그 계약을 실제 도메인에 적용하며, 어떤 현실을 모델 안에 넣고 무엇을 밖에 둘지 결정합니다.
+          </p>
+          <div class="definition">
+            <span class="term">CORE VIEW</span>
+            <p>현실을 얼마나 많이 담을지가 아니라, 어떤 질문을 안정적으로 보존할지를 먼저 묻습니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">2–4 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>질문에서 핵심 개념과 관계를 찾아내는 이유를 설명합니다.</p></article>
+            <article class="goal"><span>02</span><p>엔티티·관계·속성 사이의 경계를 목적에 맞게 판단합니다.</p></article>
+            <article class="goal"><span>03</span><p>타입 계층과 관계 방향이 질문 가능성을 어떻게 바꾸는지 구분합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">4–6 MIN · SITUATION</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>
+              운영 지식을 묶기 위해 서비스, 장애, 경보, 배포, 담당 팀, 고객 문의를 모두 연결한다고 가정해 봅시다.
+              기존 테이블의 모든 열을 노드와 속성으로 옮기면 정보는 많아 보입니다.
+            </p>
+            <p>
+              그러나 배포와 장애 사이의 의미 관계가 없으면 둘의 시간상 겹침을 묻는 질문에 답하기 어렵습니다.
+              반대로 사용하지 않을 화면 색상까지 모델링하면 변경 비용만 늘어납니다.
+            </p>
+          </div>
+          <p><span class="source-badge added">추가 설명</span> 좋은 모델은 데이터의 사본이 아니라 중요한 질문을 잃지 않는 관점입니다.</p>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">6–14 MIN · SEVEN ELEMENTS</span>
+          <h2>핵심 개념 7요소</h2>
+
+          <h3>1. 쉬운 정의</h3>
+          <p>
+            질문 중심 모델링(답해야 할 질문에서 시작하는 설계)은 특정 사용자가 특정 질문에 답하도록 현실을 단순화하는 일입니다.
+            같은 결제 도메인도 정산, 장애 분석, 고객 지원은 서로 다른 개념과 관계를 요구합니다.
+          </p>
+
+          <h3>2. 필요한 이유</h3>
+          <p>
+            원본 강의는 첫 단계에서 영역, 용도, 다룰 정보, 답할 질문, 사용자와 관리 주체를 정하라고 설명합니다.
+            이때 역량 질문(모델이 반드시 답해야 하는 질문)이 범위를 시험하는 기준이 됩니다.
+          </p>
+
+          <h3>3. 구성 요소</h3>
+          <p>
+            구성 요소는 개념 경계, 엔티티·관계·속성, 타입 계층, 관계 방향입니다. 이름이 있다고 모두 독립 엔티티가 되는 것은 아닙니다.
+            자체 정체성과 생명주기, 여러 관계에서의 재사용이 필요하면 엔티티 후보가 되고, 한 대상을 설명하는 값이면 속성 후보가 됩니다.
+          </p>
+
+          <h3>4. 작동 구조</h3>
+          <p>
+            질문에서 중요한 용어를 찾고, 개념 경계를 정한 뒤, 엔티티·관계·속성과 계층으로 표현하고, 질문을 다시 따라가며 검증합니다.
+            장애는 여러 서비스와 변경에 연결되므로 엔티티가 자연스럽고, 심각도는 값을 표시하는 데 그친다면 속성으로 충분합니다.
+            상위 타입은 공통 질문을 묶고 하위 타입은 차이를 표현합니다.
+            <code>변경</code> 아래에 <code>코드 변경</code>과 <code>설정 변경</code>을 두면 모든 변경을 함께 찾으면서 유형별 차이도 보존할 수 있습니다.
+            <code>배포가 변경을 포함한다</code>와 <code>변경이 배포에 포함된다</code>는 같은 사실을 다른 탐색 방향에서 표현합니다.
+            기준 방향을 정하면 명명과 해석이 일관되고, 반대 방향이 필요할 때도 의미가 흐려지지 않습니다.
+          </p>
+
+          <h3>5. 기존 방식과의 차이</h3>
+          <p>
+            기존 데이터 구조를 그대로 복제하는 접근은 이미 저장된 필드와 참조에서 시작합니다.
+            질문 중심 모델링은 답을 바꾸는 의미를 먼저 고르고, 원천의 필드는 그 의미를 뒷받침하는 재료로 봅니다.
+          </p>
+
+          <h3>6. 가능한 것과 불가능한 것</h3>
+          <p>
+            공통 의미가 있으면 출처가 다른 장애·배포·변경을 하나의 질문 경로로 탐색할 수 있습니다.
+            하지만 모델만으로 누락된 사실을 만들거나, 시간상 연관을 인과관계로 확정할 수는 없습니다.
+          </p>
+
+          <h3>7. 현실적인 한계</h3>
+          <p>
+            모델을 완성된 그림으로 평가하지 말고 대표 질문을 따라가며 점검합니다.
+            답에 필요한 대상, 관계, 조건이 없으면 부족한 모델이고, 어떤 질문에도 쓰이지 않는 구분이 많다면 과한 모델일 수 있습니다.
+            이해관계자마다 같은 용어의 경계를 다르게 볼 수 있고, 질문이 바뀌면 모델도 다시 조정해야 합니다.
+          </p>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본 강의는 영역과 범위 결정, 기존 본체 재사용, 중요 용어 열거, 클래스와 계층 정의,
+            속성과 관계 및 제한 정의, 인스턴스 생성의 순서로 본체 구축 방법을 설명합니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>질문에서 모델로</h2>
+          <div class="diagram-lab">
+            <p>관점 · 결제 장애를 완화한 배포를 찾는 질문</p>
+            <p>대상 · 서비스 ← 장애 ← 변경 ← 배포</p>
+            <p>의미 · 영향을 받는다 · 완화된다 · 포함된다</p>
+            <p>조건 · 운영 환경 · 발생 시점 · 배포 시점</p>
+            <p>검증 · 이 경로가 질문의 답과 근거를 설명하는지 확인</p>
+            <p class="diagram-caption">
+              이 도식에서 봐야 할 핵심: 명사 목록에서 시작하지 않고, 질문이 요구하는 대상·관계·조건을 역으로 찾습니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">14–17 MIN · COMPARE</span>
+          <h2>관련 기술과 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>관점</th><th>출발점</th><th>주요 경계</th><th>좋은 결과</th></tr></thead>
+              <tbody>
+                <tr><td>ER 모델</td><td>저장할 데이터와 무결성</td><td>테이블·열·키</td><td>일관된 기록과 트랜잭션</td></tr>
+                <tr><td>도메인 모델</td><td>업무 행위와 규칙</td><td>책임·상태·생명주기</td><td>업무 언어와 동작의 정렬</td></tr>
+                <tr><td>온톨로지 모델</td><td>공유할 질문과 의미</td><td>개념·계층·관계·제약</td><td>출처를 넘는 공통 해석</td></tr>
+                <tr><td>검색 색인</td><td>찾을 문서와 표현</td><td>필드·토큰·관련성</td><td>빠른 발견과 원문 접근</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>네 관점은 경쟁 관계가 아닙니다. 저장, 행위, 의미, 발견이라는 서로 다른 질문에 최적화되어 있으므로 목적을 섞지 않는 것이 중요합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>
+              팀이 “최근 배포 뒤 오류율이 오른 서비스와 관련 변경을 찾고 싶다”고 합의했습니다.
+              이 질문은 서비스, 배포, 변경, 관측 신호를 주요 엔티티로 끌어냅니다.
+            </p>
+            <p>
+              <code>배포가 변경을 포함한다</code>, <code>배포가 서비스에 적용된다</code>,
+              <code>관측 신호가 서비스를 관측한다</code>는 관계가 필요합니다.
+              반면 배포 문서의 모든 서식 정보는 질문에 기여하지 않으므로 모델 밖에 둘 수 있습니다.
+            </p>
+          </div>
+          <p>
+            이 모델은 배포가 오류 증가의 원인이라고 자동 확정하지 않습니다.
+            시간상 연관된 후보와 근거 경로를 보존하고, 인과 판단에 필요한 관측을 드러내는 데 목적이 있습니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–18 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“현실을 자세히 복사할수록 정확하다.” 목적 없는 세부는 정확성보다 변경 부담을 키웁니다.</p></article>
+            <article class="misconception"><span>02</span><p>“명사는 엔티티, 동사는 관계다.” 문법은 후보를 주지만 정체성·재사용·질문 목적이 최종 경계를 정합니다.</p></article>
+            <article class="misconception"><span>03</span><p>“처음부터 완전한 계층을 만들 수 있다.” 질문과 사례로 반복 검증하며 경계를 조정해야 합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="judgment">
+          <span class="section-tag">18–20 MIN · JUDGMENT</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>
+              장애의 <code>심각도</code>를 필터링하고 표시하는 값으로만 사용한다면 속성으로 충분합니다.
+              심각도 기준의 버전, 조직별 정의, 변경 이력, 다른 기준과의 매핑을 질문해야 한다면 독립 엔티티가 유리합니다.
+              정답은 단어가 아니라 필요한 질문에 달려 있습니다.
+            </p>
+          </div>
+
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>모델링의 출발점은 데이터 목록이 아니라 답해야 할 질문입니다.</li>
+            <li>엔티티·관계·속성의 경계는 정체성, 재사용, 생명주기와 질문으로 판단합니다.</li>
+            <li>대표 질문을 따라가며 빠진 의미와 쓰이지 않는 세부를 함께 찾습니다.</li>
+          </ol>
+
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>기존 테이블의 모든 열을 옮기는 방식은 저장 구조를 복제할 뿐 질문의 의미를 보장하지 않습니다.</li>
+            <li>타입 계층은 상위 타입으로 공통 질문을 묶고 하위 타입으로 세부 차이를 보존합니다.</li>
+            <li>관계의 기준 방향을 합의하면 운영 지식의 탐색과 해석이 일관됩니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2024-pub-3%E7%9F%A5%E8%AF%86%E5%BB%BA%E6%A8%A1.pdf" target="_blank" rel="noreferrer">2024-pub-3 지식 모델링</a>
+              · p.11–25: 본체 공학, 영역과 범위, 용어, 클래스 계층, 속성·관계·제약, 인스턴스
+            </li>
+          </ul>
+          <p>역량 질문, 운영 장애 모델과 ER·도메인 모델·검색 색인의 비교는 원본 개념을 백엔드 경험에 연결한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson6.html">
+          <small>NEXT · LESSON 06</small>
+          <h2>모델의 깊이는 정답보다 비용을 결정한다</h2>
+          <p>다음 강의에서는 좋은 모델을 어디까지 세밀하게 만들지, 적정 깊이와 확장 비용의 균형을 판단합니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

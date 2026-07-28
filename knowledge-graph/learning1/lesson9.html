@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 9강: 엔티티 인식의 핵심은 이름이 아니라 동일성이다" />
+  <title>9강 · 엔티티 인식의 핵심은 이름이 아니라 동일성이다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html#act-2">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 09 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 02 · TRUST · LESSON 09</p>
+        <h1>엔티티 인식의 핵심은<br />이름이 아니라 동일성이다</h1>
+        <p class="lead">문자열을 발견하는 것과 현실의 대상을 식별하는 것은 다른 문제입니다. 경계·타입·문맥을 거쳐 “어느 대상인가”까지 판단해야 연결이 쌓입니다.</p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>엔티티의 동일성은 이름 하나가 아니라 타입·별칭·문맥·기존 관계를 함께 근거로 판단합니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div><div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div><div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div><div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#connection">01 · 이전 연결</a><a href="#goals">02 · 학습 목표</a>
+        <a href="#situation">03 · 필요 상황</a><a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a><a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a><a href="#practice">08 · 적용과 정리</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="connection">
+          <span class="section-tag">0–2 MIN · CONNECT</span>
+          <h2>이전 강의와의 연결</h2>
+          <p>8강에서는 데이터 형태마다 의미가 놓인 자리와 오류 방식이 다름을 배웠습니다. 이제 비구조화 문장과 반구조화 문서에서 발견한 이름을, 이미 알고 있는 실제 대상과 연결하는 첫 구체적 판단으로 들어갑니다.</p>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">2–4 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>엔티티 경계·타입 판별·엔티티 연결의 차이를 설명합니다.</p></article>
+            <article class="goal"><span>02</span><p>이름 일치만으로 동일성을 확정할 수 없는 이유를 문맥으로 설명합니다.</p></article>
+            <article class="goal"><span>03</span><p>중복 통합과 잘못된 통합이 지식 경로에 미치는 영향을 판단합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">4–6 MIN · SITUATION</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>운영 문서에는 <code>payments</code>, 알림에는 “결제 API”, 배포 기록에는 <code>payment-service</code>가 등장합니다. 세 표현이 같은 서비스를 가리키는 것 같지만, 조직에는 결제 정산 서비스도 있습니다.</p>
+            <p>문자열이 비슷하다는 이유만으로 합치면 서로 다른 서비스의 장애·배포 관계가 뒤섞입니다. 반대로 모두 따로 두면 한 서비스의 이력이 여러 엔티티에 흩어져 연결된 흐름을 찾지 못합니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">6–14 MIN · CORE MODEL</span>
+          <h2>핵심 개념 설명</h2>
+
+          <h3>1. 쉬운 정의</h3>
+          <div class="definition">
+            <span class="term">ENTITY RECOGNITION · 대상 찾기</span>
+            <p>엔티티 인식은 원천에서 대상의 표현 범위를 찾고 종류를 판별하는 일입니다. 엔티티 연결(Entity Linking, 이미 알려진 대상과 대응)은 그 표현이 실제로 어느 대상을 가리키는지 정합니다.</p>
+          </div>
+
+          <h3>2. 필요한 이유</h3>
+          <p>관계는 식별된 대상 사이에 놓입니다. 동일한 회사를 둘로 나누면 매출·인물·사건 경로가 끊기고, 서로 다른 회사를 하나로 합치면 한쪽의 사실이 다른 쪽으로 전파됩니다. 동일성 오류는 주변 관계 전체를 오염시킵니다.</p>
+
+          <h3>3. 구성 요소</h3>
+          <ul>
+            <li>경계: “서울대학교 병원”처럼 어디부터 어디까지가 한 대상의 표현인지 찾습니다.</li>
+            <li>타입: 사람·기관·장소·서비스·시간 등 어떤 종류인지 판별합니다.</li>
+            <li>별칭: 약어, 번역명, 옛 이름처럼 한 대상의 여러 표현을 모읍니다.</li>
+            <li>문맥: 주변 단어, 출처, 시점, 함께 등장한 대상을 근거로 후보를 좁힙니다.</li>
+            <li>연결 후보와 확신: 알려진 대상 중 가능한 후보와 판단의 불확실성을 남깁니다.</li>
+          </ul>
+
+          <h3>4. 작동 구조</h3>
+          <p>먼저 표현 경계를 찾고 타입을 판별합니다. 그다음 이름과 별칭으로 후보를 만들고, 주변 문맥과 기존 관계가 맞는지 비교합니다. 충분한 근거가 없으면 새 엔티티나 미확정 후보로 남기는 편이 잘못 합치는 것보다 안전합니다.</p>
+
+          <h3>5. 기존 방식과의 차이</h3>
+          <p>문자열 검색은 같은 글자를 빠르게 찾지만 그 글자가 가리키는 대상을 구분하지 않습니다. 데이터베이스의 식별자는 이미 대상이 결정된 뒤 강한 동일성을 제공합니다. 엔티티 연결은 식별자가 없는 표현을 그 식별 대상에 대응시키는 해석 단계입니다.</p>
+
+          <h3>6. 가능한 것과 불가능한 것</h3>
+          <p>정확히 연결된 엔티티는 여러 문서의 사실과 관계를 한 대상 주위에 모으고 별칭을 넘어 탐색하게 합니다. 그러나 이름과 타입만으로 동일성을 증명할 수는 없습니다. 동명이인이나 조직 개편처럼 문맥이 겹치면 미확정 상태가 정직한 결과입니다.</p>
+
+          <h3>7. 현실적인 한계</h3>
+          <p><span class="source-badge">저장소 근거</span> 원본 강의는 엔티티 인식을 비구조화 지식 추출의 핵심 단계로 두고, 사람·기관·장소·시간 등 원자 정보를 찾는다고 설명합니다. 또한 동음이의성과 불완전한 정보가 추출을 어렵게 한다고 제시합니다.</p>
+          <p><span class="source-badge added">추가 설명</span> 실제 대상과의 연결, 미확정 후보, 잘못 합치기의 전파 위험은 이 인식 단계를 지식 그래프의 동일성 문제로 확장한 설명입니다.</p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>개념 도식</h2>
+          <div class="definition">
+            <p>“결제 API에서 지연 발생”<br />↓ 경계 찾기<br />[결제 API] · [지연]<br />↓ 타입 판별<br />서비스 · 증상<br />↓ 별칭과 문맥 비교<br />결제 API → 서비스 <code>S-17</code></p>
+          </div>
+          <p class="diagram-caption">이 도식에서 봐야 할 핵심: 이름을 표시하는 데서 끝나지 않고, 타입과 문맥을 거쳐 지속적인 동일성을 가진 대상으로 연결해야 합니다.</p>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">14–17 MIN · COMPARE</span>
+          <h2>식별 방식 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>방식</th><th>중심 단위</th><th>강한 점</th><th>약한 질문</th></tr></thead>
+              <tbody>
+                <tr><td>문자열 검색</td><td>표현의 글자</td><td>정확한 이름·부분 이름 찾기</td><td>이 이름은 어느 대상인가</td></tr>
+                <tr><td>관계형 식별자</td><td>미리 부여한 키</td><td>정해진 범위의 동일성</td><td>외부 문서의 표현은 어느 행인가</td></tr>
+                <tr><td>엔티티 연결</td><td>표현·후보·문맥</td><td>별칭과 여러 출처 통합</td><td>근거 없는 동명이인 확정</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>뉴스에서 “애플이 새 제품을 발표했다”와 “사과 가격이 올랐다”가 수집됩니다. 표면 형태만 보면 같은 단어지만, 제품·발표·기업이라는 문맥과 농산물·가격이라는 문맥이 서로 다른 타입과 대상을 가리킵니다.</p>
+            <p>기업 애플의 발표를 사과 가격 그래프에 연결하면 전혀 무관한 경제 관계가 생깁니다. 반대로 “Apple”, “애플”, “Apple Inc.”를 모두 분리하면 같은 기업의 사건을 하나의 시간선으로 보지 못합니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–18 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“이름이 같으면 같은 엔티티다.” 동명이인과 동음이의어가 있으므로 타입과 문맥이 필요합니다.</p></article>
+            <article class="misconception"><span>02</span><p>“이름이 다르면 다른 엔티티다.” 약어·번역·개명은 한 대상의 여러 표현일 수 있습니다.</p></article>
+            <article class="misconception"><span>03</span><p>“일단 합치고 나중에 고치면 된다.” 잘못 합친 대상에서 파생된 관계까지 분리해야 하므로 영향이 넓습니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="practice">
+          <span class="section-tag">18–19 MIN · JUDGMENT</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>두 장애 문서에 “Gateway”가 등장하더라도, 결제 트래픽 지연과 사내 인증 실패라는 문맥만으로 같은 엔티티임을 확정할 수는 없습니다.</p>
+            <p>서비스 타입, 소속 시스템, 함께 등장한 엔드포인트·배포·담당 범위, 문서 시점을 비교합니다. 근거가 모순되거나 부족하면 둘을 유지한 채 연결을 미확정으로 남깁니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="summary">
+          <span class="section-tag">19–20 MIN · RECALL</span>
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>엔티티 인식은 표현의 경계와 타입을 찾고, 엔티티 연결은 실제 대상을 결정합니다.</li>
+            <li>동일성은 이름 하나가 아니라 별칭·문맥·기존 관계의 일치로 판단합니다.</li>
+            <li>모호할 때의 미확정 상태는 잘못된 통합보다 더 유용한 지식입니다.</li>
+          </ol>
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>별칭은 동일성의 후보를 만들지만, 같은 엔티티라는 판단에는 타입과 문맥의 일치가 더 필요합니다.</li>
+            <li>서로 다른 서비스를 잘못 합치면 한 서비스의 장애와 배포 관계가 다른 서비스로 전파됩니다.</li>
+            <li>내부 식별자와 외부 문서를 연결할 때는 소속·시점·함께 등장한 대상이 중요한 문맥이 됩니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li><a href="https://github.com/npubird/KnowledgeGraphCourse/tree/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7" target="_blank" rel="noreferrer">2025 지식 추출 기초: 문제와 방법</a> · p.10–12: 모호성·불완전성·불일관성</li>
+            <li>같은 자료 p.28–29, p.38–39: 동음이의어·동의어, 비구조화 추출의 핵심 기술과 엔티티 인식 대상</li>
+          </ul>
+          <p>엔티티 연결과 미확정 후보에 대한 설명은 저장소의 엔티티 인식·모호성 개념을 동일성 판단으로 확장한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson10.html">
+          <small>NEXT · LESSON 10</small>
+          <h2>관계는 두 엔티티 사이의 동사가 아니다</h2>
+          <p>다음 강의에서는 식별한 엔티티 사이의 연결을 방향·역할·문맥을 가진 의미 관계로 구분합니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

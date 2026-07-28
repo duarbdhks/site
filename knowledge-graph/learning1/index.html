@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="백엔드 개발자를 위한 20강 지식 그래프 개념 학습 로드맵" />
+  <title>지식 그래프 사고 지도 · 20강</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span>Learning Atlas</span>
+      </a>
+      <span class="top-note">구현보다 구조를 이해하는 지식 그래프 입문</span>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Knowledge Graph · Learning 01</p>
+        <h1>데이터의 연결에서<br />의미의 구조로</h1>
+        <p class="lead">
+          관계형 데이터베이스, 이벤트, 검색, LLM에 익숙한 백엔드 개발자가
+          지식 그래프의 전체 구조와 기술 사이의 경계를 자기 언어로 설명하도록 설계한 20강 과정입니다.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="lesson1.html">1강 시작하기</a>
+          <a class="button secondary" href="#curriculum">전체 지도 보기</a>
+        </div>
+      </div>
+
+      <div class="hero-map" aria-label="지식 그래프의 네 핵심 활동: 표현, 추출, 융합, 활용">
+        <div class="orbit">
+          <div class="orbit-center">지식<br />그래프</div>
+          <div class="orbit-node">표현<br />모델링</div>
+          <div class="orbit-node">추출<br />식별</div>
+          <div class="orbit-node">융합<br />품질</div>
+          <div class="orbit-node">검색<br />추론</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="course-facts" aria-label="과정 정보">
+      <div class="fact">
+        <span class="fact-label">Lessons</span>
+        <span class="fact-value">20강</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Per lesson</span>
+        <span class="fact-value">20분</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Total</span>
+        <span class="fact-value">6시간 40분</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Format</span>
+        <span class="fact-value">개념 중심</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="course-intent">
+      <div class="section-heading">
+        <span class="section-index">WHY THIS ROUTE</span>
+        <div>
+          <h2 id="course-intent">목차를 외우지 않고,<br />하나의 흐름으로 이해합니다</h2>
+          <p class="section-intro">
+            원본 강의의 학술적 깊이는 보존하되, 구현 방법과 알고리즘 세부는 걷어냈습니다.
+            익숙한 백엔드 문제에서 출발해 의미 구조를 설계하고, 신뢰할 수 있는 지식을 만든 뒤,
+            검색·추론·LLM에서 가치를 꺼내는 순서로 재구성했습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="route-map" role="img" aria-label="1막 구조를 보다, 2막 신뢰를 만들다, 3막 가치를 꺼내다">
+        <article class="route-stop">
+          <small>ACT 01 · LESSON 01–06</small>
+          <h3>구조를 보다</h3>
+          <p>왜 필요한지에서 출발해 엔티티·관계·온톨로지·모델링의 경계를 세웁니다.</p>
+        </article>
+        <article class="route-stop">
+          <small>ACT 02 · LESSON 07–14</small>
+          <h3>신뢰를 만들다</h3>
+          <p>추출·식별·이벤트·융합·품질이 하나의 지식 생산 과정임을 이해합니다.</p>
+        </article>
+        <article class="route-stop">
+          <small>ACT 03 · LESSON 15–20</small>
+          <h3>가치를 꺼내다</h3>
+          <p>검색·추론·LLM·Graph RAG를 비교하고, 적용할 문제와 피할 문제를 판단합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="curriculum" aria-labelledby="curriculum-title">
+      <div class="section-heading">
+        <span class="section-index">FULL CURRICULUM</span>
+        <div>
+          <h2 id="curriculum-title">20강 학습 지도</h2>
+          <p class="section-intro">
+            제목을 누르면 핵심 관점, 개념, 이전 강의와의 연결을 확인할 수 있습니다.
+            모든 강의는 약 20분이며, 코드·설치·제품 튜토리얼을 포함하지 않습니다.
+          </p>
+        </div>
+      </div>
+
+      <section class="chapter" id="act-1">
+        <header class="chapter-label">
+          <span class="chapter-kicker">ACT 01 · 120 MIN</span>
+          <h3>구조를 보다</h3>
+          <p>연결, 표현, 온톨로지, 모델링의 차이를 하나의 개념 골격으로 만듭니다.</p>
+        </header>
+
+        <div class="lesson-list">
+          <details class="lesson-card" open>
+            <summary>
+              <span class="lesson-number">01</span>
+              <span>
+                <a class="lesson-title" href="lesson1.html">연결되어 있다고 의미가 생기는 것은 아니다</a>
+                <span class="lesson-question">데이터 링크와 의미 관계의 차이를 구분합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">입문</span>
+              <span class="chip">20분</span>
+              <span class="chip repo">저장소 기반</span>
+              <span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>지식 그래프의 본질, 엔티티, 관계 유형, 문맥, 데이터베이스·지식베이스와의 차이</p>
+              <p><b>연결</b>과정의 출발점. “왜 그래프인가”를 저장 구조가 아니라 질문의 구조에서 봅니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">02</span>
+              <span>
+                <a class="lesson-title" href="lesson2.html">지식은 점이 아니라 의미 있는 연결이다</a>
+                <span class="lesson-question">엔티티·관계·속성·타입·문맥을 최소 단위로 봅니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">입문</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>엔티티, 관계, 속성, 타입, 사실, 문맥</p>
+              <p><b>연결</b>1강의 “의미 있는 연결”을 실제 구성 요소로 분해합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">03</span>
+              <span>
+                <a class="lesson-title" href="lesson3.html">표현 방식은 저장 형식보다 먼저 결정된다</a>
+                <span class="lesson-question">표현 방식이 가능한 탐색과 해석의 범위를 결정합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">초급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>의미망, 프레임, 개념 그래프, 규칙 기반 표현, 표현 선택</p>
+              <p><b>연결</b>구성 요소를 알았으므로, 이를 어떤 구조로 담을지 비교합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">04</span>
+              <span>
+                <a class="lesson-title" href="lesson4.html">온톨로지는 데이터보다 앞선 의미 계약이다</a>
+                <span class="lesson-question">타입과 관계의 뜻을 공통 의미 계약으로 고정합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">초급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>온톨로지, 개념과 인스턴스, 관계 의미, 제약, 공통 어휘</p>
+              <p><b>연결</b>여러 표현 방식 가운데 의미를 명시적으로 고정하는 장치로 이동합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">05</span>
+              <span>
+                <a class="lesson-title" href="lesson5.html">좋은 모델은 현실을 복사하지 않고 질문을 보존한다</a>
+                <span class="lesson-question">보존하려는 질문에서 엔티티·관계·속성을 역산합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>모델링 목적, 개념 경계, 타입 계층, 관계 방향, 질문 중심 모델링</p>
+              <p><b>연결</b>온톨로지라는 의미 계약을 실제 도메인 모델로 구체화합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">06</span>
+              <span>
+                <a class="lesson-title" href="lesson6.html">모델의 깊이는 정답보다 비용을 결정한다</a>
+                <span class="lesson-question">모델의 세밀함과 유지 비용 사이의 경계를 정합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>추상화 수준, 재사용과 특수화, 과잉 모델링, 개방 세계, 확장 비용</p>
+              <p><b>연결</b>모델을 만드는 법에서 모델의 적정 경계를 정하는 법으로 나아갑니다.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="chapter" id="act-2">
+        <header class="chapter-label">
+          <span class="chapter-kicker">ACT 02 · 160 MIN</span>
+          <h3>신뢰를 만들다</h3>
+          <p>원천을 지식으로 바꾸고, 같은 대상을 묶고, 충돌과 품질을 다룹니다.</p>
+        </header>
+
+        <div class="lesson-list">
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">07</span>
+              <span>
+                <a class="lesson-title" href="lesson7.html">추출은 텍스트를 그래프로 바꾸는 일이 아니다</a>
+                <span class="lesson-question">원천의 일부를 지식으로 선택하고 해석하는 과정을 봅니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">초급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>추출 대상, 추출 단위, 원천 문맥, 불확실성, 지식 획득</p>
+              <p><b>연결</b>설계한 모델에 실제 세계의 사실을 채우는 단계로 전환합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">08</span>
+              <span>
+                <a class="lesson-title" href="lesson8.html">데이터 형태가 달라지면 실패 방식도 달라진다</a>
+                <span class="lesson-question">데이터 형태마다 다른 문맥 손실과 추출 실패를 구분합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">초급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>구조화, 반구조화, 비구조화, 명시적 스키마, 암묵적 문맥</p>
+              <p><b>연결</b>추출의 공통 문제를 원천 데이터 유형별 실패 양상으로 나눕니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">09</span>
+              <span>
+                <a class="lesson-title" href="lesson9.html">엔티티 인식의 핵심은 이름이 아니라 동일성이다</a>
+                <span class="lesson-question">문자열 인식과 현실 대상의 동일성 판단을 분리합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>엔티티 경계, 타입 판별, 별칭, 문맥, 엔티티 연결</p>
+              <p><b>연결</b>추출 과정의 첫 구체적 대상인 엔티티를 식별과 동일성 관점에서 봅니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">10</span>
+              <span>
+                <a class="lesson-title" href="lesson10.html">관계는 두 엔티티 사이의 동사가 아니다</a>
+                <span class="lesson-question">관계의 방향·역할·문맥으로 비슷한 표현을 구분합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>의미 관계, 방향, 역할, 관계 문맥, 관계 추출</p>
+              <p><b>연결</b>식별한 엔티티 사이에 해석 가능한 연결을 부여합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">11</span>
+              <span>
+                <a class="lesson-title" href="lesson11.html">사건은 관계에 변화와 시간을 더한다</a>
+                <span class="lesson-question">사건·참여자·시간으로 정적인 관계를 확장합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>이벤트, 참여자 역할, 시점, 선후와 인과, 동적 지식</p>
+              <p><b>연결</b>정적인 관계를 변화가 일어나는 사건 구조로 확장합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">12</span>
+              <span>
+                <a class="lesson-title" href="lesson12.html">융합의 첫 문제는 합치기가 아니라 같은 것 찾기다</a>
+                <span class="lesson-question">여러 증거를 조합해 서로 다른 출처의 동일 대상을 찾습니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>지식 이질성, 온톨로지 매칭, 인스턴스 매칭, 후보 생성</p>
+              <p><b>연결</b>여러 원천에서 추출한 결과를 하나의 그래프로 모으기 시작합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">13</span>
+              <span>
+                <a class="lesson-title" href="lesson13.html">일관성은 충돌을 없애는 것이 아니라 드러내는 능력이다</a>
+                <span class="lesson-question">충돌한 값과 함께 출처·시점·미확정 상태를 보존합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>의미·타입·사실 충돌, 출처 문맥, 미확정 상태, provenance</p>
+              <p><b>연결</b>동일 대상을 합친 뒤 발생하는 모순을 다룹니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">14</span>
+              <span>
+                <a class="lesson-title" href="lesson14.html">품질은 정확도 하나가 아니라 질문 가능성의 총합이다</a>
+                <span class="lesson-question">정확성·완전성·일관성·최신성을 목적에 맞게 평가합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>정확성, 완전성, 일관성, 최신성, 목적 적합성</p>
+              <p><b>연결</b>추출·융합·충돌 처리 결과를 하나의 품질 관점으로 평가합니다.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="chapter" id="act-3">
+        <header class="chapter-label">
+          <span class="chapter-kicker">ACT 03 · 120 MIN</span>
+          <h3>가치를 꺼내다</h3>
+          <p>경로를 찾고 추론하며, LLM과 연결하고, 실제 적용 여부를 판단합니다.</p>
+        </header>
+
+        <div class="lesson-list">
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">15</span>
+              <span>
+                <a class="lesson-title" href="lesson15.html">추론은 없는 사실을 상상하는 일이 아니다</a>
+                <span class="lesson-question">경로와 규칙으로 설명 가능한 지식 후보를 도출합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>규칙 추론, 경로 추론, 다중 홉, 지식 보완, 설명 가능성</p>
+              <p><b>연결</b>품질을 확인한 그래프에서 새로운 답의 후보를 도출합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">16</span>
+              <span>
+                <a class="lesson-title" href="lesson16.html">그래프 검색은 값 대신 관계의 모양을 찾는다</a>
+                <span class="lesson-question">값 대신 관계 패턴과 부분 그래프를 탐색합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>패턴 질의, 경로 탐색, 부분 그래프, 관계 검색, 결과 범위</p>
+              <p><b>연결</b>추론의 기반이 되는 경로와 구조를 직접 찾습니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">17</span>
+              <span>
+                <a class="lesson-title" href="lesson17.html">LLM과 KG는 대체 관계가 아니라 상호 보완 관계다</a>
+                <span class="lesson-question">LLM과 지식 그래프의 양방향 보완 관계를 구분합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>LLM for KG, KG for LLM, 추출 보조, 사실성, 추론 강화</p>
+              <p><b>연결</b>그래프 내부 활용에서 자연어 생성 모델과의 상호작용으로 확장합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">18</span>
+              <span>
+                <a class="lesson-title" href="lesson18.html">Graph RAG의 차이는 더 많이 찾는 데 있지 않다</a>
+                <span class="lesson-question">유사 문서와 관계 경로 기반 문맥의 차이를 이해합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">심화</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>질문의 엔티티화, 경로 선택, 부분 그래프 검색, 다중 홉 문맥, 근거</p>
+              <p><b>연결</b>KG for LLM의 대표적인 검색·응답 흐름을 구체화합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">19</span>
+              <span>
+                <a class="lesson-title" href="lesson19.html">모든 연결 문제에 지식 그래프가 필요한 것은 아니다</a>
+                <span class="lesson-question">관계 가치와 구축·품질 비용으로 적용 적합성을 판단합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">중급</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>관계 중심 질문, 다중 출처, 다중 홉, 단순 조회, 구축·품질 비용</p>
+              <p><b>연결</b>Graph RAG의 가능성을 본 뒤 적용 여부를 현실적으로 판별합니다.</p>
+            </div>
+          </details>
+
+          <details class="lesson-card">
+            <summary>
+              <span class="lesson-number">20</span>
+              <span>
+                <a class="lesson-title" href="lesson20.html">통합의 핵심은 저장소가 아니라 의미의 왕복이다</a>
+                <span class="lesson-question">원천부터 활용·피드백까지 의미가 왕복하는 흐름을 통합합니다.</span>
+              </span>
+            </summary>
+            <div class="lesson-meta">
+              <span class="chip">심화</span><span class="chip">20분</span><span class="chip repo">저장소 기반</span><span class="chip">추가 해설</span>
+            </div>
+            <div class="lesson-detail">
+              <p><b>핵심 개념</b>원천→추출→융합→저장→검색, 의미 계약, 품질 게이트, 피드백</p>
+              <p><b>연결</b>앞선 19강을 하나의 종단 간 개념 흐름으로 통합합니다.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <a class="featured-link" href="lesson1.html">
+        <span>
+          <small>READY · LESSON 01</small>
+          <h3>연결되어 있다고 의미가 생기는 것은 아니다</h3>
+        </span>
+        <span class="featured-arrow" aria-hidden="true">→</span>
+      </a>
+    </section>
+
+    <aside class="source-note" aria-labelledby="source-title">
+      <h2 id="source-title">출처와 재구성 범위</h2>
+      <p>
+        과정의 골격은 동남대학교 왕펑 교수의
+        <a href="https://github.com/npubird/KnowledgeGraphCourse/tree/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7" target="_blank" rel="noreferrer">KnowledgeGraphCourse 고정 커밋</a>을 기준으로 삼았습니다.
+        원본의 지식 표현·온톨로지·추출·융합·표현 학습·LLM 범위를 유지했습니다.
+      </p>
+      <p>
+        시간 지식, provenance, 품질 기준, 적용 적합성은 원본에서 독립 강의로 충분히 다뤄지지 않아
+        백엔드 개발자의 판단을 돕는 추가 설명으로 명시했습니다. 원본 강의와 추가 해설은 각 강의의 배지로 구분합니다.
+      </p>
+    </aside>
+  </main>
+</body>
+</html>

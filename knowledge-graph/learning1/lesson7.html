@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="지식 그래프 7강: 추출은 텍스트를 그래프로 바꾸는 일이 아니다" />
+  <title>7강 · 추출은 텍스트를 그래프로 바꾸는 일이 아니다</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
+
+  <main class="reading-shell">
+    <header class="topbar">
+      <a class="back-link" href="index.html">← 20강 학습 지도</a>
+      <span class="top-note">Lesson 07 · 약 20분</span>
+    </header>
+
+    <section class="lesson-hero">
+      <div>
+        <p class="eyebrow">ACT 02 · TRUST · LESSON 07</p>
+        <h1>추출은 텍스트를 그래프로<br />바꾸는 일이 아니다</h1>
+        <p class="lead">
+          원천에서 단어와 값을 꺼내는 것만으로 지식이 되지는 않습니다.
+          무엇을 하나의 사실로 인정하고, 어떤 문맥과 불확실성을 함께 보존할지 결정해야 합니다.
+        </p>
+      </div>
+      <aside class="question-card">
+        <small>이번 강의의 핵심 관점</small>
+        <p>원천 데이터는 식별·의미·문맥·근거를 거쳐 질문 가능한 지식이 됩니다.</p>
+      </aside>
+    </section>
+
+    <div class="time-rail" aria-label="20분 강의 시간 구성">
+      <div class="time-step">2분 · 연결</div>
+      <div class="time-step">3분 · 상황</div>
+      <div class="time-step">8분 · 개념</div>
+      <div class="time-step">4분 · 비교</div>
+      <div class="time-step">2분 · 판단</div>
+      <div class="time-step">1분 · 확인</div>
+    </div>
+
+    <div class="lesson-layout">
+      <nav class="lesson-nav" aria-label="강의 목차">
+        <strong>LESSON ROUTE</strong>
+        <a href="#previous">01 · 이전 연결</a>
+        <a href="#goals">02 · 학습 목표</a>
+        <a href="#situation">03 · 필요한 상황</a>
+        <a href="#concept">04 · 핵심 개념</a>
+        <a href="#diagram">05 · 개념 도식</a>
+        <a href="#compare">06 · 기술 비교</a>
+        <a href="#case">07 · 현실 사례</a>
+        <a href="#judgment">08 · 판단과 요약</a>
+      </nav>
+
+      <article class="lesson-content">
+        <section class="lesson-section" id="previous">
+          <span class="section-tag">0–2 MIN · CONNECT</span>
+          <h2>이전 강의와 연결</h2>
+          <p>
+            1막에서는 질문을 보존하는 의미 구조와 적정한 모델 깊이를 정했습니다.
+            이제 데이터베이스, 문서, 로그 등 현실의 원천에서 사실을 채우는 단계로 이동합니다.
+          </p>
+          <div class="definition">
+            <span class="term">CORE VIEW</span>
+            <p>원천 정보는 근거와 문맥이 모델의 엔티티·관계와 정렬될 때 지식 후보가 됩니다.</p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="goals">
+          <span class="section-tag">2–4 MIN · ORIENT</span>
+          <h2>학습 목표</h2>
+          <div class="goals">
+            <article class="goal"><span>01</span><p>정보 추출과 지식 추출의 결과 차이를 설명합니다.</p></article>
+            <article class="goal"><span>02</span><p>추출 대상·단위·문맥·출처를 함께 결정해야 하는 이유를 구분합니다.</p></article>
+            <article class="goal"><span>03</span><p>모호성·불완전성·불일치가 지식 생산에 미치는 영향을 판단합니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="situation">
+          <span class="section-tag">4–6 MIN · SITUATION</span>
+          <h2>개념이 필요한 상황</h2>
+          <div class="scenario">
+            <p>
+              장애 회고에 “배포 직후 결제 오류가 늘었고 설정 변경으로 정상화됐다”는 문장이 있습니다.
+              여기서 <code>배포</code>, <code>결제 오류</code>, <code>설정 변경</code>을 찾는 것은 시작일 뿐입니다.
+            </p>
+            <p>
+              어떤 배포인지, 오류 증가는 관측 사실인지 원인 판단인지, 설정 변경이 완화인지 근본 해결인지,
+              “직후”가 어느 시간 범위인지 결정해야 질문 가능한 지식이 됩니다.
+            </p>
+          </div>
+          <p><span class="source-badge added">추가 설명</span> 추출은 문장을 분해하는 작업이 아니라 원천 표현을 모델의 의미와 연결하는 판정 과정입니다.</p>
+        </section>
+
+        <section class="lesson-section" id="concept">
+          <span class="section-tag">6–14 MIN · SEVEN ELEMENTS</span>
+          <h2>핵심 개념 7요소</h2>
+
+          <h3>1. 쉬운 정의</h3>
+          <p>
+            지식 추출(Knowledge Extraction, 원천 정보를 의미 있는 사실로 바꾸는 과정)은 모든 정보를 꺼내는 일이 아닙니다.
+            앞서 정한 질문에 필요한 엔티티, 관계, 속성, 사건을 원천에서 식별해 기계가 해석할 수 있는 의미 구조로 옮기는 것이 목적입니다.
+          </p>
+
+          <h3>2. 필요한 이유</h3>
+          <p>
+            원천의 단어와 필드는 그 자체로 모델의 사실이 아닙니다.
+            같은 표현이 어느 실제 대상을 가리키며 어떤 관계를 주장하는지 해석해야 여러 원천을 함께 질문할 수 있습니다.
+          </p>
+
+          <h3>3. 구성 요소</h3>
+          <p>
+            추출 대상은 사람·조직·서비스 같은 엔티티, <code>영향을 준다</code> 같은 관계, 시간·상태 같은 속성, 여러 참여자와 변화를 묶는 사건입니다.
+            여기에 원천, 시점, 환경과 불확실성을 함께 둡니다.
+            이름 한 번, 문장 하나, 문서 전체, 데이터베이스 행 하나는 서로 다른 근거 단위입니다.
+            단위가 너무 작으면 문맥을 잃고, 너무 크면 사실을 지지한 표현을 설명하기 어렵습니다.
+          </p>
+
+          <h3>4. 작동 구조</h3>
+          <p>
+            원천에서 후보 표현을 발견하고, 실제 대상을 식별한 뒤, 모델의 타입과 관계에 연결합니다.
+            출처·문맥·불확실성을 붙여 사실 후보로 보존하고 검증합니다.
+            같은 표현도 시점, 환경, 문서 유형에 따라 뜻이 달라집니다.
+            “해결”은 회고의 최종 결론일 수도 있고, 실시간 채팅의 잠정 추정일 수도 있습니다.
+          </p>
+
+          <h3>5. 기존 방식과의 차이</h3>
+          <p>
+            정보 추출(문서에서 구조화 정보를 찾는 작업)은 이름과 관계 후보를 얻는 데 집중합니다.
+            지식 추출은 그 결과를 공유 모델에 맞추고, 추론과 설명에 쓸 수 있도록 출처와 의미를 보존합니다.
+          </p>
+
+          <h3>6. 가능한 것과 불가능한 것</h3>
+          <p>
+            출처를 보존하면 서로 다른 주장 사이의 충돌을 비교하고, 잘못된 관계를 수정하며, 답의 근거를 설명할 수 있습니다.
+            하지만 표현 하나만으로 대상을 확정하거나 사건 사이의 인과관계를 증명할 수는 없습니다.
+          </p>
+
+          <h3>7. 현실적인 한계</h3>
+          <p>
+            표현이 여러 대상을 가리키는 모호성, 필요한 항목이 없는 불완전성, 출처끼리 다른 불일치가 존재합니다.
+            이를 억지로 하나의 확정 사실로 만들면 그래프는 깔끔해 보여도 신뢰는 낮아집니다.
+            추출은 발견, 의미 매핑, 식별, 검증을 포함하는 지식 획득(원천에서 신뢰할 지식을 만드는 전체 과정)의 일부입니다.
+            뒤 강의에서 엔티티 식별, 관계·사건 추출, 융합과 품질을 따로 다루는 이유도 이 단계들이 서로 다른 실패를 만들기 때문입니다.
+          </p>
+          <p>
+            <span class="source-badge">저장소 근거</span>
+            원본 강의는 정보 추출이 비정형·반정형 문서에서 구조화 정보를 얻는 일인 반면,
+            지식 추출은 구조화·비구조화 원천에서 기계가 해석하고 추론에 활용할 지식을 만드는 일이라고 구분합니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="diagram">
+          <span class="section-tag">TEXT DIAGRAM</span>
+          <h2>원천에서 지식까지</h2>
+          <div class="diagram-lab">
+            <p>원천 · “배포 직후 결제 오류가 늘었다”</p>
+            <p>발견 · 배포 / 결제 오류 / 증가 / 직후</p>
+            <p>식별 · 배포 D / 결제 서비스 S / 오류율 지표 M</p>
+            <p>의미 · D 뒤에 M이 증가했고, M은 S를 관측한다</p>
+            <p>문맥 · 운영 환경 / 관측 구간 / 회고 문서 / 작성 시점</p>
+            <p>판정 · 시간상 연관은 보존하되 원인 관계는 아직 확정하지 않는다</p>
+            <p class="diagram-caption">
+              이 도식에서 봐야 할 핵심: 단어를 찾은 결과와 검증 가능한 지식 사이에는 식별·의미·문맥·판정 단계가 있습니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="compare">
+          <span class="section-tag">14–17 MIN · COMPARE</span>
+          <h2>관련 기술과 비교</h2>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead><tr><th>활동</th><th>주요 결과</th><th>보존하는 것</th><th>해석 과제</th></tr></thead>
+              <tbody>
+                <tr><td>파싱</td><td>구조와 필드</td><td>형식적 경계</td><td>필드 의미의 해석</td></tr>
+                <tr><td>정보 추출</td><td>엔티티 언급·관계 후보</td><td>문서 속 정보</td><td>실제 대상과 사실의 식별</td></tr>
+                <tr><td>ETL</td><td>변환된 데이터</td><td>규칙에 따른 값과 형태</td><td>원천 사이 의미 정렬</td></tr>
+                <tr><td>지식 추출</td><td>모델에 맞춘 사실 후보</td><td>의미·문맥·출처</td><td>신뢰 판단과 통합</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            파싱과 ETL도 지식 획득의 중요한 재료입니다.
+            차이는 결과가 구조화되었는지가 아니라, 모델의 개념과 관계로 해석되어 질문과 추론에 쓰일 수 있는가에 있습니다.
+          </p>
+        </section>
+
+        <section class="lesson-section" id="case">
+          <span class="section-tag">REALISTIC CASE</span>
+          <h2>현실적인 사례</h2>
+          <div class="scenario">
+            <p>
+              배포 시스템에는 배포 시각과 변경 목록이 있고, 장애 문서에는 “배포 영향 가능성”과 “설정 복구 후 정상화”가 적혀 있습니다.
+              모니터링에는 오류율이 다시 내려간 시점이 있습니다.
+            </p>
+            <p>
+              세 원천을 합치기 전에 각각 <code>배포가 변경을 포함한다</code>,
+              <code>문서가 배포 영향 가능성을 주장한다</code>, <code>지표가 정상 범위로 돌아온다</code>로 분리해 보존합니다.
+              그러면 관측 사실과 사람의 해석을 섞지 않고 나중에 함께 판단할 수 있습니다.
+            </p>
+          </div>
+          <p>“배포가 장애를 일으켰다”는 관계는 여러 표현을 찾았다는 이유만으로 바로 확정할 수 없습니다.</p>
+        </section>
+
+        <section class="lesson-section" id="misunderstanding">
+          <span class="section-tag">17–18 MIN · MISCONCEPTIONS</span>
+          <h2>흔한 오해</h2>
+          <div class="misconceptions">
+            <article class="misconception"><span>01</span><p>“문장의 명사와 동사를 연결하면 지식이다.” 실제 대상 식별과 관계 의미, 문맥이 빠져 있습니다.</p></article>
+            <article class="misconception"><span>02</span><p>“구조화 데이터는 그대로 사실이다.” 필드명과 값도 원래 시스템의 목적과 제약 안에서 해석해야 합니다.</p></article>
+            <article class="misconception"><span>03</span><p>“가장 그럴듯한 해석 하나만 남기면 된다.” 모호성과 충돌을 숨기면 이후 답의 신뢰도를 설명할 수 없습니다.</p></article>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="judgment">
+          <span class="section-tag">18–20 MIN · JUDGMENT</span>
+          <h2>적용 판단</h2>
+          <div class="scenario">
+            <p>
+              회고의 “설정 변경으로 정상화”는 곧바로 <code>설정 변경이 장애를 해결한다</code>라는 확정 관계가 되지 않습니다.
+              문서가 그렇게 주장한다는 사실과 관측된 정상화 시점을 먼저 분리해 보존해야 합니다.
+              임시 완화인지 근본 해결인지, 다른 변화가 동시에 있었는지 확인되지 않았다면 확정 관계보다 출처와 불확실성을 가진 후보가 적절합니다.
+            </p>
+          </div>
+
+          <h2>핵심 요약</h2>
+          <ol class="summary-lines">
+            <li>지식 추출은 정보를 찾는 데서 끝나지 않고 모델의 의미로 해석하는 과정입니다.</li>
+            <li>추출 대상·단위·문맥·출처·불확실성을 함께 보존해야 답의 근거를 설명할 수 있습니다.</li>
+            <li>모호성·불완전성·불일치는 제거할 잡음이 아니라 신뢰 판단에 필요한 상태입니다.</li>
+          </ol>
+
+          <h3>개념 정리</h3>
+          <ol class="questions">
+            <li>정보 추출은 구조화된 후보를 만들고, 지식 추출은 후보를 공유 모델의 의미와 근거에 연결합니다.</li>
+            <li>추출 단위가 너무 작으면 문맥을 잃고 너무 크면 사실을 지지하는 표현이 흐려집니다.</li>
+            <li>사람의 주장과 관측 사실을 합치면 아직 검증되지 않은 해석이 확정 사실처럼 보일 수 있습니다.</li>
+          </ol>
+        </section>
+
+        <aside class="source-note" aria-labelledby="lesson-source-title">
+          <h3 id="lesson-source-title">강의 근거</h3>
+          <ul>
+            <li>
+              <a href="https://github.com/npubird/KnowledgeGraphCourse/blob/7ed64c755a5ba6bd206d16a9aa968d030e7eb1b7/2025-pub-4%E7%9F%A5%E8%AF%86%E6%8A%BD%E5%8F%96%E5%9F%BA%E7%A1%80-%E9%97%AE%E9%A2%98%E5%92%8C%E6%96%B9%E6%B3%95.pdf" target="_blank" rel="noreferrer">2025-pub-4 지식 추출 기초: 문제와 방법</a>
+              · p.4–12: 데이터 원천, 정보 추출과 지식 추출의 차이, 모호성·불완전성·불일치
+            </li>
+            <li>
+              같은 자료 · p.38–42: 비구조화 데이터의 엔티티 식별, 관계 추출, 사건 추출과 파이프라인 품질 저하
+            </li>
+          </ul>
+          <p>운영 회고·배포·관측 사례와 주장·관측 분리 기준은 원본 개념을 백엔드 실무에 연결한 추가 설명입니다.</p>
+        </aside>
+
+        <a class="next-lesson" href="lesson8.html">
+          <small>NEXT · LESSON 08</small>
+          <h2>데이터 형태가 달라지면 실패 방식도 달라진다</h2>
+          <p>다음 강의에서는 구조화·반구조화·비구조화 원천별로 문맥이 어디에 숨어 있고 어떤 실패가 생기는지 비교합니다.</p>
+        </a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>
